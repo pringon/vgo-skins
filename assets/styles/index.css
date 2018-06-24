@@ -1,0 +1,19 @@
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+#nav-div {
+    height: 20%;
+    max-width: 100%;
+}
+.dropdown-menu {
+    height: 110%;
+}
+#logout-form {
+    margin-bottom: 10%;
+    height: 30%;
+}
+#logout-btn {
+    height: 150%;
+}
