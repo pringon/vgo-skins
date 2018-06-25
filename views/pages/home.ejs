@@ -1,5 +1,4 @@
-<% if(user) { %>
-<%=     JSON.stringify(user)  %>
+<% if(currentUser) { %>
         
 <% } else { %>
         <form action="/auth/openid" method="post">
