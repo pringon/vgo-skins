@@ -2,6 +2,7 @@
 require("dotenv").config();
 const express        = require("express"),
       app            = express(),
+      db             = require("./app/database/models"),
       expressLayouts = require("express-ejs-layouts"),
       logger         = require("morgan"),
       flash          = require("connect-flash"),
@@ -36,4 +37,4 @@ app.use(flash());
 
 require("./app/routes")(app, passport);
 
-app.listen(app.get("port"), () => console.log(`App is listening on port ${app.get("port")}`));
+db.sequelize.sync().then(() => app.listen(app.get("port"), () => console.log(`App is listening on port ${app.get("port")}`)));
