@@ -4,7 +4,7 @@
         <li class="nav-item"><a class="navbar-brand" href='/'>Logo</a></li>
     </ul>
     <ul class="navbar-nav ml-auto">
-        <% if(currentUser) { %>
+        <% if(typeof currentUser !== "undefined") { %>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src=<%- currentUser.avatar  %> /><p><%- currentUser.personaname %></p>

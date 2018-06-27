@@ -1,11 +1,12 @@
-<div class="jumbotron row" align="center">
-    <div class="row" align="center">
-        <img src=<%- queriedUser.avatarfull %><br>
+<div class="jumbotron container-fluid row" align="center">
+    <div class="row">
+        <img src=<%- queriedUser.avatarfull %>
         <p><%- queriedUser.personaname %></p>
     </div>
-    <div class="row" align="center">
-        <p>Lorem ipsum</p><br>
-        <p>Dolor sit amet</p><br>
-        <p>Consectetur blablabla</p>
+    <div class="row" style="margin-top: 25px;">
+        <form action="/user/tradeUrl" method="POST">
+            <input type="text" name="tradeUrl" value='<%- queriedUser.hasOwnProperty("tradeUrl") ? queriedUser.tradeUrl : "No URL set up" %>'>
+            <input type="submit" value="Submit">
+        </form>
     </div>
 </div>
