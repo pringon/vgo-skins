@@ -17,6 +17,7 @@
     "passport": "^0.4.0",
     "passport-openid": "^0.4.0",
     "request-promise": "^4.2.2",
-    "sequelize": "^4.38.0"
+    "sequelize": "^4.38.0",
+    "socket.io": "^2.1.1"
   }
 }

@@ -4,9 +4,11 @@ html, body {
 }
 
 #nav-div {
-    height: 20%;
+    height: 11%;
     max-width: 100%;
+    border-bottom: 1px solid black;
 }
+
 .dropdown-menu {
     height: 110%;
 }
@@ -16,4 +18,21 @@ html, body {
 }
 #logout-btn {
     height: 150%;
+}
+
+li.dropdown {
+    height: 100;
+}
+
+.main {
+    height: 89%;
+    width: 100%;
+}
+
+.chat {
+   border-left: 1px solid black;
+}
+#message-submission-form {
+    position: fixed;
+    bottom : 0;
 }

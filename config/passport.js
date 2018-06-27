@@ -16,7 +16,7 @@ module.exports = (passport) => {
     passport.use("steam-auth", new OpenIDStrategy({
         providerURL: "http://steamcommunity.com/openid",
         stateless: true,
-        returnURL: "http://localhost:3000/auth/openid/return",
+        returnURL: "http://localhost:3000/user/auth/openid/return",
         realm: "http://localhost:3000/"
         }, (id, done) => {
 
