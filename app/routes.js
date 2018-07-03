@@ -23,4 +23,6 @@ module.exports = (app, passport) => {
     app.post("/user/auth/openid", passport.authenticate("steam-auth"));
     app.get("/user/auth/openid/return", passport.authenticate("steam-auth"), UsersController.handleOpenIDReturn);
     app.post("/user/logout", UsersController.isLoggedIn, UsersController.postLogout);
+
+    app.get("/games/roulette", UsersController.isLoggedIn, GamesController.getRoulette);
 };

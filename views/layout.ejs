@@ -12,7 +12,7 @@
             
             <div class="row main">
 
-                <div class="game <%- (typeof chat !== 'undefined' && chat === true) ? 'col-sm-9' : 'col-sm-12' %>">
+                <div class="game row <%- (typeof chat !== 'undefined' && chat === true) ? 'col-sm-9' : 'col-sm-12' %>">
                     <%- body %>
                 </div>
 
@@ -29,13 +29,20 @@
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 			  crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
         <% if(typeof chat !== "undefined" && chat === true) { %>
             <script src="/socket.io/socket.io.js"></script>
             <script type="text/javascript">
                 const socket = io();
                 socket.emit("user data", <%- currentUser.steamid %>);
             </script>
-            <script src="/scrips/chat_socket.js"></script>
+            <script src="/scripts/chat_socket.js"></script>
+        <% } %>
+
+        <% if(typeof roulette !== "undefined" && roulette == true) { %>
+            <script src="/scripts/item_selection.js"></script>
+            <script src="/scripts/roulette_graphics.js"></script>
+            <script src="/scripts/roulette_socket.js"></script>
         <% } %>
     </body>
 </html>

@@ -1,4 +1,7 @@
 "use strict";
+let stakesData = [{user: "Matt", stake: 10, color: "#ECD078"}, {user: "Steve", stake: 20, color: "#D95B43"},
+              { user: "Bill", stake: 30, color: "#C02942"}, { user: "Dan", stake: 40, color: "#542437"}, 
+              { user: "Igor", stake: 60, color: "#53777A"}];
 
 module.exports = (io) => {
 
@@ -17,6 +20,11 @@ module.exports = (io) => {
                 message,
                 emittingUser: socket.userId
             });
+        });
+
+        socket.on("play roulette", () => {
+
+            socket.emit("get roulette stakes", stakesData);
         });
     });
 };
