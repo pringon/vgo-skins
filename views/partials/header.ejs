@@ -2,10 +2,14 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-faded">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item"><a class="navbar-brand" href='/'>Logo</a></li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-        
+            
             <% if(typeof currentUser !== "undefined") { %>
+                <li class="nav-item"><a class="nav-link" href="/games/roulette">Roulette</a></li>
+            <% } %>
+        </ul>
+        
+        <% if(typeof currentUser !== "undefined") { %>
+            <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="#" id="navbar-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <img src=<%- currentUser.avatar  %> /><p><%- currentUser.personaname %></p>
@@ -20,7 +24,7 @@
                         </span>
                     </div>      
                 </li>
-            <% } %>
-        </u>
+            </ul>
+        <% } %>
     </nav>
 </div>

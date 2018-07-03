@@ -36,3 +36,58 @@ li.dropdown {
     position: fixed;
     bottom : 0;
 }
+
+#roulette {
+    /*width:  20%;*/
+    margin-left: 25%;
+    margin-top: 20%;
+}
+
+#roulette-bet {
+    width: 10%;
+    height: 5%;
+    margin-left: 45%;
+    margin-top: 5%;
+}
+#roulette-bet > button {
+    width: 100%;
+    height: 100%;
+}
+.modal-lg {
+    max-width: 100%;
+}
+#roulette-modal-content {
+    height: 60%;
+    width: 954px;
+}
+.modal-content {
+    height: 100%;
+}
+.modal-body {
+    overflow-y: scroll;
+}
+.modal-item-container {
+    float: left;
+    position: relative;
+    text-align: center;
+    color: white;
+}
+.modal-item-image {
+    width: 150px;
+    height: 150px;
+    border: 1px solid black;
+}
+.modal-item-cost {
+    color: black;
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+}
+.selected-item {
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+}
+
+#total-gambled {
+    margin-bottom: 0;
+}
