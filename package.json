@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "server.js",
   "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "body-parser": "^1.18.3",
     "connect-flash": "^0.1.1",
@@ -16,8 +19,12 @@
     "mysql2": "^1.5.3",
     "passport": "^0.4.0",
     "passport-openid": "^0.4.0",
+    "randomcolor": "^0.5.3",
     "request-promise": "^4.2.2",
     "sequelize": "^4.38.0",
     "socket.io": "^2.1.1"
+  },
+  "engines": {
+    "node": "8.10.0"
   }
 }

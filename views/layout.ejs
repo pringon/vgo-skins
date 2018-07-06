@@ -34,7 +34,7 @@
             <script src="/socket.io/socket.io.js"></script>
             <script type="text/javascript">
                 const socket = io();
-                socket.emit("user data", <%- currentUser.steamid %>);
+                socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>" });
             </script>
             <script src="/scripts/chat_socket.js"></script>
         <% } %>
