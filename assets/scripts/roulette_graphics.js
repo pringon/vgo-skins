@@ -1,13 +1,24 @@
 "use strict";
 
+/**
+ * A function that takes all the bets from the current round and returns the total sum of money bet
+ * @method getTotal
+ * @param {Array} stakesList is an array containing the current round's bets
+ * @return {int} the total amount of money that was bet this round
+ */
 function getTotal(stakesList) {
     let myTotal = 0;
     for (let j = 0; j < stakesList.length; j++) {
-        myTotal += stakesList[j].stake;
+        myTotal += Math.round(stakesList[j].stake);
     }
     return myTotal;
 }
 
+/**
+ * A function that takes the users that bet this round and lists them on the screen
+ * @method listUsers
+ * @param {Array} stakesList is an array containing the current round's bets
+ */
 function listUsers(stakesList) {
 
     let usersList = document.createDocumentFragment()
@@ -25,6 +36,12 @@ function listUsers(stakesList) {
     usersListElement.appendChild(usersList);
 }
 
+/**
+ * A function that takes the users that bet this round and draws a pie chart where the slices are
+ *  proportional to the value bet by the player
+ * @method plotData
+ * @param {Array} stakesList is an array containing the current round's bets
+ */
 function plotData(stakesList) {
 
     let canvas;
@@ -41,13 +58,17 @@ function plotData(stakesList) {
         ctx.beginPath();
         ctx.moveTo(250,250);
         ctx.arc(250,250,250,lastend,lastend+
-          (Math.PI*2*(stakesList[i].stake/myTotal)),false);
+          (Math.PI*2*(Math.round(stakesList[i].stake)/myTotal)),false);
         ctx.lineTo(250,250);
         ctx.fill();
-        lastend += Math.PI*2*(stakesList[i].stake/myTotal);
+        lastend += Math.PI*2*(Math.round(stakesList[i].stake)/myTotal);
     }
 }
 
+/**
+ * A function that fetches the items owned by the player and lists them in the bet items modal
+ * @method listModalItems
+ */
 function listModalItems() {
 
     let mockImg = "https://files.opskins.media/file/vgo-img/item/dual-berettas-trigger-happy-battle-scarred-300.png";
@@ -56,6 +77,9 @@ function listModalItems() {
     { id: 3, name: mockName, price: 1.27, image: { "--300px": mockImg}}, { id: 4, name: mockName, price: 2.32, image: { "--300px": mockImg}},
     { id: 5, name: mockName, price: 15.73, image: { "--300px": mockImg}}, { id: 6, name: mockName, price: 7.14, image: { "--300px": mockImg}},
     { id: 7, name: mockName, price: 9.23, image: { "--300px": mockImg}}, { id: 8, name: mockName, price: 3.14, image: { "--300px": mockImg}}];
+
+    selectedItems = currentSelectedItems ? currentSelectedItems : {};
+    totalMoneyGambled = currentMoneyGambled ? totalMoneyGambled : 0;
 
     let itemsList = document.createDocumentFragment();
 
@@ -69,6 +93,11 @@ function listModalItems() {
         itemImage.className = "modal-item-image";
         itemImage.src = item.image["--300px"];
         itemImage.onclick = selectItem;
+        if(selectedItems.hasOwnProperty(item.id)) {
+            itemImage.className = "modal-item-image selected-item";
+        } else {
+            itemImage.className = "modal-item-image";
+        }
 
         let itemCost = document.createElement("div");
         itemCost.className = "modal-item-cost";
@@ -82,8 +111,14 @@ function listModalItems() {
     let itemsElementList = document.getElementsByClassName("modal-body")[0];
     itemsElementList.innerHTML = '';
     itemsElementList.appendChild(itemsList);
+    $("#total-gambled").text(`Total: ${totalMoneyGambled}$`);
 }
 
+/**
+ * A function that calls the plotData and listUsers functions
+ * @method refreshScreen
+ * @param {Array} stakesList is an array containing the current round's bets
+ */
 function refreshScreen(stakesList) {
     
     plotData(stakesList);
@@ -92,7 +127,7 @@ function refreshScreen(stakesList) {
 
 $(document).ready(function() {
 
-    $("#roulette-bet > button").on("click", () => {
-        listModalItems();
-    })
+    $("#roulette-bet > button").on("click", listModalItems);
+    $("#roulette-modal").on('hidden.bs.modal', clearSelection);
+    $(".modal-footer > button").on("click", submitSelection);
 });
