@@ -37,10 +37,15 @@ li.dropdown {
     bottom : 0;
 }
 
+#timer-div {
+    margin-left: 46%;
+    margin-top: 10%;
+}
+
 #roulette {
     /*width:  20%;*/
     margin-left: 25%;
-    margin-top: 20%;
+    margin-top: 5%;
 }
 
 #roulette-bet {
