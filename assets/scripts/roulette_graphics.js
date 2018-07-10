@@ -21,6 +21,14 @@ function getTotal(stakesList) {
  */
 function listUsers(stakesList) {
 
+    stakesList.sort(function(a, b) {
+        if (a.stake < b.stake)
+            return -1;
+        if (a.stake > b.stake)
+            return 1;
+        return 0;
+    });
+
     let usersList = document.createDocumentFragment()
 
     for(let i = stakesList.length-1; i >= 0; i--) {
@@ -111,7 +119,9 @@ function listModalItems() {
     let itemsElementList = document.getElementsByClassName("modal-body")[0];
     itemsElementList.innerHTML = '';
     itemsElementList.appendChild(itemsList);
-    $("#total-gambled").text(`Total: ${totalMoneyGambled}$`);
+    $("#total-gambled").text(`Total: ${currentMoneyGambled.toFixed(2)}$`);
+    totalMoneyGambled = currentMoneyGambled;
+    selectedItems = currentSelectedItems;
 }
 
 /**

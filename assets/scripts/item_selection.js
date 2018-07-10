@@ -1,6 +1,6 @@
 "use strict";
 let currentSelectedItems = {};
-let currentMoneyGambled = {};
+let currentMoneyGambled = 0;
 let selectedItems = {};
 let totalMoneyGambled = 0;
 
