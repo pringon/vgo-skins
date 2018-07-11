@@ -59,7 +59,7 @@ module.exports = (() => {
     this.postLogout = (req, res) => {
 
         req.logout();
-        res.redirect(req.get("Referer") || '/');
+        res.redirect('/');
     };
 
     return this;

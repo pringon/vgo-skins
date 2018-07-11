@@ -4,6 +4,9 @@ let randomColor = require("randomcolor");
 let stakesData = [{user: "Matt", stake: 10, color: randomColor()}, {user: "Steve", stake: 20, color: randomColor()},
               { user: "Bill", stake: 30, color: randomColor()}, { user: "Dan", stake: 40, color: randomColor()}, 
               { user: "Igor", stake: 60, color: randomColor()}];
+let headonPosts = [{ id: 1, user: "Matt", stake: 30, upper: true, lower: true }, { id: 2, user: "Bill", stake: 20, upper: true, lower: true},
+                { id: 3, user: "Matt", stake: 40, upper: true, lower: false }, { id: 4, user: "Dan", stake: 100, upper: false, lower: true},
+                { id: 5, user: "Igor", stake: 90, upper: false, lower: false}];
 
 let getTotal = () => {
     let total = 0;
@@ -61,6 +64,13 @@ module.exports = (io) => {
         socket.on("play roulette", () => {
 
             socket.emit("get roulette stakes", stakesData);
+            console.log(`${socket.userName} is playing roulette`);
+        });
+
+        socket.on("play headon", () => {
+
+            socket.emit("get headon posts", headonPosts);
+            console.log(`${socket.userName} is playing headon`);
         });
 
         socket.on("items gambled", (stake) => {

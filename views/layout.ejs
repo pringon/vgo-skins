@@ -44,5 +44,10 @@
             <script src="/scripts/roulette_graphics.js"></script>
             <script src="/scripts/roulette_socket.js"></script>
         <% } %>
+
+        <% if(typeof headon !== "undefined" && headon == true) { %>
+            <script src="/scripts/headon_graphics.js"></script>
+            <script src="/scripts/headon_socket.js"></script>
+        <% } %>
     </body>
 </html>
