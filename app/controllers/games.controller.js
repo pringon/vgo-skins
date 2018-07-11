@@ -10,7 +10,16 @@ module.exports = (() => {
             chat: true,
             roulette: true
         });
-    }
+    };
+
+    this.getHeadon = async(req, res) => {
+        let currentUser = await userUtils.getUser(req.user.steamId);
+        res.render("pages/headon.ejs", {
+            currentUser,
+            chat: true,
+            headon: true
+        });
+    };
 
     return this;
 })();

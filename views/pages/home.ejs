@@ -1,5 +1,13 @@
 <% if(typeof currentUser !== "undefined") { %>
-        
+        <div class="jumbotron" align="center">
+                <h1>Lorem Ipsum</h1>
+                <br>
+                <br>
+                <br>
+                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam viverra a eros vestibulum lobortis. Morbi finibus sit amet lorem at vestibulum. Duis finibus purus lacinia sem sodales, eu rutrum neque efficitur. Suspendisse potenti. Mauris tincidunt ex ut ex tempor, id consectetur elit dignissim. Maecenas tempus facilisis quam non efficitur. Quisque sollicitudin, quam ac suscipit mattis, tellus sapien maximus purus, ut condimentum metus justo non mi. Proin laoreet purus vel purus rhoncus, ut bibendum lacus gravida. Quisque aliquet nulla tempus, rhoncus eros non, blandit nisl. Nulla id malesuada ante. Maecenas a mi eget leo auctor laoreet. Vestibulum at tellus vestibulum, hendrerit nulla in, tincidunt nulla. Morbi sodales ornare tellus, sit amet dictum ligula consequat efficitur.
+
+                In hac habitasse platea dictumst. Vestibulum dolor felis, maximus sed justo nec, consequat aliquam neque. Curabitur a semper felis. Sed euismod urna a felis viverra vulputate. Integer sed semper sem. In libero turpis, egestas a enim sed, ornare interdum erat. Integer at ex purus. Vivamus vitae ligula venenatis, placerat lectus sit amet, sagittis mi. Cras vitae gravida ipsum. Nunc maximus scelerisque dui, non suscipit nisi euismod id. Ut facilisis, nisi vitae sollicitudin scelerisque, nunc urna rhoncus tellus, nec accumsan sem diam vel metus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus ut est vitae est lobortis vehicula et eu lacus. </p>
+        </div>
 <% } else { %>
         <form action="/user/auth/openid" method="post">
             <input name="submit" type="image" 

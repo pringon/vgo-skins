@@ -25,4 +25,5 @@ module.exports = (app, passport) => {
     app.post("/user/logout", UsersController.isLoggedIn, UsersController.postLogout);
 
     app.get("/games/roulette", UsersController.isLoggedIn, GamesController.getRoulette);
+    app.get("/games/headon", UsersController.isLoggedIn, GamesController.getHeadon);
 };

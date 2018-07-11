@@ -81,10 +81,11 @@ function listModalItems() {
 
     let mockImg = "https://files.opskins.media/file/vgo-img/item/dual-berettas-trigger-happy-battle-scarred-300.png";
     let mockName = "MAG-7 Gold Digger (Factory New)";
-    let items = [{ id: 1, name: mockName, price: 7.13, image: { "--300px": mockImg}}, { id: 2, name: mockName, price: 3.12, image: { "--300px": mockImg}},
-    { id: 3, name: mockName, price: 1.27, image: { "--300px": mockImg}}, { id: 4, name: mockName, price: 2.32, image: { "--300px": mockImg}},
-    { id: 5, name: mockName, price: 15.73, image: { "--300px": mockImg}}, { id: 6, name: mockName, price: 7.14, image: { "--300px": mockImg}},
-    { id: 7, name: mockName, price: 9.23, image: { "--300px": mockImg}}, { id: 8, name: mockName, price: 3.14, image: { "--300px": mockImg}}];
+    let items = [{ id: 1, name: mockName, price: 7.13, image: { "--300px": mockImg}}, 
+    { id: 2, name: mockName, price: 3.12, image: { "--300px": mockImg}}, { id: 3, name: mockName, price: 1.27, image: { "--300px": mockImg}}, 
+    { id: 4, name: mockName, price: 2.32, image: { "--300px": mockImg}}, { id: 5, name: mockName, price: 15.73, image: { "--300px": mockImg}}, 
+    { id: 6, name: mockName, price: 7.14, image: { "--300px": mockImg}}, { id: 7, name: mockName, price: 9.23, image: { "--300px": mockImg}}, 
+    { id: 8, name: mockName, price: 3.14, image: { "--300px": mockImg}}];
 
     selectedItems = currentSelectedItems ? currentSelectedItems : {};
     totalMoneyGambled = currentMoneyGambled ? totalMoneyGambled : 0;

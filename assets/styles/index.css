@@ -48,6 +48,20 @@ li.dropdown {
     margin-top: 5%;
 }
 
+#users-list {
+    list-style-type: none;
+    padding-left: 0;
+    width: 100%;
+    height: 100%;
+}
+#users-list li {
+    width: 100%;
+    height: 5%;
+    border: 1px solid black;
+    padding-left: 5%;
+    padding-top: 3%;
+}
+
 #roulette-bet {
     width: 10%;
     height: 5%;
@@ -95,4 +109,9 @@ li.dropdown {
 
 #total-gambled {
     margin-bottom: 0;
+}
+
+#headon-modal-content {
+    height: 60%;
+    width: 954px;
 }
