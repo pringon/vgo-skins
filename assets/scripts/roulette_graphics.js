@@ -29,17 +29,60 @@ function listUsers(stakesList) {
         return 0;
     });
 
-    let usersList = document.createDocumentFragment()
+    let total = getTotal(stakesList);
+    $(".jackpot-score > .amount").text(`$${total}`);
+    document.getElementsByClassName("score")[6].textContent = `$${total}`;
+
+    document.getElementsByClassName("score")[3].textContent = stakesList.length;
+
+    let usersList = document.createDocumentFragment();
 
     for(let i = stakesList.length-1; i >= 0; i--) {
 
-        let user = document.createElement("li");
-        user.innerHTML = `<b>${stakesList[i].user}: ${stakesList[i].stake}</b>`;
-        user.style.color = stakesList[i].color;
-        usersList.appendChild(user);
+        let playerDiv = document.createElement("div");
+        playerDiv.setAttribute("class", "row");
+
+        let playerInfoDiv = document.createElement("div");
+        playerInfoDiv.setAttribute("class", "col");
+        let playerAvatarHolder = document.createElement("span");
+        playerAvatarHolder.setAttribute("class", "avatar");
+        let playerAvatar = document.createElement("img");
+        playerAvatar.setAttribute("src", stakesList[i].avatar);
+        playerAvatar.setAttribute("alt", "Player");
+        playerAvatarHolder.appendChild(playerAvatar);
+        let playerName = document.createElement("span");
+        playerName.setAttribute("class", "name");
+        playerName.textContent = stakesList[i].user;
+        
+        playerInfoDiv.appendChild(playerAvatarHolder);
+        playerInfoDiv.appendChild(playerName);
+
+        let playerDataDiv = document.createElement("div");
+        playerDataDiv.setAttribute("class", "col");
+        let playerAmountBet = document.createElement("span");
+        playerAmountBet.setAttribute("class", "amonut");
+        playerAmountBet.textContent = `$${stakesList[i].stake}`;
+        let playerItemCount = document.createElement("span");
+        playerItemCount.setAttribute("class", "items");
+        playerItemCount.textContent = "(16 Items)";
+        let playerStakeRatio = document.createElement("span");
+        playerStakeRatio.setAttribute("class", "ratio");
+        playerStakeRatio.textContent = `${(stakesList[i].stake/total*100).toFixed(2)}%`;
+
+        playerDataDiv.appendChild(playerAmountBet);
+        playerDataDiv.appendChild(playerItemCount);
+        playerDataDiv.appendChild(playerStakeRatio);
+
+        playerDiv.appendChild(playerInfoDiv);
+        playerDiv.appendChild(playerDataDiv);
+
+        let playerDivHolder = document.createElement("div");
+        playerDivHolder.setAttribute("class", "player");
+        playerDivHolder.appendChild(playerDiv);
+        usersList.appendChild(playerDivHolder);
     }
 
-    let usersListElement = document.getElementById("users-list");
+    let usersListElement = document.getElementsByClassName("player-list")[0];
     usersListElement.innerHTML = '';
     usersListElement.appendChild(usersList);
 }
@@ -52,25 +95,19 @@ function listUsers(stakesList) {
  */
 function plotData(stakesList) {
 
-    let canvas;
-    let ctx;
-    let lastend = 0;
-    let myTotal = getTotal(stakesList);
+    let chartData = { stakes: [], colors: [], avatars: [] };
 
-    canvas = document.getElementById("roulette");
-    ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    for (let i = 0; i < stakesList.length; i++) {
-        ctx.fillStyle = stakesList[i].color;
-        ctx.beginPath();
-        ctx.moveTo(250,250);
-        ctx.arc(250,250,250,lastend,lastend+
-          (Math.PI*2*(Math.round(stakesList[i].stake)/myTotal)),false);
-        ctx.lineTo(250,250);
-        ctx.fill();
-        lastend += Math.PI*2*(Math.round(stakesList[i].stake)/myTotal);
+    for(let stake of stakesList) {
+        chartData.stakes.push(stake.stake);
+        chartData.colors.push(stake.color);
+        chartData.avatars.push({
+            src: stake.avatar,
+            width: 30,
+            height: 30
+        });
     }
+
+    plotStakes("doughnut", chartData);
 }
 
 /**
@@ -139,6 +176,6 @@ function refreshScreen(stakesList) {
 $(document).ready(function() {
 
     $("#roulette-bet > button").on("click", listModalItems);
-    $("#roulette-modal").on('hidden.bs.modal', clearSelection);
-    $(".modal-footer > button").on("click", submitSelection);
+    //$("#roulette-modal").on('hidden.bs.modal', clearSelection);
+    //$(".modal-footer > button").on("click", submitSelection);
 });

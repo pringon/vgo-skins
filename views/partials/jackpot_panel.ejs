@@ -24,19 +24,13 @@
         </div>
         <canvas id="doughnut-canvas" style="width: 350px; height: 350px;"></canvas>
         <script type="text/javascript">
-            function createChart(id, type, options) {
+            function createChart(id, type, chartData, options) {
                 var data = {
-                datasets: [
-                    {
-                    label: 'My First dataset',
-                    data: [50445, 33655, 15900],
-                    backgroundColor: [
-                        '#FF6384',
-                        '#36A2EB',
-                        '#FFCE56'
-                    ]
-                    }
-                ]
+                    datasets: [{
+                        label: 'My First dataset',
+                        data: chartData.stakes,
+                        backgroundColor: chartData.colors
+                    }]
                 };
 
                 new Chart(document.getElementById(id), {
@@ -45,8 +39,8 @@
                 options: options
                 });
             }
-            ['doughnut'].forEach(function (type) {
-                createChart(type + '-canvas', type, {
+            function plotStakes(type, chartData) {
+                createChart(type + '-canvas', type, chartData, {
                 responsive: true,
                 maintainAspectRatio: true,
                 cutoutPercentage: 65,
@@ -68,14 +62,10 @@
                 },
                 pieceLabel: {
                     render: 'image',
-                    images: [
-                    { src: '/img/user-img03.png', width: 55, height: 55 },
-                    { src: '/img/user-img03.png', width: 55, height: 55 },
-                    { src: '/img/user-img03.png', width: 55, height: 55 }
-                    ]
+                    images: chartData.avatars
                 }
                 });
-            });
+            }
         </script>
     </div>
     <div class="jackpot-btn">
