@@ -1,24 +1,4 @@
-<div style="border-right: 1px solid black;" class="col-sm-3">
-    <ul id="users-list">
-
-    </ul>
-</div>
-
-<div class="col-sm-9">
-    
-    <div id="timer-div" class="row">
-        <h1>00:00</h1>
-    </div>
-
-    <div id="roulete-div" class="row">
-        <canvas id="roulette" width="500" height="500">
-            This text is displayed if your browser does not support HTML5 Canvas.
-        </canvas>
-    </div>
-
-    <div id="roulette-bet" class="row">
-        <button class="btn btn-info" data-toggle="modal" data-target="#roulette-modal">Bet!</button>
-    </div>
-</div>
-
-<%- include("../partials/roulette_modal") %>
+<%- include("../partials/gambled_items_gallery") %>
+<%- include("../partials/jackpot_player_list") %>
+<%- include("../partials/jackpot_scoreboard") %>
+<%- include("../partials/jackpot_panel") %>

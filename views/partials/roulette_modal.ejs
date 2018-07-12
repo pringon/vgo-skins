@@ -1,20 +1,67 @@
-<div id="roulette-modal" class="modal fade" role="dialog">
-    <div id="roulette-modal-content" class="modal-dialog modal-lg">
-
+<div class="modal fade bd-example-modal-lg modal-inventory" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>Select the items you intend to gamble</h2>
-            </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+            <div class="row">
+                
+                <div class="score-panel col col-3">
+                    <div class="item">
+                        <span class="label">Jackpot Deposit</span>
+                        <span class="score">(0/20)</span>
+                    </div>
+                    <div class="item">
+                        <span class="label">Selected</span>
+                        <span class="score">$0</span>
+                    </div>
+                    <div class="item">
+                        <span class="label">Current Pot</span>
+                        <span class="score">$20.36</span>
+                    </div>
+                    <div class="item">
+                        <span class="label">Your Chances</span>
+                        <span class="score">0%</span>
+                    </div>
+                    <div class="item">
+                        <span class="label">Time Left</span>
+                        <span class="score">01:28</span>
+                    </div>
+                </div>
+                <div class="data-panel col col-9">
+                    <div class="controlers">
+                        <a href="#" class="btn">
+                        <span class="icon">
+                            <img src="/img/stock-icon.png" />
+                        </span>
+                        Your Inventory
+                        </a>
+                        <a href="#" class="btn">
+                        <span class="icon">
+                            <img src="/img/refresh-icon.png" />
+                        </span>
+                        Refresh Inventory
+                        </a>
+                        <a href="#" class="btn">
+                        <span class="icon">
+                            <img src="/img/delete-icon.png" />
+                        </span>
+                        Empty  Selection
+                        </a>
+                    </div>
+                    <div class="data-content">
+                        <span class="empty-data">
+                        <i class="fa fa-ellipsis-h"></i>
+                        </span>
+                    </div>
+                    <div class="bottom-sec">
+                        <button class="btn float-right" disabled="disabled">Deposit $0 (0 Skins)</button>
+                        <span class="text float-right">Max 20 skins and a minimum value of $0.30</span>
 
-            <div class="modal-body">
-
+                    </div>
+                </div>
             </div>
-
-            <div class="modal-footer">
-                <p id="total-gambled">Total: 0.00$</p>
-                <button type="button" class="btn btn-basic" data-dismiss="modal" disabled>Submit</button>
-            </div>
+            
         </div>
-
     </div>
 </div>
