@@ -5,6 +5,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BIGINT.UNSIGNED,
       primaryKey: true
     },
+    level: {
+      type: DataTypes.TINYINT.UNSIGNED,
+      defaultValue: 0
+    },
     opskinsTradeUrl: DataTypes.STRING
   }, {});
   User.associate = function(models) {

@@ -1,9 +1,33 @@
-<div class="container-fluid">
-    <ul id="messages">
-
-    </ul>
-    <form action="" id="message-submission-form">
-            <input autocomplete="off" />
-            <button>Send</button>
-    </form>
+<div class="chat-panel">
+    <div class="online-display gradient">
+        Online users: <b>60</b>
+        <a href="#" class="social-icon">
+        <img src="/img/twitter-icon.png" />
+        </a>
+        <a href="#" class="social-icon">
+        <img src="/img/icon.png" />
+        </a>
+    </div>
+    
+    <div class="chat-list">
+        <div class="users">
+            <div class="avatar">
+                <img src="/img/user-img02.jpg" alt="user" />
+            </div>
+            <div class="content-sec">
+                <div class="name">MîLåNâ <span class="badge bg-blue">20</span></div>
+                <div class="comment">But be car next time ;)</div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-sec">
+        <div class="input-group">
+            <input type="text" id="chat-message-submit" class="form-control" placeholder="Your Message" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button id="chat-submit" class="btn" type="button">
+                    <i class="fa fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,45 +1,121 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <title>VGO Trading</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" media="screen">
-        <link rel="stylesheet" href="/styles/index.css" media="screen">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="/styles/bootstrap.min.css" media="screen">
+
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500,700" rel="stylesheet">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+
+        <!-- slider CSS -->
+        <link rel="stylesheet" href="/styles/flickity.min.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/styles/style.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+        <script src="/scripts/Chart.PieceLabel.js"></script>
+
     </head>
     <body>
+
+        <%- include("partials/header.ejs") %>
+        
         <div class="container-fluid">
-
-            <%- include("partials/header.ejs") %>
-            
-            <div class="row main">
-
-                <div class="game row <%- (typeof chat !== 'undefined' && chat === true) ? 'col-sm-9' : 'col-sm-12' %>">
+            <% if(typeof chat !== "undefined" && chat === true) { %>
+                <%- include("partials/chat.ejs") %>
+            <% } %>
+            <div class="content">
+                <div class="main-panel bg">
                     <%- body %>
                 </div>
-
-                <% if(typeof chat !== "undefined" && chat === true) { %>
-                    <div class="col-sm-3 chat">
-                        <%- include("partials/chat.ejs") %>
-                    </div>        
-                <% } %>
-
             </div>
+            <footer>© vgogem 2018</footer>
         </div>
-        <script
-			  src="https://code.jquery.com/jquery-3.3.1.min.js"
-			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-			  crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+
+        <% if(typeof roulette !== "undefined" && roulette == true) { %>
+            <%- include("partials/roulette_modal") %>
+        <% } %>
+        
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="/scripts/jquery-3.3.1.min.js"></script>
+
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script> -->
+
+        <script src="/scripts/bootstrap.min.js"></script>
+        <script src="/scripts/flickity.pkgd.min.js"></script>
+        <script src="/scripts/circles.js"></script>
+
+
+        <script type="text/javascript">
+            $( document ).ready(function() {
+
+                $('.jackpot-pointer').animate({  transform: 810 }, {
+                    step: function(now,fx) {
+                        $(this).css('-webkit-transform','rotate('+now+'deg)'); 
+                    },
+                    duration:6000
+                },'linear');
+            });
+        </script>
+
+        <script>
+            (function() {
+                var canvas = document.getElementById('canvas'),
+                circlesCreated = false;
+                function onScroll() {
+                if (!circlesCreated && elementInViewport(canvas)) {
+                    circlesCreated = true;
+                    createCircles();
+                }
+                }
+                function elementInViewport(el) {
+                var rect = el.getBoundingClientRect();
+                return (
+                    rect.top  >= 0 &&
+                    rect.left >= 0 &&
+                    rect.top  <= (window.innerHeight || document.documentElement.clientHeight)
+                );
+                }
+                function createCircles() {
+                var colors = [
+                    ['#595980', '#ffffff']
+                    ],
+                    circles = [];
+                for (var i = 1; i <= colors.length; i++) {
+                    var child = document.getElementById('circles-' + i),
+                    percentage = 100 + (i * 9.84),
+                    circle = Circles.create({
+                        id:         child.id,
+                        value:      percentage,
+                        radius:     150,
+                        width:      4,
+                        colors:     colors[i - 1]
+                    });
+                    circles.push(circle);
+                }
+                }
+                window.onscroll = onScroll;
+            })();
+        </script>
+
 
         <% if(typeof chat !== "undefined" && chat === true) { %>
             <script src="/socket.io/socket.io.js"></script>
             <script type="text/javascript">
                 const socket = io();
-                socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>" });
+                socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>", avatar: "<%- currentUser.avatarfull %>" });
             </script>
             <script src="/scripts/chat_socket.js"></script>
         <% } %>
 
-        <% if(typeof roulette !== "undefined" && roulette == true) { %>
+        <!--<% if(typeof roulette !== "undefined" && roulette == true) { %>
             <script src="/scripts/item_selection.js"></script>
             <script src="/scripts/roulette_graphics.js"></script>
             <script src="/scripts/roulette_socket.js"></script>
@@ -48,6 +124,6 @@
         <% if(typeof headon !== "undefined" && headon == true) { %>
             <script src="/scripts/headon_graphics.js"></script>
             <script src="/scripts/headon_socket.js"></script>
-        <% } %>
+        <% } %>-->
     </body>
 </html>

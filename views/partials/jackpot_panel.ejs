@@ -1,0 +1,85 @@
+<div class="jackpot-panel">
+            
+    <div class="jackpot">
+        <a href="#" class="sound-btn btn rounded-circle">
+            <i class="fa fa-volume-up"></i>
+        </a>
+        <div class="jackpot-line">
+            <img src="/img/jackpot-line.png" />
+        </div>
+        <div class="jackpot-pointer">
+            <img src="/img/jackpot-pointer.png" />
+        </div>
+        <div class="jackpot-timer">
+            <div id="canvas">
+                <div class="circle" id="circles-1"></div>
+            </div>
+        </div>
+        <div class="jackpot-score">
+            <div class="amount">$125</div>
+            <div class="skins">30 Skins</div>
+            <div class="icon">
+                <img src="/img/plant-icon.png">
+            </div>
+        </div>
+        <canvas id="doughnut-canvas" style="width: 350px; height: 350px;"></canvas>
+        <script type="text/javascript">
+            function createChart(id, type, options) {
+                var data = {
+                datasets: [
+                    {
+                    label: 'My First dataset',
+                    data: [50445, 33655, 15900],
+                    backgroundColor: [
+                        '#FF6384',
+                        '#36A2EB',
+                        '#FFCE56'
+                    ]
+                    }
+                ]
+                };
+
+                new Chart(document.getElementById(id), {
+                type: type,
+                data: data,
+                options: options
+                });
+            }
+            ['doughnut'].forEach(function (type) {
+                createChart(type + '-canvas', type, {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutoutPercentage: 65,
+                easing: 'easeInBounce',
+                animation: {
+                    animateRotate: true,
+
+                },
+                legend: {
+                    position: 10,
+                },
+                layout: {
+                    padding: {
+                        left: 36,
+                        right: 36,
+                        top: 36,
+                        bottom: 36
+                    }
+                },
+                pieceLabel: {
+                    render: 'image',
+                    images: [
+                    { src: '/img/user-img03.png', width: 55, height: 55 },
+                    { src: '/img/user-img03.png', width: 55, height: 55 },
+                    { src: '/img/user-img03.png', width: 55, height: 55 }
+                    ]
+                }
+                });
+            });
+        </script>
+    </div>
+    <div class="jackpot-btn">
+    <button type="button" class="btn bg-green btn-lg" data-toggle="modal" data-target=".bd-example-modal-lg">Deposit</button>
+    </div>
+  
+</div>

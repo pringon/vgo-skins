@@ -49,6 +49,7 @@ module.exports = (io) => {
             console.log(`User ${userData.userName} has connected.`);
             socket.userId = userData.userId;
             socket.userName = userData.userName;
+            socket.avatar = userData.avatar;
             socket.emit("timer update", timeRemaining);
         });
 
@@ -57,7 +58,10 @@ module.exports = (io) => {
             console.log(`User with id ${socket.userId} has sent a message of: ${message}`);
             io.sockets.emit("chat message", {
                 message,
-                emittingUser: socket.userId
+                emittingUser: {
+                    userName: socket.userName,
+                    avatar: socket.avatar
+                }
             });
         });
 
