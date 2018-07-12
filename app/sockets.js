@@ -1,9 +1,9 @@
 "use strict";
 let randomColor = require("randomcolor");
 
-let stakesData = [{user: "Matt", stake: 10, color: randomColor()}, {user: "Steve", stake: 20, color: randomColor()},
-              { user: "Bill", stake: 30, color: randomColor()}, { user: "Dan", stake: 40, color: randomColor()}, 
-              { user: "Igor", stake: 60, color: randomColor()}];
+let stakesData = [{user: "Matt", avatar: "/img/player-photo.jpg", stake: 10, color: randomColor()}, {user: "Steve", avatar: "/img/player-photo.jpg", stake: 20, color: randomColor()},
+              { user: "Bill", avatar: "/img/player-photo.jpg", stake: 30, color: randomColor()}, { user: "Dan", avatar: "/img/player-photo.jpg", stake: 40, color: randomColor()}, 
+              { user: "Igor", avatar: "/img/player-photo.jpg", stake: 60, color: randomColor()}];
 let headonPosts = [{ id: 1, user: "Matt", stake: 30, upper: true, lower: true }, { id: 2, user: "Bill", stake: 20, upper: true, lower: true},
                 { id: 3, user: "Matt", stake: 40, upper: true, lower: false }, { id: 4, user: "Dan", stake: 100, upper: false, lower: true},
                 { id: 5, user: "Igor", stake: 90, upper: false, lower: false}];
@@ -20,9 +20,9 @@ let getWinner = () => {
     let winner = Math.random() * getTotal();
     for(let stake of stakesData) {
         if(winner < stake.stake) {
-            stakesData = [{user: "Matt", stake: 10, color: randomColor()}, {user: "Steve", stake: 20, color: randomColor()},
-                        { user: "Bill", stake: 30, color: randomColor()}, { user: "Dan", stake: 40, color: randomColor()}, 
-                        { user: "Igor", stake: 60, color: randomColor()}];
+            stakesData = [{user: "Matt", avatar: "/img/player-photo.jpg", stake: 10, color: randomColor()}, {user: "Steve", avatar: "/img/player-photo.jpg", stake: 20, color: randomColor()},
+                        { user: "Bill", avatar: "/img/player-photo.jpg", stake: 30, color: randomColor()}, { user: "Dan", avatar: "/img/player-photo.jpg", stake: 40, color: randomColor()}, 
+                        { user: "Igor", avatar: "/img/player-photo.jpg", stake: 60, color: randomColor()}];
             return stake;
         }
         winner -= stake.stake;
