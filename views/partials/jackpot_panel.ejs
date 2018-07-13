@@ -18,12 +18,25 @@
         <div class="jackpot-score">
             <div class="amount">$125</div>
             <div class="skins">30 Skins</div>
-            <div class="icon">
-                <img src="/img/plant-icon.png">
-            </div>
+            <% if(rouletteType == "diamond") { %>
+                <div class="icon">
+                    <img src="/img/diamond-icon.png">
+                </div>
+            <% } else if(rouletteType == "coal") { %>
+                <div class="icon">
+                    <img src="/img/coal-icon.png">
+                </div>
+            <% } else { %>
+                <div class="icon">
+                    <img src="/img/plant-icon.png">
+                </div>
+                
+            <% } %>
         </div>
         <canvas id="doughnut-canvas" style="width: 350px; height: 350px;"></canvas>
         <script type="text/javascript">
+            let prevChart = null;
+
             function createChart(id, type, chartData, options) {
                 var data = {
                     datasets: [{
@@ -33,13 +46,22 @@
                     }]
                 };
 
-                new Chart(document.getElementById(id), {
+                delete prevChart;
+                prevChart = new Chart(document.getElementById(id), {
                 type: type,
                 data: data,
                 options: options
                 });
             }
             function plotStakes(type, chartData) {
+                let canvas = document.getElementById(`${type}-canvas`);
+                let canvasParent = canvas.parentElement;
+                canvasParent.removeChild(canvas);
+                let newCanvas = document.createElement("canvas");
+                newCanvas.setAttribute("id", `${type}-canvas`);
+                newCanvas.setAttribute("style", "width: 350px; height: 350px;");
+                canvasParent.appendChild(newCanvas);
+                
                 createChart(type + '-canvas', type, chartData, {
                 responsive: true,
                 maintainAspectRatio: true,

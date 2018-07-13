@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>VGO Trading</title>
+        <title>VGO Gem</title>
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -113,10 +113,16 @@
                 socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>", avatar: "<%- currentUser.avatarfull %>" });
             </script>
             <script src="/scripts/chat_socket.js"></script>
+
+            <script type="text/javascript">
+                socket.on("user count", (connectedUsers) => {
+                    $(".online-display b").text(connectedUsers);
+                });
+            </script>
         <% } %>
 
         <% if(typeof roulette !== "undefined" && roulette == true) { %>
-            <!--<script src="/scripts/item_selection.js"></script>-->
+            <script src="/scripts/item_selection.js"></script>
             <script src="/scripts/roulette_graphics.js"></script>
             <script src="/scripts/roulette_socket.js"></script>
         <% } %>

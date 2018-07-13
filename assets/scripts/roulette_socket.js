@@ -11,6 +11,12 @@ $(document).ready(function() {
         document.getElementsByClassName("score")[8].textContent = `${minutes > 9 ? minutes : "0" + minutes}:${seconds > 9 ? seconds : "0" + seconds}`;
     });
     socket.on("round finished", (winner) => {
-        console.log(`The winner is ${winner.user}`);
+        alert(`The winner is ${winner.user}`);
+        for(let item in currentSelectedItems) {
+            delete currentSelectedItems[item];
+        }
+        currentMoneyGambled = 0;
+        $(".scoreboard .panel .score:eq(0)").html("0<small>%</small>");
+        $(".scoreboard .panel .score:eq(1)").html("<small>$</small>0.00");
     });
 });

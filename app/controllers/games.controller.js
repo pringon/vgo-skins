@@ -8,7 +8,8 @@ module.exports = (() => {
         res.render("pages/roulette.ejs", {
             currentUser,
             chat: true,
-            roulette: true
+            roulette: true,
+            rouletteType: req.params.rouletteType
         });
     };
 

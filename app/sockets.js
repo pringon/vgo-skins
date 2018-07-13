@@ -1,5 +1,6 @@
 "use strict";
-let randomColor = require("randomcolor");
+const userUtils   = require("../libs/user_utils"),
+      randomColor = require("randomcolor");
 
 let stakesData = [{user: "Matt", avatar: "/img/player-photo.jpg", stake: 10, color: randomColor()}, {user: "Steve", avatar: "/img/player-photo.jpg", stake: 20, color: randomColor()},
               { user: "Bill", avatar: "/img/player-photo.jpg", stake: 30, color: randomColor()}, { user: "Dan", avatar: "/img/player-photo.jpg", stake: 40, color: randomColor()}, 
@@ -31,18 +32,24 @@ let getWinner = () => {
 
 module.exports = (io) => {
 
-    let timeRemaining = 30;
+    let timeRemaining = 90;
+    let connectedUsers = 0;
     setInterval(() => {
         timeRemaining--;
         if(timeRemaining == 0) {
             io.sockets.emit("round finished", getWinner());
             io.sockets.emit("get roulette stakes", stakesData);
-            timeRemaining = 30;
+            timeRemaining = 90;
         }
         io.sockets.emit("time elapsed", timeRemaining);
     }, 1000);
+    setInterval(() => {
+        io.sockets.emit("user count", connectedUsers);
+    }, 10000)
 
     io.on("connection", (socket) => {
+
+        connectedUsers++;
 
         socket.on("user data", (userData) => {
 
@@ -90,8 +97,13 @@ module.exports = (io) => {
                     break;
                 }
             }
-            stakesData.push({ user: socket.userName, stake: parseFloat(stake), color: ((color == null) ? randomColor() : color) });
-            socket.emit("get roulette stakes", stakesData);
+
+            stakesData.push({ user: socket.userName, avatar: socket.avatar, stake: parseFloat(stake), color: ((color == null) ? randomColor() : color) });
+            io.sockets.emit("get roulette stakes", stakesData);
+        });
+
+        socket.on("disconnect", () => {
+            connectedUsers--;
         });
     });
 };

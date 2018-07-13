@@ -34,6 +34,7 @@ function listUsers(stakesList) {
     document.getElementsByClassName("score")[6].textContent = `$${total}`;
 
     document.getElementsByClassName("score")[3].textContent = stakesList.length;
+    document.getElementsByClassName("score")[0].innerHTML = `${(currentMoneyGambled/total*100).toFixed(2)}<small>%</small>`;
 
     let usersList = document.createDocumentFragment();
 
@@ -129,37 +130,70 @@ function listModalItems() {
 
     let itemsList = document.createDocumentFragment();
 
+    let itemsRow = document.createElement("div");
+    itemsRow.setAttribute("class", "row");
+    let columnIndex = 0;
+
     for(let item of items) {
 
         let itemContainer = document.createElement("div");
-        itemContainer.className = "modal-item-container";
-
-        let itemImage = document.createElement("img");
-        itemImage.id = item.id;
-        itemImage.className = "modal-item-image";
-        itemImage.src = item.image["--300px"];
-        itemImage.onclick = selectItem;
         if(selectedItems.hasOwnProperty(item.id)) {
-            itemImage.className = "modal-item-image selected-item";
+            itemContainer.setAttribute("class", "col selected-item");    
         } else {
-            itemImage.className = "modal-item-image";
+            itemContainer.setAttribute("class", "col");
         }
+        itemContainer.setAttribute("id", item.id);
+        itemContainer.onclick = selectItem;
+        let itemHolder = document.createElement("div");
+        itemHolder.setAttribute("class", "skin-item");
 
-        let itemCost = document.createElement("div");
-        itemCost.className = "modal-item-cost";
-        itemCost.textContent = item.price;
+        let topSection = document.createElement("div");
+        topSection.setAttribute("class", "top-sec");
+        let itemCode = document.createElement("span");
+        itemCode.setAttribute("class", "code");
+        itemCode.textContent = "MM";
+        let itemPrice = document.createElement("span");
+        itemPrice.setAttribute("class", "amount");
+        itemPrice.textContent = `$${item.price}`;
+        topSection.appendChild(itemCode);
+        topSection.appendChild(itemPrice);
 
-        itemContainer.appendChild(itemImage);
-        itemContainer.appendChild(itemCost);
-        itemsList.appendChild(itemContainer);
+        let midSection = document.createElement("div");
+        midSection.setAttribute("class", "mid-sec");
+        let itemImage = document.createElement("img");
+        itemImage.setAttribute("src", item.image["--300px"]);
+        midSection.appendChild(itemImage);
+
+        let bottomSection = document.createElement("div");
+        bottomSection.setAttribute("class", "bottom-sec");
+        bottomSection.textContent = item.name;
+        
+        itemHolder.appendChild(topSection);
+        itemHolder.appendChild(midSection);
+        itemHolder.appendChild(bottomSection);
+        itemContainer.appendChild(itemHolder);
+        itemsRow.appendChild(itemContainer);
+
+        columnIndex++;
+        if(columnIndex == 5) {
+            itemsList.appendChild(itemsRow);
+            itemsRow = document.createElement("div");
+            itemsRow.setAttribute("class", "row");
+            columnIndex = 0;
+        }
     }
 
-    let itemsElementList = document.getElementsByClassName("modal-body")[0];
+    if(columnIndex > 0) {
+        itemsList.appendChild(itemsRow);
+    }
+
+    let itemsElementList = document.getElementsByClassName("data-content")[0];
     itemsElementList.innerHTML = '';
     itemsElementList.appendChild(itemsList);
-    $("#total-gambled").text(`Total: ${currentMoneyGambled.toFixed(2)}$`);
+    $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${currentMoneyGambled.toFixed(2)}`);
+    $(".data-panel .bottom-sec button").text(`Deposit $${currentMoneyGambled.toFixed(2)} (0 Skins)`);
     totalMoneyGambled = currentMoneyGambled;
-    selectedItems = currentSelectedItems;
+    selectedItems = Object.assign({}, currentSelectedItems);
 }
 
 /**
@@ -175,7 +209,7 @@ function refreshScreen(stakesList) {
 
 $(document).ready(function() {
 
-    $("#roulette-bet > button").on("click", listModalItems);
-    //$("#roulette-modal").on('hidden.bs.modal', clearSelection);
-    //$(".modal-footer > button").on("click", submitSelection);
+    $(".jackpot-btn > button").on("click", listModalItems);
+    $("#roulette-modal").on('hidden.bs.modal', clearSelection);
+    $(".data-panel .bottom-sec button").on("click", submitSelection);
 });

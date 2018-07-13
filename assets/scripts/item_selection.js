@@ -4,9 +4,9 @@ let currentMoneyGambled = 0;
 let selectedItems = {};
 let totalMoneyGambled = 0;
 
-function selectItem(event) {
+function selectItem() {
     
-    let element = $(event.target);
+    let element = $(this);
 
     if(element.hasClass("selected-item")) {
     
@@ -14,41 +14,44 @@ function selectItem(event) {
 
         totalMoneyGambled -= selectedItems[element.attr("id")];
         delete selectedItems[element.attr("id")];
-
-        $("#total-gambled").text(`Total: ${totalMoneyGambled.toFixed(2)}$`);
     } else {
     
         element.addClass("selected-item");
 
-        selectedItems[element.attr("id")] = parseFloat(element.next().text());
+        selectedItems[element.attr("id")] = parseFloat(element.get(0).childNodes[0].childNodes[0].childNodes[1].innerText.substr(1));
         totalMoneyGambled += selectedItems[element.attr("id")];
-
-        $("#total-gambled").text(`Total: ${totalMoneyGambled.toFixed(2)}$`);
     }
+    $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${totalMoneyGambled.toFixed(2)}`);
+    $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (0 Skins)`);
+    $(".modal-content .row .score-panel .item .score:eq(0)").text(`(${Object.keys(selectedItems).length}/20)`);
 
     if(Object.keys(selectedItems).length !== 0 && selectedItems.constructor === Object) {
 
-        $(".modal-footer > button").addClass("btn-info");
-        $(".modal-footer > button").removeClass("btn-basic");
-        $(".modal-footer > button").prop("disabled", false);
+        //$(".data-panel .bottom-sec button").addClass("btn-info");
+        //$(".data-panel .bottom-sec button").removeClass("btn-basic");
+        $(".data-panel .bottom-sec button").prop("disabled", false);
     } else {
 
-        $(".modal-footer > button").addClass("btn-basic");
-        $(".modal-footer > button").removeClass("btn-info");
+        //$(".data-panel .bottom-sec button").addClass("btn-basic");
+        //$(".data-panel .bottom-sec button").removeClass("btn-info");
+        $(".data-panel .bottom-sec button").prop("disabled", true);
     }
 }
 
 function submitSelection() {
 
-    console.log(`stake is ${totalMoneyGambled}`);
-    socket.emit("items gambled", totalMoneyGambled.toFixed(2));
-    currentSelectedItems = selectedItems;
+    document.getElementsByClassName("score")[1].innerHTML = `<small>$</small>${totalMoneyGambled.toFixed(2)}`;
+    currentSelectedItems = Object.assign({}, selectedItems);
     currentMoneyGambled = totalMoneyGambled;
+    socket.emit("items gambled", totalMoneyGambled.toFixed(2));
 }
 
 function clearSelection() {
 
-    selectedItems = {};
+    for(let item in selectedItems) {
+        delete selectedItems[item];
+    }
     totalMoneyGambled = 0;
-    $("#total-gambled").text("Total: 0.00$");
+    $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${currentMoneyGambled.toFixed(2)}`);
+    $(".data-panel .bottom-sec button").text(`Deposit $${currentMoneyGambled.toFixed(2)} (0 Skins)`);
 }

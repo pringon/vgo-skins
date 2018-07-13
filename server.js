@@ -1,5 +1,7 @@
 "use strict";
-require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 const express        = require("express"),
       app            = express(),
       http           = require("http").Server(app),
