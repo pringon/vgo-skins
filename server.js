@@ -15,8 +15,6 @@ const express        = require("express"),
       cookieParser   = require("cookie-parser"),
       bodyParser     = require("body-parser");
 
-app.set("port", process.env.PORT || 3000);
-
 require("./config/passport")(passport);
 
 app.use(logger("dev"));
@@ -43,4 +41,4 @@ require("./app/routes")(app, passport);
 
 require("./app/sockets")(io);
 
-db.sequelize.sync().then(() => http.listen(app.get("port"), () => console.log(`App is listening on port ${app.get("port")}`)));
+db.sequelize.sync().then(() => http.listen(process.env.PORT || 3000, "0.0.0.0", () => console.log(`App is listening on port ${app.get("port")}`)));
