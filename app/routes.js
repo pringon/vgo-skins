@@ -8,11 +8,7 @@ module.exports = (app, passport) => {
 
     app.get('/', async(req, res) => {
         if(req.user) {
-            let currentUser = await userUtils.getUser(req.user.steamId);
-            res.render("pages/home.ejs", {
-                currentUser: currentUser,
-                chat: true
-            });
+            res.redirect("games/roulette/plant");
         } else {
             res.render("pages/home.ejs");
         }
@@ -24,6 +20,6 @@ module.exports = (app, passport) => {
     app.get("/user/auth/openid/return", passport.authenticate("steam-auth"), UsersController.handleOpenIDReturn);
     app.post("/user/logout", UsersController.isLoggedIn, UsersController.postLogout);
 
-    app.get("/games/roulette", UsersController.isLoggedIn, GamesController.getRoulette);
+    app.get("/games/roulette/:rouletteType", UsersController.isLoggedIn, GamesController.getRoulette);
     app.get("/games/headon", UsersController.isLoggedIn, GamesController.getHeadon);
 };

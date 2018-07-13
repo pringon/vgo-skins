@@ -1,0 +1,17 @@
+{
+    "name": "VGO Gem",
+    "description": "A CSGO VGO item gambling app",
+    "repository": "https://github.com/pringon/vgo-skins",
+    "keywords": ["node", "express", "socketio", "passport"],
+    "env": {
+        "NODE_ENV": {
+            "description": "The environment in which the server is running",
+            "value": "production"
+        },
+        "STEAM_API_KEY": {
+            "description": "The steam api key used in this app",
+            "value": "7664E9A795BF8A70D4FA8A6F22FF5AEC"
+        }
+    },
+    "image": "heroku/nodejs"
+}
