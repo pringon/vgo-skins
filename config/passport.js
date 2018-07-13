@@ -16,8 +16,8 @@ module.exports = (passport) => {
     passport.use("steam-auth", new OpenIDStrategy({
         providerURL: "http://steamcommunity.com/openid",
         stateless: true,
-        returnURL: `https://vgo-gem-alpha.herokuapp.com:${process.env.PORT || 3000}/user/auth/openid/return`,
-        realm: `https://vgo-gem-alpha.herokuapp.com:${process.env.PORT || 3000}`
+        returnURL: `https://vgo-gem-alpha.herokuapp.com/user/auth/openid/return`,
+        realm: `https://vgo-gem-alpha.herokuapp.com/`
         }, (id, done) => {
 
             process.nextTick(async() => {
