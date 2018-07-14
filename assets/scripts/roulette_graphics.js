@@ -37,6 +37,7 @@ function listUsers(stakesList) {
     document.getElementsByClassName("score")[0].innerHTML = `${(currentMoneyGambled/total*100).toFixed(2)}<small>%</small>`;
 
     let usersList = document.createDocumentFragment();
+    console.log(stakesList);
 
     for(let i = stakesList.length-1; i >= 0; i--) {
 
@@ -46,7 +47,10 @@ function listUsers(stakesList) {
         let playerInfoDiv = document.createElement("div");
         playerInfoDiv.setAttribute("class", "col");
         let playerAvatarHolder = document.createElement("span");
+        playerAvatarHolder.setAttribute("id", `playerholder-${stakesList[i].id}`);
         playerAvatarHolder.setAttribute("class", "avatar");
+        playerAvatarHolder.style.border = `solid 4px ${stakesList[i].color}`;
+        setArrowColor(`playerholder-${stakesList[i].id}`, stakesList[i].color);
         let playerAvatar = document.createElement("img");
         playerAvatar.setAttribute("src", stakesList[i].avatar);
         playerAvatar.setAttribute("alt", "Player");
@@ -96,9 +100,10 @@ function listUsers(stakesList) {
  */
 function plotData(stakesList) {
 
-    let chartData = { stakes: [], colors: [], avatars: [] };
+    let chartData = { names: [], stakes: [], colors: [], avatars: [] };
 
     for(let stake of stakesList) {
+        chartData.names.push(stake.user);
         chartData.stakes.push(stake.stake);
         chartData.colors.push(stake.color);
         chartData.avatars.push({
@@ -108,6 +113,7 @@ function plotData(stakesList) {
         });
     }
 
+    console.log(chartData);
     plotStakes("doughnut", chartData);
 }
 
@@ -126,7 +132,7 @@ function listModalItems() {
     { id: 8, name: mockName, price: 3.14, image: { "--300px": mockImg}}];
 
     selectedItems = currentSelectedItems ? currentSelectedItems : {};
-    totalMoneyGambled = currentMoneyGambled ? totalMoneyGambled : 0;
+    totalMoneyGambled = currentMoneyGambled ? currentMoneyGambled : 0;
 
     let itemsList = document.createDocumentFragment();
 

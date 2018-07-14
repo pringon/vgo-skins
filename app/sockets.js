@@ -2,9 +2,9 @@
 const userUtils   = require("../libs/user_utils"),
       randomColor = require("randomcolor");
 
-let stakesData = [{user: "Matt", avatar: "/img/player-photo.jpg", stake: 10, color: randomColor()}, {user: "Steve", avatar: "/img/player-photo.jpg", stake: 20, color: randomColor()},
-              { user: "Bill", avatar: "/img/player-photo.jpg", stake: 30, color: randomColor()}, { user: "Dan", avatar: "/img/player-photo.jpg", stake: 40, color: randomColor()}, 
-              { user: "Igor", avatar: "/img/player-photo.jpg", stake: 60, color: randomColor()}];
+let stakesData = [{ id: 1, user: "Matt", avatar: "/img/player-photo.jpg", stake: 10, color: randomColor()}, { id: 2, user: "Steve", avatar: "/img/player-photo.jpg", stake: 20, color: randomColor()},
+              { id: 3, user: "Bill", avatar: "/img/player-photo.jpg", stake: 30, color: randomColor()}, { id: 4, user: "Dan", avatar: "/img/player-photo.jpg", stake: 40, color: randomColor()}, 
+              { id: 5, user: "Igor", avatar: "/img/player-photo.jpg", stake: 60, color: randomColor()}];
 let headonPosts = [{ id: 1, user: "Matt", stake: 30, upper: true, lower: true }, { id: 2, user: "Bill", stake: 20, upper: true, lower: true},
                 { id: 3, user: "Matt", stake: 40, upper: true, lower: false }, { id: 4, user: "Dan", stake: 100, upper: false, lower: true},
                 { id: 5, user: "Igor", stake: 90, upper: false, lower: false}];
@@ -17,13 +17,27 @@ let getTotal = () => {
     return total;
 };
 
+let getWinnerPos = (winnerId) => {
+    let total = getTotal();
+    let winnerSum = 0;
+    for(let stake of stakesData) {
+        if(stake.id = winnerId) {
+            winnerSum += stake.stake/2;
+            break;
+        } else {
+            winnerSum += stake.stake;
+        }
+    }
+    return Math.round((winnerSum*360)/total);
+};
+
 let getWinner = () => {
     let winner = Math.random() * getTotal();
     for(let stake of stakesData) {
         if(winner < stake.stake) {
-            stakesData = [{user: "Matt", avatar: "/img/player-photo.jpg", stake: 10, color: randomColor()}, {user: "Steve", avatar: "/img/player-photo.jpg", stake: 20, color: randomColor()},
-                        { user: "Bill", avatar: "/img/player-photo.jpg", stake: 30, color: randomColor()}, { user: "Dan", avatar: "/img/player-photo.jpg", stake: 40, color: randomColor()}, 
-                        { user: "Igor", avatar: "/img/player-photo.jpg", stake: 60, color: randomColor()}];
+            stakesData = [{ id: 1, user: "Matt", avatar: "/img/player-photo.jpg", stake: 10, color: randomColor()}, { id: 2, user: "Steve", avatar: "/img/player-photo.jpg", stake: 20, color: randomColor()},
+                        { id: 3, user: "Bill", avatar: "/img/player-photo.jpg", stake: 30, color: randomColor()}, { id: 4, user: "Dan", avatar: "/img/player-photo.jpg", stake: 40, color: randomColor()}, 
+                        { id: 5, user: "Igor", avatar: "/img/player-photo.jpg", stake: 60, color: randomColor()}];
             return stake;
         }
         winner -= stake.stake;
@@ -37,11 +51,16 @@ module.exports = (io) => {
     setInterval(() => {
         timeRemaining--;
         if(timeRemaining == 0) {
-            io.sockets.emit("round finished", getWinner());
-            io.sockets.emit("get roulette stakes", stakesData);
-            timeRemaining = 90;
+            let winner = getWinner();
+            io.sockets.emit("round finished", { winner, winnerPos: getWinnerPos(winner.id)});
+            setTimeout(function() {
+                io.sockets.emit("get roulette stakes", stakesData);
+            }, 7000);
+            timeRemaining = 100;
         }
-        io.sockets.emit("time elapsed", timeRemaining);
+        if(timeRemaining <= 90) {
+            io.sockets.emit("time elapsed", timeRemaining);
+        }
     }, 1000);
     setInterval(() => {
         io.sockets.emit("user count", connectedUsers);
@@ -62,14 +81,16 @@ module.exports = (io) => {
 
         socket.on("chat message", (message) => {
 
-            console.log(`User with id ${socket.userId} has sent a message of: ${message}`);
-            io.sockets.emit("chat message", {
-                message,
-                emittingUser: {
-                    userName: socket.userName,
-                    avatar: socket.avatar
-                }
-            });
+            if(message.length > 2) {
+                console.log(`User with id ${socket.userId} has sent a message of: ${message}`);
+                io.sockets.emit("chat message", {
+                    message,
+                    emittingUser: {
+                        userName: socket.userName,
+                        avatar: socket.avatar
+                    }
+                });
+            }
         });
 
         socket.on("play roulette", () => {
@@ -98,7 +119,7 @@ module.exports = (io) => {
                 }
             }
 
-            stakesData.push({ user: socket.userName, avatar: socket.avatar, stake: parseFloat(stake), color: ((color == null) ? randomColor() : color) });
+            stakesData.push({ id: socket.userId, user: socket.userName, avatar: socket.avatar, stake: parseFloat(stake), color: ((color == null) ? randomColor() : color) });
             io.sockets.emit("get roulette stakes", stakesData);
         });
 

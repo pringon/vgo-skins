@@ -1,6 +1,7 @@
 "use strict"
 const db = require("../app/database/models"),
       OpenIDStrategy = require("passport-openid").Strategy;
+const host = process.env.NODE_ENV == "production" ? "https://vgo-gem-alpha.herokuapp.com/" : "http://localhost:3000/";
 
 module.exports = (passport) => {
 
@@ -16,8 +17,8 @@ module.exports = (passport) => {
     passport.use("steam-auth", new OpenIDStrategy({
         providerURL: "http://steamcommunity.com/openid",
         stateless: true,
-        returnURL: `https://vgo-gem-alpha.herokuapp.com/user/auth/openid/return`,
-        realm: `https://vgo-gem-alpha.herokuapp.com/`
+        returnURL: `${host}user/auth/openid/return`,
+        realm: host
         }, (id, done) => {
 
             process.nextTick(async() => {

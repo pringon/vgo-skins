@@ -8,7 +8,7 @@ module.exports = (app, passport) => {
 
     app.get('/', async(req, res) => {
         if(req.user) {
-            res.redirect("games/roulette/plant");
+            res.redirect("/games/roulette/plant");
         } else {
             res.render("pages/home.ejs");
         }

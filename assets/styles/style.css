@@ -308,7 +308,6 @@ body{
 	-webkit-border-radius: 100px;
 	-moz-border-radius: 100px;
 	display: inline-block;
-	border: solid 4px #aa26db;
 	position: relative;
 }
 .main-panel .panel-leftbar .player-list .player .avatar:before{
