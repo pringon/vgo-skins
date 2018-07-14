@@ -2,8 +2,10 @@
 
 function sendChatMessage() {
     let message = $("#chat-message-submit").val();
-    socket.emit("chat message", message);
-    $("#chat-message-submit").val('');
+    if(message.length > 2) {
+        socket.emit("chat message", message);
+        $("#chat-message-submit").val('');
+    }
 }
 
 $("#chat-submit").on("click", () => {
@@ -15,6 +17,7 @@ $("#chat-message-submit").on("keyup", (event) => {
     if((event.keyCode ? event.keyCode : event.which) == 13) {
         sendChatMessage();
     }
+    return false;
 });
 
 socket.on("chat message", ({ message, emittingUser}) => {

@@ -41,4 +41,4 @@ require("./app/routes")(app, passport);
 
 require("./app/sockets")(io);
 
-db.sequelize.sync().then(() => http.listen(process.env.PORT || 3000, "0.0.0.0", () => console.log(`App is listening on port ${app.get("port")}`)));
+db.sequelize.sync().then(() => http.listen(process.env.PORT || 3000, () => console.log(`App is listening on port ${process.env.PORT || 3000}`)));

@@ -39,6 +39,7 @@
 
             function createChart(id, type, chartData, options) {
                 var data = {
+                    labels: chartData.names,
                     datasets: [{
                         label: 'My First dataset',
                         data: chartData.stakes,

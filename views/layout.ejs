@@ -54,25 +54,47 @@
 
 
         <script type="text/javascript">
-            $( document ).ready(function() {
-
-                $('.jackpot-pointer').animate({  transform: 810 }, {
-                    step: function(now,fx) {
-                        $(this).css('-webkit-transform','rotate('+now+'deg)'); 
-                    },
-                    duration:6000
-                },'linear');
+            function spinJackpot(winnerPos) {
+                $( document ).ready(function() {
+                    let startJP = winnerPos + (360*3);    
+                    $('.jackpot-pointer').animate({  transform: startJP }, {
+                        step: function(now,fx) {
+                            $(this).css('-webkit-transform','rotate('+now+'deg)'); 
+                        },
+                        duration:6000
+                    },'linear');
             });
+            }
         </script>
 
         <script>
+            function createCircles(timeRemaining) {
+                var colors = [
+                    ['#595980', '#ffffff']
+                    ],
+                    circles = [];
+                for (var i = 1; i <= colors.length; i++) {
+                    var child = document.getElementById('circles-' + i),
+                    percentage = 100 + (i * 9.84),
+                    circle = Circles.create({
+                        id:         child.id,
+                        value:      timeRemaining,
+                        duration:   0,
+                        maxValue:   90,
+                        radius:     150,
+                        width:      4,
+                        colors:     colors[i - 1]
+                    });
+                    circles.push(circle);
+                }
+            }
             (function() {
                 var canvas = document.getElementById('canvas'),
                 circlesCreated = false;
                 function onScroll() {
                 if (!circlesCreated && elementInViewport(canvas)) {
                     circlesCreated = true;
-                    createCircles();
+                    createCircles(90);
                 }
                 }
                 function elementInViewport(el) {
@@ -83,27 +105,34 @@
                     rect.top  <= (window.innerHeight || document.documentElement.clientHeight)
                 );
                 }
-                function createCircles() {
-                var colors = [
-                    ['#595980', '#ffffff']
-                    ],
-                    circles = [];
-                for (var i = 1; i <= colors.length; i++) {
-                    var child = document.getElementById('circles-' + i),
-                    percentage = 100 + (i * 9.84),
-                    circle = Circles.create({
-                        id:         child.id,
-                        value:      percentage,
-                        radius:     150,
-                        width:      4,
-                        colors:     colors[i - 1]
-                    });
-                    circles.push(circle);
-                }
-                }
                 window.onscroll = onScroll;
             })();
         </script>
+
+        <script type="text/javascript">
+            function setArrowColor(elementId, color) {
+                let sheet = (function() {
+                // Create the <style> tag
+                let style = document.createElement("style");
+
+                // Add a media (and/or media query) here if you'd like!
+                // style.setAttribute("media", "screen")
+                // style.setAttribute("media", "only screen and (max-width : 1024px)")
+
+                // WebKit hack
+                style.appendChild(document.createTextNode(""));
+
+                // Add the <style> element to the page
+                document.head.appendChild(style);
+
+                return style.sheet;
+                })();
+                // You can pass color value here
+                console.log(sheet);
+                sheet.insertRule(`#${elementId}:before { border-left-color:${color}!important; }`, 0);
+
+            }
+            </script>
 
 
         <% if(typeof chat !== "undefined" && chat === true) { %>
@@ -111,6 +140,9 @@
             <script type="text/javascript">
                 const socket = io();
                 socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>", avatar: "<%- currentUser.avatarfull %>" });
+                socket.on("reconnect", () => {
+                    socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>", avatar: "<%- currentUser.avatarfull %>" });
+                });
             </script>
             <script src="/scripts/chat_socket.js"></script>
 
