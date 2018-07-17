@@ -37,7 +37,6 @@ function listUsers(stakesList) {
     document.getElementsByClassName("score")[0].innerHTML = `${(currentMoneyGambled/total*100).toFixed(2)}<small>%</small>`;
 
     let usersList = document.createDocumentFragment();
-    console.log(stakesList);
 
     for(let i = stakesList.length-1; i >= 0; i--) {
 
@@ -113,7 +112,6 @@ function plotData(stakesList) {
         });
     }
 
-    console.log(chartData);
     plotStakes("doughnut", chartData);
 }
 
@@ -121,18 +119,13 @@ function plotData(stakesList) {
  * A function that fetches the items owned by the player and lists them in the bet items modal
  * @method listModalItems
  */
-function listModalItems() {
+function listModalItems({ availableItems, gambledItems }) {
 
-    let mockImg = "https://files.opskins.media/file/vgo-img/item/dual-berettas-trigger-happy-battle-scarred-300.png";
-    let mockName = "MAG-7 Gold Digger (Factory New)";
-    let items = [{ id: 1, name: mockName, price: 7.13, image: { "--300px": mockImg}}, 
-    { id: 2, name: mockName, price: 3.12, image: { "--300px": mockImg}}, { id: 3, name: mockName, price: 1.27, image: { "--300px": mockImg}}, 
-    { id: 4, name: mockName, price: 2.32, image: { "--300px": mockImg}}, { id: 5, name: mockName, price: 15.73, image: { "--300px": mockImg}}, 
-    { id: 6, name: mockName, price: 7.14, image: { "--300px": mockImg}}, { id: 7, name: mockName, price: 9.23, image: { "--300px": mockImg}}, 
-    { id: 8, name: mockName, price: 3.14, image: { "--300px": mockImg}}];
+    selectedItems = {};
+    totalMoneyGambled = 0;
 
-    selectedItems = currentSelectedItems ? currentSelectedItems : {};
-    totalMoneyGambled = currentMoneyGambled ? currentMoneyGambled : 0;
+    /*selectedItems = currentSelectedItems ? Object.assign({}, currentSelectedItems) : {};
+    totalMoneyGambled = currentMoneyGambled ? currentMoneyGambled : 0;*/
 
     let itemsList = document.createDocumentFragment();
 
@@ -140,14 +133,20 @@ function listModalItems() {
     itemsRow.setAttribute("class", "row");
     let columnIndex = 0;
 
-    for(let item of items) {
+    for(let item of availableItems) {
 
         let itemContainer = document.createElement("div");
-        if(selectedItems.hasOwnProperty(item.id)) {
+
+        console.log(item.id);
+        if(gambledItems.indexOf(item.id.toString()) !== -1) {
+            console.log("intra");
+            totalMoneyGambled += item.price;
+            selectedItems[item.id] = item.price;
             itemContainer.setAttribute("class", "col selected-item");    
         } else {
             itemContainer.setAttribute("class", "col");
         }
+
         itemContainer.setAttribute("id", item.id);
         itemContainer.onclick = selectItem;
         let itemHolder = document.createElement("div");
@@ -198,8 +197,8 @@ function listModalItems() {
     itemsElementList.appendChild(itemsList);
     $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${currentMoneyGambled.toFixed(2)}`);
     $(".data-panel .bottom-sec button").text(`Deposit $${currentMoneyGambled.toFixed(2)} (0 Skins)`);
-    totalMoneyGambled = currentMoneyGambled;
-    selectedItems = Object.assign({}, currentSelectedItems);
+    /*totalMoneyGambled = currentMoneyGambled;
+    selectedItems = Object.assign({}, currentSelectedItems);*/
 }
 
 /**
@@ -209,13 +208,14 @@ function listModalItems() {
  */
 function refreshScreen(stakesList) {
     
+    potTotal = getTotal(stakesList);
     plotData(stakesList);
     listUsers(stakesList);
 }
 
 $(document).ready(function() {
 
-    $(".jackpot-btn > button").on("click", listModalItems);
+    $(".jackpot-btn > button").on("click", () => socket.emit("select items", true));
     $("#roulette-modal").on('hidden.bs.modal', clearSelection);
     $(".data-panel .bottom-sec button").on("click", submitSelection);
 });

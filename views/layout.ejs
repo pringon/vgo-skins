@@ -55,15 +55,14 @@
 
         <script type="text/javascript">
             function spinJackpot(winnerPos) {
-                $( document ).ready(function() {
-                    let startJP = winnerPos + (360*3);    
-                    $('.jackpot-pointer').animate({  transform: startJP }, {
-                        step: function(now,fx) {
-                            $(this).css('-webkit-transform','rotate('+now+'deg)'); 
-                        },
-                        duration:6000
-                    },'linear');
-            });
+                console.log(winnerPos);
+                let startJP = winnerPos + (360*3);    
+                $('.jackpot-pointer').animate({  transform: startJP }, {
+                    step: function(now,fx) {
+                        $(this).css('-webkit-transform','rotate('+now+'deg)'); 
+                    },
+                    duration:6000
+                },'linear');        
             }
         </script>
 
@@ -112,23 +111,22 @@
         <script type="text/javascript">
             function setArrowColor(elementId, color) {
                 let sheet = (function() {
-                // Create the <style> tag
-                let style = document.createElement("style");
+                    // Create the <style> tag
+                    let style = document.createElement("style");
 
-                // Add a media (and/or media query) here if you'd like!
-                // style.setAttribute("media", "screen")
-                // style.setAttribute("media", "only screen and (max-width : 1024px)")
+                    // Add a media (and/or media query) here if you'd like!
+                    // style.setAttribute("media", "screen")
+                    // style.setAttribute("media", "only screen and (max-width : 1024px)")
 
-                // WebKit hack
-                style.appendChild(document.createTextNode(""));
+                    // WebKit hack
+                    style.appendChild(document.createTextNode(""));
 
-                // Add the <style> element to the page
-                document.head.appendChild(style);
+                    // Add the <style> element to the page
+                    document.head.appendChild(style);
 
-                return style.sheet;
+                    return style.sheet;
                 })();
                 // You can pass color value here
-                console.log(sheet);
                 sheet.insertRule(`#${elementId}:before { border-left-color:${color}!important; }`, 0);
 
             }
