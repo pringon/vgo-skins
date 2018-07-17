@@ -3,6 +3,7 @@ let currentSelectedItems = {};
 let currentMoneyGambled = 0;
 let selectedItems = {};
 let totalMoneyGambled = 0;
+let potTotal = 0;
 
 function selectItem() {
     
@@ -24,6 +25,8 @@ function selectItem() {
     $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${totalMoneyGambled.toFixed(2)}`);
     $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (0 Skins)`);
     $(".modal-content .row .score-panel .item .score:eq(0)").text(`(${Object.keys(selectedItems).length}/20)`);
+    $(".modal-content .row .score-panel .item .score:eq(2)").text(`$${(potTotal+totalMoneyGambled).toFixed(2)}`);
+    $(".modal-content .row .score-panel .item .score:eq(3)").text(`${(totalMoneyGambled/(potTotal+totalMoneyGambled)*100).toFixed(2)}%`);
 
     if(Object.keys(selectedItems).length !== 0 && selectedItems.constructor === Object) {
 
@@ -43,7 +46,7 @@ function submitSelection() {
     document.getElementsByClassName("score")[1].innerHTML = `<small>$</small>${totalMoneyGambled.toFixed(2)}`;
     currentSelectedItems = Object.assign({}, selectedItems);
     currentMoneyGambled = totalMoneyGambled;
-    socket.emit("items gambled", totalMoneyGambled.toFixed(2));
+    socket.emit("items gambled", { stake: totalMoneyGambled.toFixed(2), itemsGambled: Object.keys(selectedItems) });
 }
 
 function clearSelection() {
