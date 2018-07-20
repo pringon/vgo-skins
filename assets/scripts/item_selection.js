@@ -29,7 +29,7 @@ function selectItem() {
     $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${totalMoneyGambled.toFixed(2)}`);
     $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (0 Skins)`);
     $(".modal-content .row .score-panel .item .score:eq(0)").text(`(${Object.keys(selectedItems).length}/20)`);
-    $(".modal-content .row .score-panel .item .score:eq(2)").text(`$${(potTotal+totalMoneyGambled).toFixed(2)}`);
+    $(".modal-content .row .score-panel .item .score:eq(2)").text(`$${potTotal.toFixed(2)}`);
     $(".modal-content .row .score-panel .item .score:eq(3)").text(`${(totalMoneyGambled/(potTotal+totalMoneyGambled)*100).toFixed(2)}%`);
 
     if(Object.keys(selectedItems).length !== 0 && selectedItems.constructor === Object) {
@@ -64,10 +64,15 @@ function submitSelection() {
 
 function clearSelection() {
 
-    for(let item in selectedItems) {
-        delete selectedItems[item];
-    }
+    selectedItems = {};
     totalMoneyGambled = 0;
-    $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${currentMoneyGambled.toFixed(2)}`);
-    $(".data-panel .bottom-sec button").text(`Deposit $${currentMoneyGambled.toFixed(2)} (0 Skins)`);
+    let items = document.getElementsByClassName("gambling-selection-item");
+    for(let item of items) {
+        item.setAttribute("class", "gambling-selection-item col");
+    }
+    $(".modal-content .row .score-panel .item .score:eq(0)").text(`(0/20)`);
+    $(".modal-content .row .score-panel .item .score:eq(1)").text(`$0.00`);
+    $(".modal-content .row .score-panel .item .score:eq(3)").text(`0.00%`);
+    $(".data-panel .bottom-sec button").text(`Deposit $0.00 (0 Skins)`);
+    $(".data-panel .bottom-sec button").prop("disabled", true);
 }
