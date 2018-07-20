@@ -55,14 +55,22 @@
 
         <script type="text/javascript">
             function spinJackpot(winnerPos) {
-                console.log(winnerPos);
+
                 let startJP = winnerPos + (360*3);    
                 $('.jackpot-pointer').animate({  transform: startJP }, {
                     step: function(now,fx) {
                         $(this).css('-webkit-transform','rotate('+now+'deg)'); 
                     },
                     duration:6000
-                },'linear');        
+                },'linear'); 
+                setTimeout(() => {
+                    $('.jackpot-pointer').animate({  transform: 0 }, {
+                        step: function(now,fx) {
+                            $(this).css('-webkit-transform','rotate('+now+'deg)'); 
+                        },
+                        duration:0
+                    },'linear');
+                }, 7000);       
             }
         </script>
 

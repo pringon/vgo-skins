@@ -9,7 +9,7 @@
 function getTotal(stakesList) {
     let myTotal = 0;
     for (let j = 0; j < stakesList.length; j++) {
-        myTotal += Math.round(stakesList[j].stake);
+        myTotal += stakesList[j].total;
     }
     return myTotal;
 }
@@ -22,16 +22,16 @@ function getTotal(stakesList) {
 function listUsers(stakesList) {
 
     stakesList.sort(function(a, b) {
-        if (a.stake < b.stake)
+        if (a.total < b.total)
             return -1;
-        if (a.stake > b.stake)
+        if (a.total > b.total)
             return 1;
         return 0;
     });
 
     let total = getTotal(stakesList);
-    $(".jackpot-score > .amount").text(`$${total}`);
-    document.getElementsByClassName("score")[6].textContent = `$${total}`;
+    $(".jackpot-score > .amount").text(`$${total.toFixed(2)}`);
+    document.getElementsByClassName("score")[6].textContent = `$${total.toFixed(2)}`;
 
     document.getElementsByClassName("score")[3].textContent = stakesList.length;
     document.getElementsByClassName("score")[0].innerHTML = `${(currentMoneyGambled/total*100).toFixed(2)}<small>%</small>`;
@@ -65,13 +65,13 @@ function listUsers(stakesList) {
         playerDataDiv.setAttribute("class", "col");
         let playerAmountBet = document.createElement("span");
         playerAmountBet.setAttribute("class", "amonut");
-        playerAmountBet.textContent = `$${stakesList[i].stake}`;
+        playerAmountBet.textContent = `$${stakesList[i].total}`;
         let playerItemCount = document.createElement("span");
         playerItemCount.setAttribute("class", "items");
         playerItemCount.textContent = "(16 Items)";
         let playerStakeRatio = document.createElement("span");
         playerStakeRatio.setAttribute("class", "ratio");
-        playerStakeRatio.textContent = `${(stakesList[i].stake/total*100).toFixed(2)}%`;
+        playerStakeRatio.textContent = `${(stakesList[i].total/total*100).toFixed(2)}%`;
 
         playerDataDiv.appendChild(playerAmountBet);
         playerDataDiv.appendChild(playerItemCount);
@@ -92,6 +92,87 @@ function listUsers(stakesList) {
 }
 
 /**
+ * A function that takes this round's stakes data and populates the item gallery
+ * @method populateItemsGallery
+ * @param {Array} stakesList is an array containing the current round's bets
+ */
+function populateItemsGallery(stakesList) {
+
+    let itemsGallery = document.createDocumentFragment();
+    let firstSelected = false;
+    let itemCount = 0;
+
+    for(let stake of stakesList) {
+        for(let item of stake.items) {
+
+            console.log(item);
+            let itemHolder = document.createElement("div");
+            if(!firstSelected) {
+
+                itemHolder.setAttribute("class", "gallery-cell item is-selected");
+                itemHolder.setAttribute("style", `position: absolute; left: ${(itemCount*10.38).toFixed(2)}%;`);
+                itemHolder.setAttribute("aria-selected", "true");
+                firstSelected = true;
+            } else {
+
+                itemHolder.setAttribute("class", "gallery-cell item");
+                itemHolder.setAttribute("style", `position: absolute; left: ${(itemCount*10.38).toFixed(2)}%;`);
+                itemHolder.setAttribute("aria-selected", "false");
+            }
+
+
+            let topSection = document.createElement("div");
+            topSection.setAttribute("class", "top-sec");
+
+            let playerAvatarHolder = document.createElement("span");
+            playerAvatarHolder.setAttribute("class", "avatar");
+            let playerAvatar = document.createElement("img");
+            playerAvatar.setAttribute("src", stake.avatar);
+            playerAvatarHolder.appendChild(playerAvatar);
+
+            let itemCode = document.createElement("span");
+            itemCode.setAttribute("class", "code");
+            itemCode.textContent = "MM";
+
+            let itemPrice = document.createElement("span");
+            itemPrice.setAttribute("class", "amount");
+            itemPrice.textContent = `$${item.price}`;
+
+            topSection.appendChild(playerAvatarHolder);
+            topSection.appendChild(itemCode);
+            topSection.appendChild(itemPrice);
+
+
+            let midSection = document.createElement("div");
+            midSection.setAttribute("class", "mid-sec");
+
+            let itemImage = document.createElement("img");
+            itemImage.setAttribute("src", item.image["--300px"]);
+
+            midSection.appendChild(itemImage);
+
+
+            let bottomSection = document.createElement("div");
+            bottomSection.setAttribute("class", "bottom-sec");
+            bottomSection.textContent = item.name;
+
+
+            itemHolder.appendChild(topSection);
+            itemHolder.appendChild(midSection);
+            itemHolder.appendChild(bottomSection);
+
+            itemsGallery.appendChild(itemHolder);
+            
+            itemCount++;
+        }
+    }
+
+    let gallerySlider = document.getElementsByClassName("flickity-slider")[0];
+    gallerySlider.innerHTML = '';
+    gallerySlider.appendChild(itemsGallery);
+}
+
+/**
  * A function that takes the users that bet this round and draws a pie chart where the slices are
  *  proportional to the value bet by the player
  * @method plotData
@@ -103,7 +184,7 @@ function plotData(stakesList) {
 
     for(let stake of stakesList) {
         chartData.names.push(stake.user);
-        chartData.stakes.push(stake.stake);
+        chartData.stakes.push(stake.total);
         chartData.colors.push(stake.color);
         chartData.avatars.push({
             src: stake.avatar,
@@ -211,6 +292,7 @@ function refreshScreen(stakesList) {
     potTotal = getTotal(stakesList);
     plotData(stakesList);
     listUsers(stakesList);
+    populateItemsGallery(stakesList);
 }
 
 $(document).ready(function() {
