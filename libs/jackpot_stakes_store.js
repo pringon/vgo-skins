@@ -1,5 +1,5 @@
 "use strict";
-const redisClient
+let redisClient;
 if(process.env.REDIS_URL) {
     redisClient = require("redis").createClient(process.env.REDIS_URL);
 } else {
