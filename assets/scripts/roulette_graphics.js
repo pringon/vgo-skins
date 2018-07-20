@@ -6,10 +6,10 @@
  * @param {Array} stakesList is an array containing the current round's bets
  * @return {int} the total amount of money that was bet this round
  */
-function getTotal(stakesList) {
+function getTotal(stakesList, att = "total") {
     let myTotal = 0;
     for (let j = 0; j < stakesList.length; j++) {
-        myTotal += stakesList[j].total;
+        myTotal += stakesList[j][att];
     }
     return myTotal;
 }
@@ -203,10 +203,17 @@ function plotData(stakesList) {
 function listModalItems({ availableItems, gambledItems }) {
 
     selectedItems = {};
-    totalMoneyGambled = 0;
+    totalMoneyGambled = getTotal(gambledItems, "price");
 
     /*selectedItems = currentSelectedItems ? Object.assign({}, currentSelectedItems) : {};
     totalMoneyGambled = currentMoneyGambled ? currentMoneyGambled : 0;*/
+    for(let gambledItem of gambledItems) {
+        console.log(gambledItem);
+        selectedItems[gambledItem.id] = gambledItem;
+        console.log(selectedItems[gambledItem.id]);
+    }
+    console.log(gambledItems);
+    console.log(selectedItems);
 
     let itemsList = document.createDocumentFragment();
 
@@ -219,13 +226,10 @@ function listModalItems({ availableItems, gambledItems }) {
         let itemContainer = document.createElement("div");
 
         console.log(item.id);
-        if(gambledItems.indexOf(item.id.toString()) !== -1) {
-            console.log("intra");
-            totalMoneyGambled += item.price;
-            selectedItems[item.id] = item.price;
-            itemContainer.setAttribute("class", "col selected-item");    
+        if(gambledItems.map(e => e.id).indexOf(item.id.toString()) !== -1) {
+            itemContainer.setAttribute("class", "col gambling-selection-item selected-item");    
         } else {
-            itemContainer.setAttribute("class", "col");
+            itemContainer.setAttribute("class", "gambling-selection-item col");
         }
 
         itemContainer.setAttribute("id", item.id);
@@ -298,6 +302,6 @@ function refreshScreen(stakesList) {
 $(document).ready(function() {
 
     $(".jackpot-btn > button").on("click", () => socket.emit("select items", true));
-    $("#roulette-modal").on('hidden.bs.modal', clearSelection);
+    $("#dump-items").on("click", clearSelection);
     $(".data-panel .bottom-sec button").on("click", submitSelection);
 });

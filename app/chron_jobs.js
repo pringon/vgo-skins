@@ -14,6 +14,7 @@ module.exports = {
             this.timeRemaining--;
             if(this.timeRemaining == 0) {
                 this.timeRemaining = 100;
+                io.sockets.emit("time elapsed", 0);
 
                 jackpotStore.getAllStakes(stakes => {
                     
