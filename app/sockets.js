@@ -12,6 +12,8 @@ module.exports = (io) => {
     setInterval(chronJobs.jackPotTimer(io), 1000);
     setInterval(chronJobs.updateUsers(io), 10000);
 
+    rouletteSocket.seedStakes();
+
     io.on("connection", (socket) => {
 
         chronJobs.connectedUsers++;

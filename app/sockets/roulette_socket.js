@@ -18,12 +18,13 @@ module.exports = {
         8: { name: mockName, price: 3.14, image: { "--300px": mockImg } }
     },
 
+
     seedStakes: function() {
 
         let stakesData = [{ id: 1, user: "Matt", avatar: "/img/player-photo.jpg", stake: 10, color: randomColor()}, { id: 2, user: "Steve", avatar: "/img/player-photo.jpg", stake: 20, color: randomColor()},
-                    { id: 5, user: "Igor", avatar: "/img/player-photo.jpg", stake: 60, color: randomColor()}, { id: 4, user: "Dan", avatar: "/img/player-photo.jpg", stake: 40, color: randomColor()}, 
-                    { id: 3, user: "Bill", avatar: "/img/player-photo.jpg", stake: 30, color: randomColor()}];
-        
+        { id: 5, user: "Igor", avatar: "/img/player-photo.jpg", stake: 60, color: randomColor()}, { id: 4, user: "Dan", avatar: "/img/player-photo.jpg", stake: 40, color: randomColor()}, 
+        { id: 3, user: "Bill", avatar: "/img/player-photo.jpg", stake: 30, color: randomColor()}];
+
         stakesData.forEach((stake, index) => {
             jackpotStore.setStake(stake, [{ id: 3*index+1, name: mockName, price: 7.13, image: { "--300px": mockImg}}, 
             { id: 3*index+2, name: mockName, price: 3.12, image: { "--300px": mockImg}}, { id: 3*index+3, name: mockName, price: 1.27, image: { "--300px": mockImg}}]);
@@ -73,16 +74,20 @@ module.exports = {
 
     refreshStakes: function(io) {
 
-        jackpotStore.getAllStakes((stakes) => io.sockets.emit("get roulette stakes", stakes));
+        jackpotStore.getAllStakes(stakes => {
+            console.log(stakes);
+            io.sockets.emit("get roulette stakes", stakes);
+        });
     },
 
     initSocket: function(io, socket) {
 
-        this.seedStakes();
-
         socket.on("play roulette", () => {
     
-            jackpotStore.getAllStakes(stakes => socket.emit("get roulette stakes", stakes));
+            jackpotStore.getAllStakes(stakes => {
+                console.log(stakes);
+                socket.emit("get roulette stakes", stakes);
+            });
             console.log(`${socket.userName} is playing roulette`);
         });
 
