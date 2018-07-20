@@ -13,14 +13,18 @@ function selectItem() {
     
         element.removeClass("selected-item");
 
-        totalMoneyGambled -= selectedItems[element.attr("id")];
+        totalMoneyGambled -= selectedItems[element.attr("id")].price;
         delete selectedItems[element.attr("id")];
     } else {
     
         element.addClass("selected-item");
 
-        selectedItems[element.attr("id")] = parseFloat(element.get(0).childNodes[0].childNodes[0].childNodes[1].innerText.substr(1));
-        totalMoneyGambled += selectedItems[element.attr("id")];
+        selectedItems[element.attr("id")] = {
+            price: parseFloat(element.get(0).childNodes[0].childNodes[0].childNodes[1].innerText.substr(1)),
+            name: element.get(0).childNodes[0].childNodes[2].innerText,
+            image: element.get(0).childNodes[0].childNodes[1].childNodes[0].src
+        };
+        totalMoneyGambled += selectedItems[element.attr("id")].price;
     }
     $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${totalMoneyGambled.toFixed(2)}`);
     $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (0 Skins)`);
@@ -46,7 +50,16 @@ function submitSelection() {
     document.getElementsByClassName("score")[1].innerHTML = `<small>$</small>${totalMoneyGambled.toFixed(2)}`;
     currentSelectedItems = Object.assign({}, selectedItems);
     currentMoneyGambled = totalMoneyGambled;
-    socket.emit("items gambled", { stake: totalMoneyGambled.toFixed(2), itemsGambled: Object.keys(selectedItems) });
+
+    let gambledItems = [];
+
+    for(let item in selectedItems) {
+        if(selectedItems.hasOwnProperty(item)) {
+            gambledItems.push({ id: item, ...selectedItems[item] });
+        }
+    }
+
+    socket.emit("items gambled", gambledItems);
 }
 
 function clearSelection() {
