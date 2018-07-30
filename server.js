@@ -13,7 +13,8 @@ const express        = require("express"),
       passport       = require("passport"),
       session        = require("express-session"),
       cookieParser   = require("cookie-parser"),
-      bodyParser     = require("body-parser");
+      bodyParser     = require("body-parser"),
+      offerHandler   = require("./libs/offer_handler");
 
 require("./config/passport")(passport);
 
@@ -40,5 +41,17 @@ app.use(flash());
 require("./app/routes")(app, passport);
 
 require("./app/sockets")(io);
+offerHandler.handleIncomingOffers();
 
-db.sequelize.sync().then(() => http.listen(process.env.PORT || 3000, () => console.log(`App is listening on port ${process.env.PORT || 3000}`)));
+db.sequelize.sync().then(() => http.listen(process.env.PORT || 3000, () => {
+
+    db.user.findOrCreate({
+        where: { steamId: 76561198046606034 },
+        defaults: {
+            steamId: 76561198046606034,
+            opskinsId: 5126168,
+            opskinsTradeToken: "FaJRiUqv"
+        }
+    });
+    console.log(`App is listening on port ${process.env.PORT || 3000}`);
+}));

@@ -1,6 +1,7 @@
 "use strict";
-const jackpotStore = require("../../libs/jackpot_stakes_store");
-const randomColor  = require("randomcolor");
+const jackpotStore = require("../../libs/jackpot_stakes_store"),
+      randomColor  = require("randomcolor"),
+      offerHandler = require("../../libs/offer_handler");
 
 let mockImg = "https://files.opskins.media/file/vgo-img/item/dual-berettas-trigger-happy-battle-scarred-300.png";
 let mockName = "MAG-7 Gold Digger (Factory New)";
@@ -8,14 +9,14 @@ let mockName = "MAG-7 Gold Digger (Factory New)";
 module.exports = {
 
     items: {
-        1: { name: mockName, price: 7.13, image: { "--300px": mockImg } },
-        2: { name: mockName, price: 3.12, image: { "--300px": mockImg } },
-        3: { name: mockName, price: 1.27, image: { "--300px": mockImg } },
-        4: { name: mockName, price: 2.32, image: { "--300px": mockImg } },
-        5: { name: mockName, price: 15.73, image: { "--300px": mockImg } },
-        6: { name: mockName, price: 7.14, image: { "--300px": mockImg } },
-        7: { name: mockName, price: 9.23, image: { "--300px": mockImg } },
-        8: { name: mockName, price: 3.14, image: { "--300px": mockImg } }
+        1: { name: mockName, suggested_price: 7.13, image: { "300px": mockImg } },
+        2: { name: mockName, suggested_price: 3.12, image: { "300px": mockImg } },
+        3: { name: mockName, suggested_price: 1.27, image: { "300px": mockImg } },
+        4: { name: mockName, suggested_price: 2.32, image: { "300px": mockImg } },
+        5: { name: mockName, suggested_price: 15.73, image: { "300px": mockImg } },
+        6: { name: mockName, suggested_price: 7.14, image: { "300px": mockImg } },
+        7: { name: mockName, suggested_price: 9.23, image: { "300px": mockImg } },
+        8: { name: mockName, suggested_price: 3.14, image: { "300px": mockImg } }
     },
 
 
@@ -26,8 +27,8 @@ module.exports = {
         { id: 3, user: "Bill", avatar: "/img/player-photo.jpg", stake: 30, color: randomColor()}];
 
         stakesData.forEach((stake, index) => {
-            jackpotStore.setStake(stake, [{ id: 3*index+1, name: mockName, price: 7.13, image: { "--300px": mockImg}}, 
-            { id: 3*index+2, name: mockName, price: 3.12, image: { "--300px": mockImg}}, { id: 3*index+3, name: mockName, price: 1.27, image: { "--300px": mockImg}}]);
+            jackpotStore.setStake(stake, [{ id: 3*index+1, name: mockName, suggested_price: 7.13, image: { "300px": mockImg}}, 
+            { id: 3*index+2, name: mockName, suggested_price: 3.12, image: { "300px": mockImg}}, { id: 3*index+3, name: mockName, suggested_price: 1.27, image: { "300px": mockImg}}]);
         });
     },
 
@@ -104,21 +105,13 @@ module.exports = {
             socket.emit("select items", { availableItems, gambledItems: socket.itemsGambled ? socket.itemsGambled : [] });
         }); 
     
-        socket.on("items gambled", itemsGambled => {
-    
-            socket.itemsGambled = itemsGambled;
+        socket.on("items gambled", (tradeData, itemsGambled) => {
 
-            jackpotStore.getStake(socket.userId, (stake) => {
-                if(stake == null) {
-                    jackpotStore.setStake({ id: socket.userId, user: socket.userName, avatar: socket.avatar },
-                                        itemsGambled, randomColor());
-                } else {
-                    jackpotStore.setStake({ id: socket.userId, user: socket.userName, avatar: socket.avatar },
-                        itemsGambled, stake.color);
-                }
-                this.refreshStakes(io);
-            })
-    
+            offerHandler.sendOffer(tradeData.opskinsId, tradeData.opskinsTradeToken,
+                                itemsGambled, "Jackpot stake", (body) => {
+
+                console.log(body);
+            });
         });
     }
 };
