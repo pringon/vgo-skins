@@ -45,14 +45,18 @@ module.exports = (() => {
     this.postTradeUrl = (req, res) => {
 
         if(req.body.tradeUrl.indexOf("https://trade.opskins.com/t/") == 0) {
+            let tradeUrlKeys = req.body.tradeUrl.split('/');
             db.user.update({
-                opskinsTradeUrl: req.body.tradeUrl
+                opskinsId: tradeUrlKeys[4],
+                opskinsTradeToken: tradeUrlKeys[5]
             }, {
                 where: { steamId: req.user.steamId }
             });
             
             res.status(204);
             res.send();
+        } else {
+            res.send("Trade url does not exist");
         }
     },
 

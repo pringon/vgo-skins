@@ -147,7 +147,7 @@ function populateItemsGallery(stakesList) {
             midSection.setAttribute("class", "mid-sec");
 
             let itemImage = document.createElement("img");
-            itemImage.setAttribute("src", item.image["--300px"]);
+            itemImage.setAttribute("src", item.image["300px"]);
 
             midSection.appendChild(itemImage);
 
@@ -251,7 +251,7 @@ function listModalItems({ availableItems, gambledItems }) {
         let midSection = document.createElement("div");
         midSection.setAttribute("class", "mid-sec");
         let itemImage = document.createElement("img");
-        itemImage.setAttribute("src", item.image["--300px"]);
+        itemImage.setAttribute("src", item.image["300px"]);
         midSection.appendChild(itemImage);
 
         let bottomSection = document.createElement("div");

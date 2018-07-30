@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TINYINT.UNSIGNED,
       defaultValue: 0
     },
-    opskinsTradeUrl: DataTypes.STRING
+    opskinsId: DataTypes.INTEGER.UNSIGNED,
+    opskinsTradeToken: DataTypes.STRING
   }, {});
   User.associate = function(models) {
     // associations can be defined here
