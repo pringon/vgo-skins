@@ -12,7 +12,7 @@ module.exports = (io) => {
     setInterval(chronJobs.jackPotTimer(io), 1000);
     setInterval(chronJobs.updateUsers(io), 10000);
 
-    rouletteSocket.seedStakes();
+    //rouletteSocket.seedStakes();
 
     io.on("connection", (socket) => {
 
@@ -24,7 +24,7 @@ module.exports = (io) => {
             socket.userId = userData.userId;
             socket.userName = userData.userName;
             socket.avatar = userData.avatar;
-            socket.emit("timer update", chronJobs.timeRemaining);
+            socket.emit("time elapsed", chronJobs.timeRemaining);
         });
 
         require("./sockets/chat_socket")(io, socket);

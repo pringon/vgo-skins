@@ -2,22 +2,27 @@
 const request = require("request"),
       authenticator = require("otplib").authenticator,
       OPSkinsTrade = require("opskins-express-trade"),
-      jackpotBetsStore = require("./jackpot_stakes_store");
+      jackpotBetsStore = require("./jackpot_stakes_store"),
+      rouletteSocket = require("../app/sockets/roulette_socket");
 
 module.exports = {
 
-    sendOffer: function(opskinsId, opskinsTradeToken, items, message = "", cb = null) {
+    opskinsHeaders: { 
+        Authorization: "Basic " + Buffer.from(process.env.OPSKINS_API_KEY + ":", "ascii").toString("base64")
+    },
 
+    sendOffer: function(userId, items, message = "", cb = null) {
+
+        console.log("user id is", userId);
         let options = { method: 'POST',
-                    url: 'https://api-trade.opskins.com/ITrade/SendOffer/v1/',
+                    url: 'https://api-trade.opskins.com/ITrade/SendOfferToSteamId/v1/',
                     headers: { 
                         'Cache-Control': 'no-cache',
-                        'Authorization': `Basic ${apiHash}`,
+                        'Authorization': this.opskinsHeaders.Authorization,
                         'Content-Type': 'application/x-www-form-urlencoded' },
                     form: { 
                         twofactor_code: authenticator.generate(process.env.TWO_FACTOR_SECRET),
-                        uid: opskinsId,
-                        token: opskinsTradeToken,
+                        steam_id: userId,
                         items: items,
                         message: message } };
 
@@ -37,11 +42,13 @@ module.exports = {
         jackpotBetsStore.offerExists(offer.id, (offerExists) => {
             if(!offerExists) {
                 jackpotBetsStore.addOffer(offer.id);
-                jackpotBetsStore.addBets({ 
+                jackpotBetsStore.setStake({ 
                     id: offer.recipient.steam_id,
                     user: offer.recipient.display_name,
                     avatar: offer.recipient.avatar
-                }, offer.recipient.items);
+                }, offer.recipient.items, () => {
+                    rouletteSocket.refreshStakes();
+                });
             }
         })
     },

@@ -145,6 +145,7 @@
             <script src="/socket.io/socket.io.js"></script>
             <script type="text/javascript">
                 const socket = io();
+                const currentUserSteamId = <%- currentUser.steamid %>;
                 socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>", avatar: "<%- currentUser.avatarfull %>" });
                 socket.on("reconnect", () => {
                     socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>", avatar: "<%- currentUser.avatarfull %>" });

@@ -23,6 +23,10 @@
     "database": "iym2p5oj4sjsw8h0",
     "host": "g9fej9rujq0yt0cd.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
     "port": 3306,
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "dialectOptions": {
+      "supportBigNumbers": true,
+      "bigNumberStrings": true
+    }
   }
 }

@@ -19,10 +19,13 @@ module.exports = {
                 multiTask.hmset(`jackpot_players:${user.id}`, {
                     "user": user.user,
                     "avatar": user.avatar,
-                    "color": JSON.stringify(randomColor()),
+                    "color": randomColor(),
                     "total": items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price)/100, 0).toFixed(2)
                 });
-                items.forEach(item => multiTask.sadd(`jackpot_players:${user.id}:items`, JSON.stringify(item)));
+                items.forEach(item => {
+                    multiTask.sadd(`jackpot_players:${user.id}:items`, JSON.stringify(item))
+                    multiTask.sadd(`jackpot_players:${user.id}:items:ids`, item.id);
+                });
                 multiTask.exec((err, results) => {
 
                     if(err) {
@@ -43,7 +46,8 @@ module.exports = {
 
                         if(!this.itemIsInSet(currentItems, item.id.toString())) {
                             addedTotal += parseFloat(item.suggested_price)/100;
-                            multiTask.sadd(`jackpot_items:${user.id}`, JSON.stringify(item));
+                            multiTask.sadd(`jackpot_players:${user.id}:items`, JSON.stringify(item))
+                            multiTask.sadd(`jackpot_players:${user.id}:items:ids`, item.id);
                             insertedItems.push(item);
                         }
                     });
@@ -72,15 +76,31 @@ module.exports = {
         redisClient.sadd("jackpot_offers", offerId);
     },
 
+    getPlayerCount: function(cb) {
+
+        redisClient.scard("jackpot_plaers", (count) => {
+            cb(count);
+        })
+    },
+
     getStake: function(userId, cb) {
 
         let multiTask = redisClient.multi();
         multiTask.hgetall(`jackpot_players:${userId}`);
         multiTask.smembers(`jackpot_players:${userId}:items`);
+        multiTask.smembers(`jackpot_players:${userId}:items:ids`);
         multiTask.exec((err, results) => {
 
+            if(results[0] == null) {
+                cb(null);
+                return;
+            }
             let stake = results[0];
-            stake.items = JSON.parse(results[1]);
+            stake.items = []
+            for(let item of results[1]) {
+                stake.items.push(JSON.parse(item));
+            }
+            stake.itemIds = results[2];
             cb(stake);
         });
     },
@@ -99,14 +119,19 @@ module.exports = {
             playerList.forEach((player) => {
                 multiTask.hgetall(`jackpot_players:${player}`);
                 multiTask.smembers(`jackpot_players:${player}:items`);
+                multiTask.smembers(`jackpot_players:${player}:items:ids`);
             });
 
             multiTask.exec((err, results) => {
                 
                 let stakes = [];
-                for(let index = 0, length = results.length; index < length; index += 2) {
+                for(let index = 0, length = results.length; index < length; index += 3) {
                     stakes.push(results[index]);
-                    stakes[index/2].items = JSON.parse(results[index+1]);
+                    stakes[index/3].items = [];
+                    for(let item of results[index+1]) {
+                        stakes[index/3].items.push(JSON.parse(item));
+                    }
+                    stakes[index/3].itemIds = results[index+2];
                 }
 
                 cb(stakes);

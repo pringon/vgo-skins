@@ -1,7 +1,7 @@
 "use strict";
-
-const db        = require("../database/models"),
-      userUtils = require("../../libs/user_utils");
+const db           = require("../database/models"),
+      userUtils    = require("../../libs/user_utils"),
+      jackpotStore = require("../../libs/jackpot_stakes_store");
 
 module.exports = (() => {
 
@@ -13,16 +13,18 @@ module.exports = (() => {
         res.redirect('/');
     };
 
-    this.getProfile = async(req, res) => {
+    this.getProfile = (req, res) => {
 
-        let currentUser = await userUtils.getUser(req.user.steamId);
+        let currentUser = userUtils.getUser(req.user.steamId);
+
         if(req.params.id == req.user.steamId) {
             res.render("pages/profile.ejs", {
                 currentUser: currentUser,
                 queriedUser: currentUser
             });
         } else {
-            let queriedUser = await userUtils.getUser(req.params.id);
+            
+            let queriedUser = userUtils.getUser(req.params.id);
             if(typeof queriedUser === 'undefined') {
                 queriedUser = currentUser;
             }
@@ -58,6 +60,21 @@ module.exports = (() => {
         } else {
             res.send("Trade url does not exist");
         }
+    },
+
+    this.getAvailableItems = (req, res) => {
+
+        userUtils.getAvailableItems(req.user.steamId, (err, availableItems) => {
+            if(err) {
+                console.log(err);
+            }
+            jackpotStore.getStake(req.user.steamId, gambledItems => {
+                if(gambledItems == null) {
+                    gambledItems = { items: [] };
+                }
+                res.json({ availableItems, gambledItems: gambledItems.items });
+            });
+        })
     },
 
     this.postLogout = (req, res) => {
