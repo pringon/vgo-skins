@@ -8,7 +8,10 @@ module.exports = (() => {
     this.getRoulette = async(req, res) => {
         let currentUser = await userUtils.getUser(req.user.steamId);
         res.render("pages/roulette.ejs", {
-            currentUser,
+            currentUser: {
+                level: req.user.level,
+                ...currentUser
+            },
             chat: true,
             roulette: true,
             rouletteType: req.params.rouletteType
@@ -50,7 +53,10 @@ module.exports = (() => {
     this.getHeadon = async(req, res) => {
         let currentUser = await userUtils.getUser(req.user.steamId);
         res.render("pages/headon.ejs", {
-            currentUser,
+            currentUser: {
+                level: req.user.level,
+                ...currentUser
+            },
             chat: true,
             headon: true
         });

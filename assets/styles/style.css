@@ -431,6 +431,19 @@ body{
 	opacity: 0.8;
 	padding-bottom: 10px;
 }
+.firework {
+	width: 260px;
+	height: 260px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -130px;
+	margin-top:-130px;
+	line-height: 260px;
+}
+.firework img{
+	max-width: 100%;
+}
 
 
 .chat-panel{
@@ -630,6 +643,10 @@ canvas {
 }
 .jackpot-score .icon img{
 	width: 100%;
+}
+.jackpot-score .betting-amount{
+	font-size: 14px;
+	padding: 5px 15px 0px;
 }
 
 .jackpot-btn{

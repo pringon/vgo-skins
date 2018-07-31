@@ -1,12 +1,59 @@
 "use strict";
-const randomColor = require("randomcolor");
-const rouletteSocket = require("./sockets/roulette_socket");
-const jackpotStore = require("../libs/jackpot_stakes_store");
+const rouletteSocket = require("./sockets/roulette_socket"),
+      jackpotStore   = require("../libs/jackpot_stakes_store"),
+      offerHandler   = require("../libs/offer_handler");
 
 module.exports = {
 
     timeRemaining: 90,
     connectedUsers: 0,
+
+    handleWinnerOffer: function(userId, items) {
+
+        const total = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price), 0);
+        const rakeMax = total * 0.1;
+        
+        items.sort((a, b) => a.suggested_price - b.suggested_price);
+        let rakedItems = [];
+        let currentRake = 0;
+        for(let item of items) {
+            if(item.suggested_price < rakeMax - currentRake) {
+                rakedItems.push(item);
+                currentRake += item.suggested_price;
+            } else {
+                let subSum = 0;
+                let indexes = [];
+                for(let rakedItem in rakedItems) {
+        
+                    subSum += rakedItems[rakedItem].suggested_price;
+                    indexes.push(rakedItem);
+                    if(rakeMax >= currentRake - subSum + item.suggested_price) {
+                        if(item.suggested_price > subSum) {
+        
+                            for(let index = indexes.length; index >= 0; index--) {
+                                rakedItems.splice(index, 1);
+                            }
+                            rakedItems.push(item);
+                            currentRake += item.suggested_price - subSum;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        for(let rakedItem of rakedItems) {
+            for(let index in items) {
+                if(items[index].id == rakedItem.id) {
+                    items.splice(index, 1);
+                    break;
+                }
+            }
+        }
+
+        offerHandler.sendOffer(userId, items.map(item => item.id).join(','), "Jackpot prize", (body) => {
+            console.log(body);
+        });
+    },
 
     jackPotTimer: function(io) {
 
@@ -17,6 +64,7 @@ module.exports = {
                     if(count >= 2) {
                         this.timeRemaining--;
                     }
+                    this.timeRemaining--;
                 });
             } else {
                 this.timeRemaining--;
@@ -32,12 +80,16 @@ module.exports = {
         
                                 io.sockets.emit("round finished", { winner, winnerPos });
 
+                                let prizePot = [];
+                                stakes.forEach(stake => {
+                                    stake.items.forEach(item => prizePot.push(item));
+                                });
+                                this.handleWinnerOffer(winner.id, prizePot);
+
                                 setTimeout(function() {
-                                    jackpotStore.wipeStakes();
-                                    setTimeout(rouletteSocket.seedStakes, 1000);
-                                    setTimeout(function() {
+                                    jackpotStore.wipeStakes(() => {
                                         rouletteSocket.refreshStakes(io);
-                                    }, 2000);
+                                    });
                                 }, 7000);
                             });
                         });
