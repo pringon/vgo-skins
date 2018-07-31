@@ -11,32 +11,41 @@ module.exports = {
     jackPotTimer: function(io) {
 
         return () => {
-            this.timeRemaining--;
-            if(this.timeRemaining == 0) {
-                this.timeRemaining = 100;
-                io.sockets.emit("time elapsed", 0);
+            if(this.timeRemaining == 90) {
 
-                jackpotStore.getAllStakes(stakes => {
-                    
-                    rouletteSocket.getWinner(stakes, winner => {
+                jackpotStore.getPlayerCount(count => {
+                    if(count >= 2) {
+                        this.timeRemaining--;
+                    }
+                });
+            } else {
+                this.timeRemaining--;
+                if(this.timeRemaining == 0) {
+                    this.timeRemaining = 100;
+                    io.sockets.emit("time elapsed", 0);
 
-                        rouletteSocket.getWinnerPos(stakes, winner.id, winnerPos => {
-    
-                            io.sockets.emit("round finished", { winner, winnerPos });
+                    jackpotStore.getAllStakes(stakes => {
+                        
+                        rouletteSocket.getWinner(stakes, winner => {
 
-                            setTimeout(function() {
-                                jackpotStore.wipeStakes();
-                                setTimeout(rouletteSocket.seedStakes, 1000);
+                            rouletteSocket.getWinnerPos(stakes, winner.id, winnerPos => {
+        
+                                io.sockets.emit("round finished", { winner, winnerPos });
+
                                 setTimeout(function() {
-                                    rouletteSocket.refreshStakes(io);
-                                }, 2000);
-                            }, 7000);
+                                    jackpotStore.wipeStakes();
+                                    setTimeout(rouletteSocket.seedStakes, 1000);
+                                    setTimeout(function() {
+                                        rouletteSocket.refreshStakes(io);
+                                    }, 2000);
+                                }, 7000);
+                            });
                         });
                     });
-                });
-            }
-            if(this.timeRemaining <= 90) {
-                io.sockets.emit("time elapsed", this.timeRemaining);
+                }
+                if(this.timeRemaining <= 90) {
+                    io.sockets.emit("time elapsed", this.timeRemaining);
+                }
             }
         };
     },

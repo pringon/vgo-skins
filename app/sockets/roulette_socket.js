@@ -77,41 +77,20 @@ module.exports = {
 
         jackpotStore.getAllStakes(stakes => {
             console.log(stakes);
-            io.sockets.emit("get roulette stakes", stakes);
+            this.io.sockets.emit("get roulette stakes", stakes);
         });
     },
 
     initSocket: function(io, socket) {
 
+        this.io = io;
         socket.on("play roulette", () => {
     
             jackpotStore.getAllStakes(stakes => {
-                console.log(stakes);
+                
                 socket.emit("get roulette stakes", stakes);
             });
             console.log(`${socket.userName} is playing roulette`);
-        });
-
-        socket.on("select items", () => {
-
-            let availableItems = [];
-
-            for(let item in this.items) {
-                if(this.items.hasOwnProperty(item)) {
-                    availableItems.push({ id: item, ...this.items[item]});
-                }
-            }
-
-            socket.emit("select items", { availableItems, gambledItems: socket.itemsGambled ? socket.itemsGambled : [] });
-        }); 
-    
-        socket.on("items gambled", (tradeData, itemsGambled) => {
-
-            offerHandler.sendOffer(tradeData.opskinsId, tradeData.opskinsTradeToken,
-                                itemsGambled, "Jackpot stake", (body) => {
-
-                console.log(body);
-            });
         });
     }
 };

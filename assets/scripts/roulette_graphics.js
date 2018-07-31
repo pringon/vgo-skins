@@ -29,7 +29,7 @@ function listUsers(stakesList) {
         return 0;
     });
 
-    let total = getTotal(stakesList);
+    let total = parseFloat(getTotal(stakesList));
     $(".jackpot-score > .amount").text(`$${total.toFixed(2)}`);
     document.getElementsByClassName("score")[6].textContent = `$${total.toFixed(2)}`;
 
@@ -136,7 +136,7 @@ function populateItemsGallery(stakesList) {
 
             let itemPrice = document.createElement("span");
             itemPrice.setAttribute("class", "amount");
-            itemPrice.textContent = `$${item.price}`;
+            itemPrice.textContent = `$${(parseFloat(item.suggested_price)/100).toFixed(2)}`;
 
             topSection.appendChild(playerAvatarHolder);
             topSection.appendChild(itemCode);
@@ -203,7 +203,8 @@ function plotData(stakesList) {
 function listModalItems({ availableItems, gambledItems }) {
 
     selectedItems = {};
-    totalMoneyGambled = getTotal(gambledItems, "price");
+    totalMoneyGambled = getTotal(gambledItems, "suggested_price")/100;
+    userStakeInPot = totalMoneyGambled;
 
     /*selectedItems = currentSelectedItems ? Object.assign({}, currentSelectedItems) : {};
     totalMoneyGambled = currentMoneyGambled ? currentMoneyGambled : 0;*/
@@ -212,8 +213,6 @@ function listModalItems({ availableItems, gambledItems }) {
         selectedItems[gambledItem.id] = gambledItem;
         console.log(selectedItems[gambledItem.id]);
     }
-    console.log(gambledItems);
-    console.log(selectedItems);
 
     let itemsList = document.createDocumentFragment();
 
@@ -221,16 +220,57 @@ function listModalItems({ availableItems, gambledItems }) {
     itemsRow.setAttribute("class", "row");
     let columnIndex = 0;
 
+    for(let item of gambledItems) {
+
+        let itemContainer = document.createElement("div");
+
+        itemContainer.setAttribute("class", "col gambling-selection-item selected-item");
+
+        itemContainer.setAttribute("id", item.id);
+        let itemHolder = document.createElement("div");
+        itemHolder.setAttribute("class", "skin-item");
+
+        let topSection = document.createElement("div");
+        topSection.setAttribute("class", "top-sec");
+        let itemCode = document.createElement("span");
+        itemCode.setAttribute("class", "code");
+        itemCode.textContent = "MM";
+        let itemPrice = document.createElement("span");
+        itemPrice.setAttribute("class", "amount");
+        itemPrice.textContent = `$${(parseFloat(item.suggested_price)/100).toFixed(2)}`;
+        topSection.appendChild(itemCode);
+        topSection.appendChild(itemPrice);
+
+        let midSection = document.createElement("div");
+        midSection.setAttribute("class", "mid-sec");
+        let itemImage = document.createElement("img");
+        itemImage.setAttribute("src", item.image["300px"]);
+        midSection.appendChild(itemImage);
+
+        let bottomSection = document.createElement("div");
+        bottomSection.setAttribute("class", "bottom-sec");
+        bottomSection.textContent = item.name;
+        
+        itemHolder.appendChild(topSection);
+        itemHolder.appendChild(midSection);
+        itemHolder.appendChild(bottomSection);
+        itemContainer.appendChild(itemHolder);
+        itemsRow.appendChild(itemContainer);
+
+        columnIndex++;
+        if(columnIndex == 5) {
+            itemsList.appendChild(itemsRow);
+            itemsRow = document.createElement("div");
+            itemsRow.setAttribute("class", "row");
+            columnIndex = 0;
+        }
+    }
+
     for(let item of availableItems) {
 
         let itemContainer = document.createElement("div");
 
-        console.log(item.id);
-        if(gambledItems.map(e => e.id).indexOf(item.id.toString()) !== -1) {
-            itemContainer.setAttribute("class", "col gambling-selection-item selected-item");    
-        } else {
-            itemContainer.setAttribute("class", "gambling-selection-item col");
-        }
+        itemContainer.setAttribute("class", "gambling-selection-item col");
 
         itemContainer.setAttribute("id", item.id);
         itemContainer.onclick = selectItem;
@@ -244,7 +284,7 @@ function listModalItems({ availableItems, gambledItems }) {
         itemCode.textContent = "MM";
         let itemPrice = document.createElement("span");
         itemPrice.setAttribute("class", "amount");
-        itemPrice.textContent = `$${item.price}`;
+        itemPrice.textContent = `$${(parseFloat(item.suggested_price)/100).toFixed(2)}`;
         topSection.appendChild(itemCode);
         topSection.appendChild(itemPrice);
 
@@ -280,8 +320,9 @@ function listModalItems({ availableItems, gambledItems }) {
     let itemsElementList = document.getElementsByClassName("data-content")[0];
     itemsElementList.innerHTML = '';
     itemsElementList.appendChild(itemsList);
-    $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${currentMoneyGambled.toFixed(2)}`);
-    $(".data-panel .bottom-sec button").text(`Deposit $${currentMoneyGambled.toFixed(2)} (0 Skins)`);
+    $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (0 Skins)`);
+    $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${totalMoneyGambled.toFixed(2)}`);
+    $(".modal-content .row .score-panel .item .score:eq(3)").text(`${(totalMoneyGambled/(potTotal+totalMoneyGambled-userStakeInPot)*100).toFixed(2)}%`);
     /*totalMoneyGambled = currentMoneyGambled;
     selectedItems = Object.assign({}, currentSelectedItems);*/
 }
@@ -293,7 +334,7 @@ function listModalItems({ availableItems, gambledItems }) {
  */
 function refreshScreen(stakesList) {
     
-    potTotal = getTotal(stakesList);
+    potTotal = parseFloat(getTotal(stakesList));
     plotData(stakesList);
     listUsers(stakesList);
     populateItemsGallery(stakesList);
@@ -301,7 +342,16 @@ function refreshScreen(stakesList) {
 
 $(document).ready(function() {
 
-    $(".jackpot-btn > button").on("click", () => socket.emit("select items", true));
+    $(".jackpot-btn > button").on("click", () => {
+    
+        console.log("intra");
+        fetch(`/user/items`)
+            .then(res => res.json())
+            .then(items => {
+                console.log(items);
+                listModalItems(items);
+            });
+    });
     $("#dump-items").on("click", clearSelection);
     $(".data-panel .bottom-sec button").on("click", submitSelection);
 });

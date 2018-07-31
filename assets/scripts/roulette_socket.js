@@ -5,7 +5,6 @@ $(document).ready(function() {
         console.log(stakesData);
         refreshScreen(stakesData);
     });
-    socket.on("select items", listModalItems);
     socket.on("time elapsed", (timeRemaining) => {
         let minutes = Math.floor(timeRemaining/60);
         let seconds = timeRemaining%60;

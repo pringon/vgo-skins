@@ -3,6 +3,7 @@ let currentSelectedItems = {};
 let currentMoneyGambled = 0;
 let selectedItems = {};
 let totalMoneyGambled = 0;
+let userStakeInPot = 0;
 let potTotal = 0;
 
 function selectItem() {
@@ -30,7 +31,7 @@ function selectItem() {
     $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (0 Skins)`);
     $(".modal-content .row .score-panel .item .score:eq(0)").text(`(${Object.keys(selectedItems).length}/20)`);
     $(".modal-content .row .score-panel .item .score:eq(2)").text(`$${potTotal.toFixed(2)}`);
-    $(".modal-content .row .score-panel .item .score:eq(3)").text(`${(totalMoneyGambled/(potTotal+totalMoneyGambled)*100).toFixed(2)}%`);
+    $(".modal-content .row .score-panel .item .score:eq(3)").text(`${(totalMoneyGambled/(potTotal+totalMoneyGambled-userStakeInPot)*100).toFixed(2)}%`);
 
     if(Object.keys(selectedItems).length !== 0 && selectedItems.constructor === Object) {
 
@@ -48,18 +49,27 @@ function selectItem() {
 function submitSelection() {
 
     document.getElementsByClassName("score")[1].innerHTML = `<small>$</small>${totalMoneyGambled.toFixed(2)}`;
-    currentSelectedItems = Object.assign({}, selectedItems);
-    currentMoneyGambled = totalMoneyGambled;
 
     let gambledItems = [];
-
     for(let item in selectedItems) {
         if(selectedItems.hasOwnProperty(item)) {
             gambledItems.push({ id: item, ...selectedItems[item] });
         }
     }
 
-    socket.emit("items gambled", gambledItems);
+    fetch(`/games/roulette/plant/${gambledItems.map(item => item.id)}`, {
+        method: "POST",
+        headers: {
+            "Accept": "application/json"
+        }
+    }).then(res => res.json())
+    .then(res => {
+        tradePopup = window.open(`https://trade.opskins.com/trade-offers/${res.tradeId}`,"_blank");
+        tradePopup.focus();
+        
+        selectedItems = {};
+        totalMoneyGambled = 0;
+    });
 }
 
 function clearSelection() {
