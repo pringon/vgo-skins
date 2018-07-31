@@ -68,7 +68,7 @@ function listUsers(stakesList) {
         playerAmountBet.textContent = `$${stakesList[i].total}`;
         let playerItemCount = document.createElement("span");
         playerItemCount.setAttribute("class", "items");
-        playerItemCount.textContent = "(16 Items)";
+        playerItemCount.textContent = `(${stakesList[i].items.length} Items)`;
         let playerStakeRatio = document.createElement("span");
         playerStakeRatio.setAttribute("class", "ratio");
         playerStakeRatio.textContent = `${(stakesList[i].total/total*100).toFixed(2)}%`;
@@ -170,6 +170,7 @@ function populateItemsGallery(stakesList) {
     let gallerySlider = document.getElementsByClassName("flickity-slider")[0];
     gallerySlider.innerHTML = '';
     gallerySlider.appendChild(itemsGallery);
+    $("js-flickity").flickity("reloadCells");
 }
 
 /**

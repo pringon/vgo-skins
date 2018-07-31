@@ -96,6 +96,7 @@ module.exports = {
                 return;
             }
             let stake = results[0];
+            stake.id = userId;
             stake.items = []
             for(let item of results[1]) {
                 stake.items.push(JSON.parse(item));
@@ -127,6 +128,7 @@ module.exports = {
                 let stakes = [];
                 for(let index = 0, length = results.length; index < length; index += 3) {
                     stakes.push(results[index]);
+                    stakes[index/3].id = playerList[index/3];
                     stakes[index/3].items = [];
                     for(let item of results[index+1]) {
                         stakes[index/3].items.push(JSON.parse(item));
@@ -140,7 +142,7 @@ module.exports = {
         });
     },
 
-    wipeStakes: function() {
+    wipeStakes: function(cb = null) {
 
         redisClient.smembers("jackpot_players", (err, playerList) => {
 
@@ -151,7 +153,12 @@ module.exports = {
                 multiTask.del(`jackpot_players:${player}:items`);
             });
 
-            multiTask.exec();
+            multiTask.exec((err, results) => {
+
+                if(cb !== null) {
+                    cb(results);
+                }
+            });
         });
     },
 

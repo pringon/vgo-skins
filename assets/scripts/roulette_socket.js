@@ -15,6 +15,10 @@ $(document).ready(function() {
     socket.on("round finished", ({winner, winnerPos}) => {
         console.log(`The winner is ${winner.user}`);
         spinJackpot(winnerPos);
+        $(".firework img").show();
+        setTimeout(function(){
+            $(".firework img").hide();    
+        }, 5000);
         for(let item in currentSelectedItems) {
             delete currentSelectedItems[item];
         }

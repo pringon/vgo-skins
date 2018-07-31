@@ -6,11 +6,16 @@ const host = process.env.NODE_ENV == "production" ? "https://vgo-gem-alpha.herok
 module.exports = (passport) => {
 
     passport.serializeUser((user, done) => {
-        done(null, user.steamId);
+        done(null, JSON.stringify({
+            id: user.steamId,
+            level: user.level
+        }));
     });
-    passport.deserializeUser((id, done) => {
+    passport.deserializeUser((user, done) => {
+        let userData = JSON.parse(user);
         done(null, {
-            steamId: id
+            steamId: userData.id,
+            level: userData.level
         });
     });
 

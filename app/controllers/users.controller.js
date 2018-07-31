@@ -19,7 +19,10 @@ module.exports = (() => {
 
         if(req.params.id == req.user.steamId) {
             res.render("pages/profile.ejs", {
-                currentUser: currentUser,
+                currentUser: {
+                    level: req.user.level,
+                    ...currentUser
+                },
                 queriedUser: currentUser
             });
         } else {
@@ -29,7 +32,10 @@ module.exports = (() => {
                 queriedUser = currentUser;
             }
             res.render("pages/profile.ejs", {
-                currentUser: currentUser,
+                currentUser: {
+                    level: req.user.level,
+                    ...currentUser
+                },
                 queriedUser: queriedUser
             });
         }
