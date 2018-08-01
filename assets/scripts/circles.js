@@ -55,8 +55,6 @@
 
 }(this, function() {
 
-  "use strict";
-
   var requestAnimFrame = window.requestAnimationFrame       ||
                      window.webkitRequestAnimationFrame ||
                      window.mozRequestAnimationFrame    ||
