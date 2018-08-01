@@ -64,7 +64,6 @@ module.exports = {
                     if(count >= 2) {
                         this.timeRemaining--;
                     }
-                    this.timeRemaining--;
                 });
             } else {
                 this.timeRemaining--;
