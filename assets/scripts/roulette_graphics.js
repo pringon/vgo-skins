@@ -347,7 +347,6 @@ $(document).ready(function() {
     
         console.log("intra");
         fetch(`/user/items`)
-            .then(res => res.json())
             .then(items => {
                 console.log(items);
                 listModalItems(items);
