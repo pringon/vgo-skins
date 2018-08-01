@@ -1,5 +1,3 @@
-"use strict";
-
 function sendChatMessage() {
     let message = $("#chat-message-submit").val();
     if(message.length > 2) {

@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * A function that takes the number of posts as parameter and lists them on the screen for the user
  * @method refreshPosts

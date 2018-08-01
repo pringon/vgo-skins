@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * A function that takes all the bets from the current round and returns the total sum of money bet
  * @method getTotal
@@ -345,11 +343,22 @@ $(document).ready(function() {
 
     $(".jackpot-btn > button").on("click", () => {
     
-        console.log("intra");
-        fetch(`/user/items`)
-            .then(items => {
-                console.log(items);
-                listModalItems(items);
+        // console.log("intra");
+        // fetch(`/user/items`, {
+        //     headers: {
+        //         "Accept": "application/json"
+        //     }
+        // }).then(items => items.json)
+        //   .then(items => {
+        //         console.log(items);
+        //         listModalItems(items);
+        //     });
+            $.ajax({
+                url: "/user/items",
+                success: (items) => {
+                    console.log(items);
+                    listModalItems(items);
+                }
             });
     });
     $("#dump-items").on("click", clearSelection);

@@ -1,4 +1,3 @@
-"use strict";
 let currentSelectedItems = {};
 let currentMoneyGambled = 0;
 let selectedItems = {};
@@ -57,19 +56,32 @@ function submitSelection() {
         }
     }
 
-    fetch(`/games/roulette/plant/${gambledItems.map(item => item.id)}`, {
-        method: "POST",
-        headers: {
-            "Accept": "application/json"
-        }
-    }).then(res => res.json())
-    .then(res => {
-        tradePopup = window.open(`https://trade.opskins.com/trade-offers/${res.tradeId}`,"_blank");
-        tradePopup.focus();
+    // fetch(`/games/roulette/plant/${gambledItems.map(item => item.id)}`, {
+    //     method: "POST",
+    //     headers: {
+    //         "Accept": "application/json"
+    //     }
+    // }).then(res => res.json())
+    // .then(res => {
+    //     tradePopup = window.open(`https://trade.opskins.com/trade-offers/${res.tradeId}`,"_blank");
+    //     tradePopup.focus();
         
-        selectedItems = {};
-        totalMoneyGambled = 0;
-    });
+    //     selectedItems = {};
+    //     totalMoneyGambled = 0;
+    // });
+    let tradePopup = window.open('', "_blank");
+    $.ajax({
+        url: `/games/roulette/plant/${gambledItems.map(item => item.id)}`,
+        method: "POST",
+        success: function(res) {
+            console.log(window);
+            tradePopup.location = `https://trade.opskins.com/trade-offers/${res.tradeId}`;
+            tradePopup.focus();
+            
+            selectedItems = {};
+            totalMoneyGambled = 0;
+        }
+    })
 }
 
 function clearSelection() {
