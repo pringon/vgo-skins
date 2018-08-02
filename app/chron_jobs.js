@@ -52,7 +52,7 @@ module.exports = {
 
         offerHandler.sendOffer(userId, items.map(item => item.id).join(','), "Jackpot prize", (body) => {
             jackpotStore.wipeStakes(() => {
-                rouletteSocket.refreshStakes(io);
+                rouletteSocket.refreshStakes();
             });
         });
     },
@@ -63,7 +63,6 @@ module.exports = {
             if(this.timeRemaining == 90) {
 
                 jackpotStore.getPlayerCount(count => {
-                    console.log(count);
                     if(count >= 2) {
                         this.timeRemaining--;
                     }

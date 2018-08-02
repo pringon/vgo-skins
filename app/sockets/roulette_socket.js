@@ -73,7 +73,7 @@ module.exports = {
         });
     },
 
-    refreshStakes: function(io) {
+    refreshStakes: function() {
 
         jackpotStore.getAllStakes(stakes => {
             console.log(stakes);
