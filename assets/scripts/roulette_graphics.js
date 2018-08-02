@@ -103,6 +103,21 @@ function populateItemsGallery(stakesList) {
     for(let stake of stakesList) {
         for(let item of stake.items) {
 
+            let wearCode = '';
+            if(item.wear == null) {
+                wearCode = '';
+            } else if(item.wear < 0.07) {
+                wearCode = "FN";
+            } else if(item.wear < 0.15) {
+                wearCode = "MW";
+            } else if(item.wear < 0.37) {
+                wearCode = "FT";
+            } else if(item.wear < 0.44) {
+                wearCode = "WW";
+            } else {
+                wearCode = "BS";
+            }
+
             console.log(item);
             let itemHolder = document.createElement("div");
             if(!firstSelected) {
@@ -130,7 +145,7 @@ function populateItemsGallery(stakesList) {
 
             let itemCode = document.createElement("span");
             itemCode.setAttribute("class", "code");
-            itemCode.textContent = "MM";
+            itemCode.textContent = wearCode;
 
             let itemPrice = document.createElement("span");
             itemPrice.setAttribute("class", "amount");
@@ -152,7 +167,9 @@ function populateItemsGallery(stakesList) {
 
             let bottomSection = document.createElement("div");
             bottomSection.setAttribute("class", "bottom-sec");
-            bottomSection.textContent = item.name;
+            bottomSection.textContent = item.name.indexOf('|') !== -1 ?
+                                            item.name.substring(item.name.indexOf('|')+1, item.name.indexOf('(')) :
+                                            item.name;
 
 
             itemHolder.appendChild(topSection);
@@ -217,6 +234,21 @@ function listModalItems({ availableItems, gambledItems }) {
 
     for(let item of gambledItems) {
 
+        let wearCode = '';
+        if(item.wear == null) {
+            wearCode = '';
+        } else if(item.wear < 0.07) {
+            wearCode = "FN";
+        } else if(item.wear < 0.15) {
+            wearCode = "MW";
+        } else if(item.wear < 0.37) {
+            wearCode = "FT";
+        } else if(item.wear < 0.44) {
+            wearCode = "WW";
+        } else {
+            wearCode = "BS";
+        }
+
         let itemContainer = document.createElement("div");
 
         itemContainer.setAttribute("class", "col gambling-selection-item selected-item");
@@ -229,7 +261,7 @@ function listModalItems({ availableItems, gambledItems }) {
         topSection.setAttribute("class", "top-sec");
         let itemCode = document.createElement("span");
         itemCode.setAttribute("class", "code");
-        itemCode.textContent = "MM";
+        itemCode.textContent = wearCode;
         let itemPrice = document.createElement("span");
         itemPrice.setAttribute("class", "amount");
         itemPrice.textContent = `$${(parseFloat(item.suggested_price)/100).toFixed(2)}`;
@@ -244,7 +276,9 @@ function listModalItems({ availableItems, gambledItems }) {
 
         let bottomSection = document.createElement("div");
         bottomSection.setAttribute("class", "bottom-sec");
-        bottomSection.textContent = item.name;
+        bottomSection.textContent = item.name.indexOf('|') !== -1 ?
+                                            item.name.substring(item.name.indexOf('|')+1, item.name.indexOf('(')) :
+                                            item.name;
         
         itemHolder.appendChild(topSection);
         itemHolder.appendChild(midSection);
@@ -263,6 +297,21 @@ function listModalItems({ availableItems, gambledItems }) {
 
     for(let item of availableItems) {
 
+        let wearCode = '';
+        if(item.wear == null) {
+            wearCode = '';
+        } else if(item.wear < 0.07) {
+            wearCode = "FN";
+        } else if(item.wear < 0.15) {
+            wearCode = "MW";
+        } else if(item.wear < 0.37) {
+            wearCode = "FT";
+        } else if(item.wear < 0.44) {
+            wearCode = "WW";
+        } else {
+            wearCode = "BS";
+        }
+
         let itemContainer = document.createElement("div");
 
         itemContainer.setAttribute("class", "ungambled-item gambling-selection-item col");
@@ -276,7 +325,7 @@ function listModalItems({ availableItems, gambledItems }) {
         topSection.setAttribute("class", "top-sec");
         let itemCode = document.createElement("span");
         itemCode.setAttribute("class", "code");
-        itemCode.textContent = "MM";
+        itemCode.textContent = wearCode;
         let itemPrice = document.createElement("span");
         itemPrice.setAttribute("class", "amount");
         itemPrice.textContent = `$${(parseFloat(item.suggested_price)/100).toFixed(2)}`;
@@ -291,7 +340,9 @@ function listModalItems({ availableItems, gambledItems }) {
 
         let bottomSection = document.createElement("div");
         bottomSection.setAttribute("class", "bottom-sec");
-        bottomSection.textContent = item.name;
+        bottomSection.textContent = item.name.indexOf('|') !== -1 ?
+                                            item.name.substring(item.name.indexOf('|')+1, item.name.indexOf('(')) :
+                                            item.name;
         
         itemHolder.appendChild(topSection);
         itemHolder.appendChild(midSection);
