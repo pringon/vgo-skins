@@ -64,11 +64,11 @@ module.exports = {
             let winner = Math.random() * total;
 
             for(let stake of stakes) {
-                if(winner <= stake.total) {
+                if(winner <= parseFloat(stake.total)) {
                     cb(stake);
                     return;
                 }
-                winner -= stake.total;
+                winner -= parseFloat(stake.total);
             }
         });
     },
