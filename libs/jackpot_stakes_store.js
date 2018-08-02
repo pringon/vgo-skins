@@ -78,7 +78,7 @@ module.exports = {
 
     getPlayerCount: function(cb) {
 
-        redisClient.scard("jackpot_plaers", (count) => {
+        redisClient.scard("jackpot_players", (err, count) => {
             cb(count);
         })
     },

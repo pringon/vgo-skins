@@ -3,6 +3,7 @@ let currentMoneyGambled = 0;
 let selectedItems = {};
 let totalMoneyGambled = 0;
 let userStakeInPot = 0;
+let userItemsInPot = 0;
 let potTotal = 0;
 
 function selectItem() {
@@ -27,8 +28,8 @@ function selectItem() {
         totalMoneyGambled += selectedItems[element.attr("id")].price;
     }
     $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${totalMoneyGambled.toFixed(2)}`);
-    $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (0 Skins)`);
-    $(".modal-content .row .score-panel .item .score:eq(0)").text(`(${Object.keys(selectedItems).length}/20)`);
+    $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (${Object.keys(selectedItems).length} Skins)`);
+    $(".modal-content .row .score-panel .item .score:eq(0)").text(`(${Object.keys(selectedItems).length + userItemsInPot}/20)`);
     $(".modal-content .row .score-panel .item .score:eq(2)").text(`$${potTotal.toFixed(2)}`);
     $(".modal-content .row .score-panel .item .score:eq(3)").text(`${(totalMoneyGambled/(potTotal+totalMoneyGambled-userStakeInPot)*100).toFixed(2)}%`);
 
@@ -46,8 +47,6 @@ function selectItem() {
 }
 
 function submitSelection() {
-
-    document.getElementsByClassName("score")[1].innerHTML = `<small>$</small>${totalMoneyGambled.toFixed(2)}`;
 
     let gambledItems = [];
     for(let item in selectedItems) {
@@ -88,9 +87,9 @@ function clearSelection() {
 
     selectedItems = {};
     totalMoneyGambled = 0;
-    let items = document.getElementsByClassName("gambling-selection-item");
+    let items = document.getElementsByClassName("ungambled-item");
     for(let item of items) {
-        item.setAttribute("class", "gambling-selection-item col");
+        item.setAttribute("class", "ungambled-item gambling-selection-item col");
     }
     $(".modal-content .row .score-panel .item .score:eq(0)").text(`(0/20)`);
     $(".modal-content .row .score-panel .item .score:eq(1)").text(`$0.00`);

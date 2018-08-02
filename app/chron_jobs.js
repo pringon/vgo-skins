@@ -61,6 +61,7 @@ module.exports = {
             if(this.timeRemaining == 90) {
 
                 jackpotStore.getPlayerCount(count => {
+                    console.log(count);
                     if(count >= 2) {
                         this.timeRemaining--;
                     }
