@@ -69,16 +69,18 @@ module.exports = {
                 });
             } else {
                 this.timeRemaining--;
+                if(this.timeRemaining <= 90) {
+                    io.sockets.emit("time elapsed", this.timeRemaining);
+                }
                 if(this.timeRemaining == 0) {
                     this.timeRemaining = 100;
-                    io.sockets.emit("time elapsed", 0);
 
                     jackpotStore.getAllStakes(stakes => {
-                        
+                        console.log(stakes);
                         rouletteSocket.getWinner(stakes, winner => {
-
+                            console.log(winner);
                             rouletteSocket.getWinnerPos(stakes, winner.id, winnerPos => {
-        
+                                console.log(winnerPos);
                                 io.sockets.emit("round finished", { winner, winnerPos });
 
                                 let prizePot = [];
@@ -89,9 +91,6 @@ module.exports = {
                             });
                         });
                     });
-                }
-                if(this.timeRemaining <= 90) {
-                    io.sockets.emit("time elapsed", this.timeRemaining);
                 }
             }
         };
