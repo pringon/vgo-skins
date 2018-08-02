@@ -7,7 +7,7 @@
 function getTotal(stakesList, att = "total") {
     let myTotal = 0;
     for (let j = 0; j < stakesList.length; j++) {
-        myTotal += stakesList[j][att];
+        myTotal += parseFloat(stakesList[j][att]);
     }
     return myTotal;
 }
@@ -19,24 +19,24 @@ function getTotal(stakesList, att = "total") {
  */
 function listUsers(stakesList) {
 
-    stakesList.sort(function(a, b) {
-        if (a.total < b.total)
-            return -1;
-        if (a.total > b.total)
-            return 1;
-        return 0;
-    });
+    stakesList.sort((a, b) => a.total - b.total);
 
-    let total = parseFloat(getTotal(stakesList));
+    let total = getTotal(stakesList);
     $(".jackpot-score > .amount").text(`$${total.toFixed(2)}`);
     document.getElementsByClassName("score")[6].textContent = `$${total.toFixed(2)}`;
 
     document.getElementsByClassName("score")[3].textContent = stakesList.length;
-    document.getElementsByClassName("score")[0].innerHTML = `${(currentMoneyGambled/total*100).toFixed(2)}<small>%</small>`;
+    
 
     let usersList = document.createDocumentFragment();
 
     for(let i = stakesList.length-1; i >= 0; i--) {
+
+        if(stakesList[i].id == currentUserSteamId) {
+            document.getElementsByClassName("score")[0].innerHTML = `${(parseFloat(stakesList[i].total)/total*100).toFixed(2)}<small>%</small>`;        
+            document.getElementsByClassName("score")[1].innerHTML = `<small>$</small>${parseFloat(stakesList[i].total).toFixed(2)}`;
+     
+        }
 
         let playerDiv = document.createElement("div");
         playerDiv.setAttribute("class", "row");
@@ -202,16 +202,12 @@ function plotData(stakesList) {
 function listModalItems({ availableItems, gambledItems }) {
 
     selectedItems = {};
-    totalMoneyGambled = getTotal(gambledItems, "suggested_price")/100;
-    userStakeInPot = totalMoneyGambled;
+    totalMoneyGambled = 0;
+    userStakeInPot = getTotal(gambledItems, "suggested_price")/100;
+    userItemsInPot = gambledItems.length;
 
     /*selectedItems = currentSelectedItems ? Object.assign({}, currentSelectedItems) : {};
     totalMoneyGambled = currentMoneyGambled ? currentMoneyGambled : 0;*/
-    for(let gambledItem of gambledItems) {
-        console.log(gambledItem);
-        selectedItems[gambledItem.id] = gambledItem;
-        console.log(selectedItems[gambledItem.id]);
-    }
 
     let itemsList = document.createDocumentFragment();
 
@@ -269,7 +265,7 @@ function listModalItems({ availableItems, gambledItems }) {
 
         let itemContainer = document.createElement("div");
 
-        itemContainer.setAttribute("class", "gambling-selection-item col");
+        itemContainer.setAttribute("class", "ungambled-item gambling-selection-item col");
 
         itemContainer.setAttribute("id", item.id);
         itemContainer.onclick = selectItem;
@@ -320,6 +316,7 @@ function listModalItems({ availableItems, gambledItems }) {
     itemsElementList.innerHTML = '';
     itemsElementList.appendChild(itemsList);
     $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (0 Skins)`);
+    $(".modal-content .row .score-panel .item .score:eq(0)").text(`(${userItemsInPot}/20)`);
     $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${totalMoneyGambled.toFixed(2)}`);
     $(".modal-content .row .score-panel .item .score:eq(3)").text(`${(totalMoneyGambled/(potTotal+totalMoneyGambled-userStakeInPot)*100).toFixed(2)}%`);
     /*totalMoneyGambled = currentMoneyGambled;
@@ -333,7 +330,7 @@ function listModalItems({ availableItems, gambledItems }) {
  */
 function refreshScreen(stakesList) {
     
-    potTotal = parseFloat(getTotal(stakesList));
+    potTotal = getTotal(stakesList);
     plotData(stakesList);
     listUsers(stakesList);
     populateItemsGallery(stakesList);
