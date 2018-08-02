@@ -51,7 +51,9 @@ module.exports = {
         }
 
         offerHandler.sendOffer(userId, items.map(item => item.id).join(','), "Jackpot prize", (body) => {
-            console.log(body);
+            jackpotStore.wipeStakes(() => {
+                rouletteSocket.refreshStakes(io);
+            });
         });
     },
 
@@ -85,12 +87,6 @@ module.exports = {
                                     stake.items.forEach(item => prizePot.push(item));
                                 });
                                 this.handleWinnerOffer(winner.id, prizePot);
-
-                                setTimeout(function() {
-                                    jackpotStore.wipeStakes(() => {
-                                        rouletteSocket.refreshStakes(io);
-                                    });
-                                }, 7000);
                             });
                         });
                     });
