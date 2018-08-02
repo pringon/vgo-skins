@@ -1,5 +1,7 @@
 $(document).ready(function() {
-    
+
+    $('.gallery').flickity('resize');
+
     socket.emit("play roulette", true);
     socket.on("get roulette stakes", (stakesData) => {
         console.log(stakesData);

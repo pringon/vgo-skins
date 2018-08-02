@@ -185,7 +185,7 @@ function populateItemsGallery(stakesList) {
     let gallerySlider = document.getElementsByClassName("flickity-slider")[0];
     gallerySlider.innerHTML = '';
     gallerySlider.appendChild(itemsGallery);
-    $("js-flickity").flickity("reloadCells");
+    $(".gallery").flickity("reloadCells");
 }
 
 /**
