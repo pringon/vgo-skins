@@ -36,7 +36,7 @@ module.exports = {
 
         let total = 0;
         for(let stake of stakes) {
-            total += stake.total;
+            total += parseFloat(stake.total);
         }
         cb(total);
     },
@@ -47,11 +47,11 @@ module.exports = {
             let winnerSum = 0;
             for(let stake of stakes) {
                 if(stake.id == winnerId) {
-                    winnerSum += stake.total/2;
+                    winnerSum += parseFloat(stake.total)/2;
                     cb(Math.round((winnerSum*360)/total));
                     return;
                 } else {
-                    winnerSum += stake.total;
+                    winnerSum += parseFloat(stake.total);
                 }
             }
             cb(0);
