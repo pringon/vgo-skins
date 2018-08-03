@@ -51,11 +51,7 @@ module.exports = {
         }
 
         offerHandler.sendOffer(userId, items.map(item => item.id).join(','), "Jackpot prize", (body) => {
-            setTimeout(() => {
-                jackpotStore.wipeStakes(() => {
-                    rouletteSocket.refreshStakes();
-                });
-            }, 6500);
+            setTimeout(rouletteSocket.startRound.bind(rouletteSocket), 6500);
         });
     },
 

@@ -61,15 +61,17 @@ module.exports = {
     getWinner: function(stakes, cb) {
 
         this.getTotal(stakes, total => {
-            let winner = Math.random() * total;
+            jackpotStore.getRoundToken((err, token) => {
+                let winner = token * total;
 
-            for(let stake of stakes) {
-                if(winner <= parseFloat(stake.total)) {
-                    cb(stake);
-                    return;
+                for(let stake of stakes) {
+                    if(winner <= parseFloat(stake.total)) {
+                        cb(stake);
+                        return;
+                    }
+                    winner -= parseFloat(stake.total);
                 }
-                winner -= parseFloat(stake.total);
-            }
+            })
         });
     },
 
@@ -81,9 +83,24 @@ module.exports = {
         });
     },
 
-    initSocket: function(io, socket) {
+    startRound: function() {
 
+        jackpotStore.wipeStakes((err) => {
+            if(err) {
+                throw new Error(err);
+            }
+
+            jackpotStore.setRoundToken();
+            this.refreshStakes();
+        });
+    },
+
+    initRoulette: function(io) {
         this.io = io;
+    },
+
+    initSocket: function(socket) {
+
         socket.on("play roulette", () => {
     
             jackpotStore.getAllStakes(stakes => {
