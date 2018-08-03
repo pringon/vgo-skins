@@ -7,6 +7,16 @@ const randomColor = require("randomcolor");
 
 module.exports = {
   
+    getRoundToken: function(cb) {
+
+        redisClient.get("jackpot_round_ticket", cb);
+    },
+
+    setRoundToken: function() {
+
+        redisClient.set("jackpot_round_ticket", Math.random());
+    },
+
     setStake: function(user, items, cb = null) {
 
         redisClient.hget(`jackpot_players:${user.id}`, "total", (err, total) => {
@@ -146,6 +156,11 @@ module.exports = {
 
         redisClient.smembers("jackpot_players", (err, playerList) => {
 
+            if(playerList == null || playerList == []) {
+                cb([]);
+                return;
+            }
+
             let multiTask = redisClient.multi();
             multiTask.del("jackpot_players");
             playerList.forEach(player => {
@@ -156,7 +171,7 @@ module.exports = {
             multiTask.exec((err, results) => {
 
                 if(cb !== null) {
-                    cb(results);
+                    cb(err, results);
                 }
             });
         });

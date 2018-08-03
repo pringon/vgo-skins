@@ -8,7 +8,10 @@ let headonPosts = [{ id: 1, user: "Matt", stake: 30, upper: true, lower: true },
 const rouletteSocket = require("./sockets/roulette_socket");
 
 module.exports = (io) => {
+
+    rouletteSocket.initRoulette(io);
     
+    rouletteSocket.startRound();
     setInterval(chronJobs.jackPotTimer(io), 1000);
     setInterval(chronJobs.updateUsers(io), 10000);
 
@@ -28,7 +31,7 @@ module.exports = (io) => {
         });
 
         require("./sockets/chat_socket")(io, socket);
-        rouletteSocket.initSocket(io, socket);
+        rouletteSocket.initSocket(socket);
 
         socket.on("play headon", () => {
 

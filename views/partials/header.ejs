@@ -69,7 +69,7 @@
                 <span class="avatar rounded-circle">
                     <img src="<%- currentUser.avatarfull %>" alt="user" />
                 </span>
-                <span class="link-label"><%- currentUser.personaname %></span>
+                <span class="link-label"><%- currentUser.personaname.length < 10 ? currentUser.personaname : currentUser.personaname.substring(0, 9).concat("...") %></span>
                 <span class="text">Level</span> <span class="badge gradient"><%- currentUser.level %></span>
                 
             </span>
