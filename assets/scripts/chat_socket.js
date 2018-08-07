@@ -34,7 +34,7 @@ socket.on("chat message", ({ message, emittingUser}) => {
     messageUserContent.className = "content-sec";
     let messageUserContentName = document.createElement("div");
     messageUserContentName.className = "name";
-    messageUserContentName.innerHTML = `${emittingUser.userName} <span class="badge bg-blue">20</span>`;
+    messageUserContentName.innerHTML = `${emittingUser.userName} <span class="badge bg-blue">${emittingUser.level}</span>`;
     let messageUserContentComment = document.createElement("div");
     messageUserContentComment.className = "comment";
     messageUserContentComment.innerHTML = message;

@@ -27,6 +27,7 @@ module.exports = (io) => {
             socket.userId = userData.userId;
             socket.userName = userData.userName;
             socket.avatar = userData.avatar;
+            socket.level = userData.level;
             socket.emit("time elapsed", chronJobs.timeRemaining);
         });
 

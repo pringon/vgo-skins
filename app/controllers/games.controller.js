@@ -1,5 +1,6 @@
 "use strict";
-const userUtils         = require("../../libs/user_utils"),
+const db                = require("../database/models"),
+      userUtils         = require("../../libs/user_utils"),
       jackpotStakeStore = require("../../libs/jackpot_stakes_store"),
       offerHandler      = require("../../libs/offer_handler");
 
@@ -7,15 +8,18 @@ module.exports = (() => {
 
     this.getRoulette = async(req, res) => {
         let currentUser = await userUtils.getUser(req.user.steamId);
-        res.render("pages/roulette.ejs", {
-            currentUser: {
-                level: req.user.level,
-                ...currentUser
-            },
-            chat: true,
-            roulette: true,
-            rouletteType: req.params.rouletteType
-        });
+        db.JackpotHistory.getTierHistory(0, jackpotHistory => {
+            res.render("pages/roulette.ejs", {
+                jackpotHistory,
+                currentUser: {
+                    level: req.user.level,
+                    ...currentUser
+                },
+                chat: true,
+                roulette: true,
+                rouletteType: req.params.rouletteType
+            });
+        })
     };
 
     this.postRouletteStake = (req, res) => {

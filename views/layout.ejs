@@ -18,6 +18,7 @@
 
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/styles/style.css">
+        <link rel="stylesheet" href="/styles/responsive.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
         <script src="/scripts/Chart.PieceLabel.js"></script>
 
@@ -52,6 +53,58 @@
         <script src="/scripts/flickity.pkgd.min.js"></script>
         <script src="/scripts/circles.js"></script>
 
+        <!-- Chat-responsive -->
+        <script type="text/javascript">
+            $(window).on('load resize', function () {
+                if ($(window).width() < 1200) {
+                    $(".chat-panel").addClass("collapse in");
+                } else {
+                    $(".chat-panel").removeClass("collapse in");
+                }
+            });
+        </script>
+        <!-- end -->
+
+        <!-- body scroll none -->
+        <script type="text/javascript">
+            $(window).on('load', function () {
+                $(".chat-bar-menu").click(function(){
+                    $("body").toggleClass("scroll-none");
+                });
+                $(".navbar-toggler").click(function(){
+                    $("body").toggleClass("scroll-none");
+                });
+            });
+        </script>
+        <!-- end -->
+
+        <!-- Levels icons -->
+        <script type="text/javascript">
+            $(window).on('load', function () {
+                $(".level > .badge").each(function(k,v){
+                    let levels = parseInt($(this).text());
+                    if(levels <= 9 ){
+                        $(this).addClass("bg-gray");
+                    }
+                    if(levels > 9 && levels <= 19 ){
+                        $(this).addClass("bg-blue");
+                    }
+                    if(levels > 19 && levels <= 29 ){
+                        $(this).addClass("purple-blue");
+                    }
+                    if(levels > 29 && levels <= 39 ){
+                        $(this).addClass("blue-shade");
+                    }
+                    if(levels > 39 && levels <= 49 ){
+                        $(this).addClass("green-shade");
+                    }
+                    if(levels > 49 ){
+                        $(this).addClass("silver-white");
+                    }
+                });
+            });
+        </script>
+        <!-- end -->
 
         <script type="text/javascript">
             function spinJackpot(winnerPos) {
@@ -145,8 +198,12 @@
             <script src="/socket.io/socket.io.js"></script>
             <script type="text/javascript">
                 const socket = io();
-                const currentUserSteamId = <%- currentUser.steamid %>;
-                socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>", avatar: "<%- currentUser.avatarfull %>" });
+                const currentUserData = {
+                    steamId: <%- currentUser.steamid %>,
+                    level: <%- currentUser.level %>
+                };
+                socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>", 
+                                            avatar: "<%- currentUser.avatarfull %>", level: <%- currentUser.level %> });
                 socket.on("reconnect", () => {
                     socket.emit("user data", { userId: <%- currentUser.steamid %>, userName: "<%- currentUser.personaname %>", avatar: "<%- currentUser.avatarfull %>" });
                 });
@@ -161,6 +218,83 @@
         <% } %>
 
         <% if(typeof roulette !== "undefined" && roulette == true) { %>
+            <!-- Jackpot-resposive -->
+            <script type="text/javascript">
+                $(window).on('load resize', function () {
+                    let jpWidth = $( ".jackpot" ).width(),
+                        getP = jpWidth * (23/100),
+                        getJPWidth = jpWidth * (6.43/100),
+                        getScoreTextA = jpWidth * (8.93/100),
+                        getScoreTextB = jpWidth * (5.36/100),
+                        getScoreIcon = jpWidth * (9.82/100);
+                    if(jpWidth < 560){
+                        $( ".jackpot-timer" ).css({"top": getP, "bottom": getP, "left": getP, "right": getP});
+                        $( "#doughnut-canvas" ).css({"padding": getJPWidth});
+                        $( ".jackpot-score" ).css({"padding": getP, "width": jpWidth, "height": jpWidth});
+                        $( ".jackpot-score .amount" ).css({"font-size": getScoreTextA});
+                        $( ".jackpot-score .skins" ).css({"font-size": getScoreTextB});
+                        $( ".jackpot-score .icon" ).css({"width": getScoreIcon, "height": getScoreIcon});
+                    }
+                });
+            </script>
+            <!-- end -->
+            
+            <!-- Jackpot-timer -->
+            <script>
+                (function() {
+                var canvas = document.getElementById('canvas'),
+                    circlesCreated = false;
+                function onScroll() {
+                    if (!circlesCreated && elementInViewport(canvas)) {
+                    circlesCreated = true;
+                    createCircles();
+                    }
+                }
+                function elementInViewport(el) {
+                    var rect = el.getBoundingClientRect();
+                    return (
+                    rect.top  >= 0 &&
+                    rect.left >= 0 &&
+                    rect.top  <= (window.innerHeight || document.documentElement.clientHeight)
+                    );
+                }
+                function createCircles() {
+                    var colors = [
+                        ['#595980', '#ffffff']
+                    ],
+                    circles = [];
+                    for (var i = 1; i <= colors.length; i++) {
+                    var child = document.getElementById('circles-' + i),
+                        circle = Circles.create({
+                        id:         child.id,
+                        value:      10,
+                        maxValue:   10,
+                        duration:   10000,
+                        radius:     getWidth(),
+                        width:      4,
+                        colors:     colors[i - 1]
+                        });
+                    circles.push(circle);
+                    }
+                    window.onload = function(e) {
+                    for (var i = 0; i < circles.length; i++) {
+                        circles[i].updateRadius(getWidth());
+                    }
+                    };
+                    window.onresize = function(e) {
+                    for (var i = 0; i < circles.length; i++) {
+                        circles[i].updateRadius(getWidth());
+                    }
+                    };
+                    function getWidth() {
+                    let jpw = $( ".jackpot-timer" ).width();
+                    return jpw / 2;
+                    }
+                }
+                window.onscroll = onScroll;
+                })();
+            </script>
+            <!-- end -->
             <script type="text/javascript">
                 $(".firework img").hide();
             </script>

@@ -1,0 +1,479 @@
+/*New element css*/
+.scroll-none{
+  overflow: hidden;
+}
+.chat-bar-menu{
+	display: none;
+}
+.chat-bar-menu:hover{
+	color: #fff;
+}
+.navbar-toggler-icon{
+	color: #fff;
+}
+.profile-dropdown{
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 20px;
+  text-align: center;
+  color: #fff;
+  display: none;
+}
+.profile-dropdown:hover{
+  color: #fff;
+}
+#sidebar.collapse {
+  -webkit-transition-timing-function: ease;
+       -o-transition-timing-function: ease;
+          transition-timing-function: ease;
+  -webkit-transition-duration: .2s;
+       -o-transition-duration: .2s;
+          transition-duration: .2s;
+}
+
+#sidebar.collapsing {
+  width: 0;
+  -webkit-transition-timing-function: ease-in;
+       -o-transition-timing-function: ease-in;
+          transition-timing-function: ease-in;
+  -webkit-transition-property: width;
+       -o-transition-property: width;
+          transition-property: width;
+
+}
+
+@media screen and (max-width: 1200px) {
+  .chat-panel {
+    background: #2e2e50;
+    top: 86px;
+    padding: 0px;
+    padding-top: 44px;
+    overflow: hidden;
+        height: inherit;
+  }
+  .chat-panel .online-display{
+  	width: 300px;
+  	position: absolute;
+  	top: 0px;
+  	left: 0px;
+  	border-radius: 0px;
+  	padding: 10px;
+  	z-index: 1;
+  }
+  .chat-panel .chat-list {
+    width: 300px;
+    overflow-y: auto;
+    position: absolute;
+    bottom: 0;
+    top: 50px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.chat-panel .footer-sec {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #262649;
+    padding: 11px 30px;
+    width: 100%;
+}
+  .content{
+  	padding: 0px;
+  	padding-top: 86px;
+  }
+  .navbar-left{
+  	padding-right: 0px;
+  }
+  .navbar-right{
+	position: relative;
+	width: auto;
+	float: right;
+	top: 0;
+	height: auto;
+  }
+  .navbar-right .profile-panel{
+	padding: 0 15px;
+	padding-top: 20px;
+	line-height: normal;
+	height: 86px;
+  }
+  .main-panel{
+  	margin-top: 0px;
+  	border-radius: 0px;
+  }
+  .chat-bar-menu{
+  	width: 60px;
+  	height: 60px;
+  	position: fixed;
+  	right: 15px;
+  	bottom: 15px;
+  	text-align: center;
+  	z-index: 99;
+  	color: #ffffff;
+  	font-size: 30px;
+  	line-height: 60px;
+  	box-shadow: 0px 6px 8px rgba(0,0,0,0.5);
+  	display: block;
+  }
+  .navbar{
+  	position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 999;
+    top: 0;
+  }
+  .navbar-brand{
+  	margin-bottom:15px;
+  }
+  .navbar .nav-link{
+  	padding-bottom: 15px;
+  }
+
+}
+
+@media screen and (max-width: 991px) {
+  .navbar-right .profile-panel .link-label{
+    display: none;
+  }
+  .navbar-right .profile-panel{
+    height: 60px;
+    padding: 0px;
+    padding-right: 15px;
+  }
+  .navbar-right .profile-panel.active, .navbar-right .profile-panel:hover{
+    background: inherit;
+  }
+  .navbar-right .profile-panel .avatar{
+    width: 45px;
+    height: 45px;
+    margin: 0px;
+    margin-top: 7px;
+  }
+  .navbar-brand{
+    margin-bottom: 5px;
+    padding-top: 10px;
+  }
+  .navbar .navbar-brand img{
+    width: 150px;
+  }
+  .navbar-toggler{
+    width: 60px;
+    height: 60px;
+    border: none;
+    padding: 0;
+    line-height: 27px;
+  }
+  .navbar-left{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 60px;
+    bottom: 0;
+    background: #222341;
+    overflow-y: auto;
+  }
+  .navbar .nav-item{
+    width: 100%;
+    border: none;
+    border-bottom: solid 1px #141422
+  }
+  .profile-dropdown{
+    display: block; 
+  }
+  .content{
+    padding-top: 60px;
+  }
+  .main-panel .panel-leftbar{
+    position: relative;
+    width: 100%;
+    float: left;
+    top: 0;
+  }
+  .main-panel .panel-leftbar .player-list .player{
+    width: 50%;
+    float: left;
+    border-right: solid 1px #141422;
+  }
+  .jackpot-panel{
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .main-panel .scoreboard{
+    display: none;
+  }
+  .winners-history-panel{
+    padding-left: 15px;
+  }
+  .winners-history-panel .winning-items ul li{
+  width: 120px;
+  }
+  .winners-history-panel .winner-info{
+    width: 100%;
+    text-align: center;
+  }
+  .winners-history-panel .winner-info .avatar{
+    float: none;
+    display: inline-block;
+    margin-right: 0px;
+  }
+  .chat-panel{
+    top: 60px;
+  }
+  .navbar-right .btn-login{
+    display: none;
+    position: fixed;
+    top: 60px;
+    right: 0;
+    margin: 0;
+    border-radius: 0px;
+  }
+  .navbar-right .btn-login.open{
+    display: block;
+  }
+  .navbar .nav-link .nav-link-grp{
+    width: 100%;
+    padding: 0 15px;
+  }
+  .navbar .nav-link .link-label{
+    padding-top: 12px;
+  }
+  .navbar .nav-link .link-label .badge{
+    float: right;
+  }
+  .main-panel .panel-leftbar .player-list .player .avatar:before{
+    display: none;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .modal-inventory .score-panel .item{
+    margin-bottom: 0px;
+    padding: 10px;
+    border-radius: 0px;
+    border-bottom: 1px solid #15152a;
+  }
+  .modal-inventory .data-panel .controlers{
+    margin-top: 10px;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+  .modal-inventory .data-panel .controlers .btn{
+    height: 86px;
+    float: left;
+    font-size: 13px;
+    padding: 0px;
+    margin:0px;
+    border-radius: 0px;
+    border-right: solid 1px #15152a;
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+  }
+  .modal-inventory .data-panel .controlers .btn:last-child{
+    border:none;
+  }
+  .modal-inventory .data-panel .controlers .btn .icon{
+    display: block;
+    width: 100%;
+    height: 36px;
+    float: none;
+  }
+  .modal-inventory .data-panel .controlers .btn .icon img{
+    vertical-align: top;
+    width: 50px;
+  }
+  .modal-inventory .data-panel .bottom-sec{
+    text-align: center;
+  }
+  .modal-inventory .data-panel .bottom-sec .btn{
+    float: none !important;
+    margin-top: 10px;
+  }
+  .modal-inventory .data-panel .bottom-sec .text{
+    margin: 0px;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .modal-inventory .data-panel .controlers .your-coins{
+    width: 100%;
+    text-align: center;
+    margin: 0px;
+    margin-top: 10px;
+  }
+  .modal-inventory .score-panel .item.cols3{
+    padding: 10px;
+  }
+  .coin-flip-panel{
+    padding: 15px;
+  }
+  .coin-flip-panel .coin-flip-score .scores .cols{
+    border: none;
+    border-bottom: solid 1px #11111d;
+  }
+  .coin-flip-panel .coin-flip-score .action-panel{
+    width: 100%;
+    border: none;
+    border-bottom: solid 1px #11111d;
+  }
+  .coin-flip-panel .coin-flip-score .action-panel .btn:last-child{
+    float: right;
+  }
+  .coin-flip-panel .coin-flip-score .scores{
+    width: 100%;
+    display: inline-block;
+  }
+  .coin-players-list .item .skins-col{
+    display: inline-block;
+    width: 100%;
+    margin-top: 10px; 
+  }
+  .coin-players-list .item .action-col .btn{
+    margin-top: 0px;
+  }
+  .coin-players-list .item .action-col .circle{
+    margin-top: 0px;
+  }
+  .coin-players-list .item .action-col .avatar{
+     margin-top: 0px;
+  }
+  .coin-players-list .item .player-vs .avatar{
+    width: 45px;
+    height: 45px;
+  }
+  .coin-players-list .item .player-vs .vs{
+    margin: 0 -10px;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    line-height: 16px;
+    font-size: 12px;
+  }
+  .coinFlipModal .modal-header{
+    padding: 0px;
+    margin-bottom: 15px;
+  }
+  .coinFlipModal .players-panel .player-left{
+    text-align: center;
+    width: 80px;
+    padding: 15px 0px;
+  }
+  .coinFlipModal .players-panel .player-left .avatar{
+    display: inline-block;
+    float: none;
+    width: 70px;
+    height: 70px;
+  }
+  .coinFlipModal .players-panel .player-left .name{
+    display: inline-block;
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    margin-top: 10px;
+  }
+  .coinFlipModal .players-panel .player-right{
+    text-align: center;
+    width: 80px;
+    padding: 15px 0px;
+  }
+  .coinFlipModal .players-panel .player-right .avatar{
+    display: inline-block;
+    float: none;
+    width: 70px;
+    height: 70px;
+  }
+  .coinFlipModal .players-panel .player-right .name{
+    display: inline-block;
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    margin-top: 10px;
+  }
+  .coinFlipModal .players-panel .coin-flip-anim #coin-flip-here{
+    width: 80px;
+    height: 80px;
+    margin-top: 10px;
+  }
+  .coinFlipModal .players-panel .coin-flip-anim{
+    margin-top: 10px;
+  }
+  .profile-content-panel .dashboard-panel .left-panel{
+    float: left;
+    width: 100%;
+    text-align: center;
+  }
+  .profile-content-panel .dashboard-panel .left-panel .avatar{
+    display: inline-block;
+    margin-right: 0px;
+    float: none;
+  }
+  .profile-content-panel .dashboard-panel .right-panel{
+    float: left;
+    width: 100%;
+  }
+  .profile-content-panel .level-status-panel .row .col{
+    width: 100%;
+    -ms-flex-preferred-size: inherit;
+    flex-basis: inherit;
+    -ms-flex-positive: inherit;
+    flex-grow: inherit;
+    padding: 5px;
+  }
+  .modal-lg .modal-header{
+    padding: 0px;
+    margin-bottom: 15px;
+  }
+  
+}
+@media screen and (max-width: 768px) {
+  .coinFlipModal .palyer-skins-panel .col{
+    -ms-flex-preferred-size: inherit;
+    flex-basis: inherit;
+    -ms-flex-positive: inherit;
+    flex-grow: inherit;
+  }
+  .coinFlipModal .palyer-skins-panel .col:first-child{
+    padding: 0 15px 20px 15px;
+  }
+  .coinFlipModal .palyer-skins-panel .col:last-child{
+    padding: 20px 15px 0px 15px;
+  }
+  .coinFlipModal .palyer-skins-panel .devider{
+    width: inherit;
+    height: 2px;
+    background: #434364;
+    position: absolute;
+    top: 50%;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    margin-top: -1px; 
+  }
+  .coinFlipModal .palyer-skins-panel .devider:before{
+    left: 50%
+  }
+  .profile-content-panel .dashboard-panel .right-panel .col{
+    width: 100%;
+    -ms-flex-preferred-size: inherit;
+    flex-basis: inherit;
+    -ms-flex-positive: inherit;
+    flex-grow: inherit;
+    padding: 5px;
+  }
+  .profile-content-panel .support-panel .btn{
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .historyModal .panel .left-panel{
+    width: 100%;
+    float: left;
+  }
+  .winners-history-panel .panel .left-panel{
+    width: 100%;
+    float: left;
+  }
+}

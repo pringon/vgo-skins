@@ -13,9 +13,9 @@ module.exports = (() => {
         res.redirect('/');
     };
 
-    this.getProfile = (req, res) => {
+    this.getProfile = async(req, res) => {
 
-        let currentUser = userUtils.getUser(req.user.steamId);
+        let currentUser = await userUtils.getUser(req.user.steamId);
 
         if(req.params.id == req.user.steamId) {
             res.render("pages/profile.ejs", {
@@ -27,7 +27,7 @@ module.exports = (() => {
             });
         } else {
             
-            let queriedUser = userUtils.getUser(req.params.id);
+            let queriedUser = await userUtils.getUser(req.params.id);
             if(typeof queriedUser === 'undefined') {
                 queriedUser = currentUser;
             }

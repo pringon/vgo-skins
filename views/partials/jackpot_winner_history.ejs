@@ -1,0 +1,57 @@
+<div class="winners-history-panel">
+    <% jackpotHistory.forEach(jackpotEntry => { %>
+        <div class="panel rounded">
+            <div class="player-list">
+                <div class="winner-info rounded">
+                    <div class="avatar rounded-circle">
+                        <a href="/user/profile/<%- jackpotEntry.winner.id %>""><img src="<%- jackpotEntry.winner.avatar %>" class="rounded-circle"></a>
+                    </div>
+                    <div class="info">
+                        <div class="name"><%- jackpotEntry.winner.name %></div>
+                        <div class="score">
+                            <label>Win: </label> $<%- (parseFloat(jackpotEntry.total)/100).toFixed(2) %>
+                        </div>
+                        <div class="score">
+                            <label>Chance: </label> <%- (parseFloat(jackpotEntry.winner.total)*100/parseFloat(jackpotEntry.total/100)).toFixed(2) %>%
+                        </div>
+                    </div>
+                </div>
+                <ul>
+                    <% jackpotEntry.stakes.forEach(stake => { %>
+                        <% if(stake.userId != jackpotEntry.winner.id) { %>
+                            <li>
+                                <a href="/user/profile/stake.userId" class="rounded">
+                                    <span class="avatar">
+                                        <img src="<%- stake.userData.avatar %>">
+                                        <span class="score"><%- (parseFloat(stake.total)*100/(parseFloat(jackpotEntry.total)/100)).toFixed(2) %>%</span>
+                                    </span>
+                                </a>
+                            </li>
+                        <% } %>
+                    <% }); %>
+                </ul>
+            </div>
+            <div class="winning-items rounded">
+                <div class="title">Winning Items</div>
+                <ul>
+                    <% jackpotEntry.stakes.forEach(stake => { %>
+                        <% stake.items.forEach(item => { %>
+                            <li class="skin-item rounded">
+                                <div class="top-sec">
+                                    <span class="code"><%- item.wear %></span>
+                                    <span class="amount">$<%- (parseFloat(item.suggested_price)/100).toFixed(2) %></total>
+                                </div>
+                                <div class="mid-sec">
+                                    <img src="<%- item.image['300px'] %>">
+                                </div>
+                                <div class="bottom-sec">
+                                    <%- item.name %>
+                                </div>
+                            </li>
+                        <% }); %>
+                    <% }); %>
+                </ul>
+            </div>
+        </div>
+    <% }); %>
+</div>
