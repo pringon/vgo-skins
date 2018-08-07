@@ -8,7 +8,8 @@ module.exports = (io, socket) => {
                 message,
                 emittingUser: {
                     userName: socket.userName,
-                    avatar: socket.avatar
+                    avatar: socket.avatar,
+                    level: socket.level
                 }
             });
         }

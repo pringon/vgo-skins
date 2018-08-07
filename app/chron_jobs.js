@@ -1,5 +1,6 @@
 "use strict";
-const rouletteSocket = require("./sockets/roulette_socket"),
+const db             = require("./database/models"),
+      rouletteSocket = require("./sockets/roulette_socket"),
       jackpotStore   = require("../libs/jackpot_stakes_store"),
       offerHandler   = require("../libs/offer_handler");
 
@@ -8,7 +9,27 @@ module.exports = {
     timeRemaining: 90,
     connectedUsers: 0,
 
-    handleWinnerOffer: function(userId, items) {
+    getItemWearCode: function(wearValue) {
+
+        if(wearValue == null) {
+            return'';
+        }
+        if(wearValue < 0.07) {
+            return "FN";
+        }
+        if(wearValue < 0.15) {
+            return "MW";
+        }
+        if(wearValue < 0.37) {
+            return "FT";
+        }
+        if(wearValue < 0.44) {
+            return "WW";
+        }
+        return "BS";
+    },
+
+    handleWinnerOffer: function(userId, items, cb = null) {
 
         const total = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price), 0);
         const rakeMax = total * 0.1;
@@ -52,6 +73,9 @@ module.exports = {
 
         offerHandler.sendOffer(userId, items.map(item => item.id).join(','), "Jackpot prize", (body) => {
             setTimeout(rouletteSocket.startRound.bind(rouletteSocket), 6500);
+            if(cb) {
+                cb(total);
+            }
         });
     },
 
@@ -85,7 +109,29 @@ module.exports = {
                                 stakes.forEach(stake => {
                                     stake.items.forEach(item => prizePot.push(item));
                                 });
-                                this.handleWinnerOffer(winner.id, prizePot);
+                                this.handleWinnerOffer(winner.id, prizePot, total => {
+                                    db.JackpotHistory.create({
+                                        total,
+                                        winner: winner.id,
+                                        tier: 0,
+                                        stakes: JSON.stringify(stakes.map(stake => {
+                                            return {
+                                                userId: stake.id,
+                                                total: stake.total,
+                                                items: stake.items.map(item => {
+                                                    return {
+                                                        wear: this.getItemWearCode(item.wear),
+                                                        image: {
+                                                            "300px": item.image["300px"]
+                                                        },
+                                                        name: item.name,
+                                                        suggested_price: item.suggested_price
+                                                    }
+                                                })
+                                            }
+                                        }))
+                                    });
+                                });
                             });
                         });
                     });

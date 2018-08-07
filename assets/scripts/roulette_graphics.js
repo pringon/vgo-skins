@@ -2,6 +2,7 @@
  * A function that takes all the bets from the current round and returns the total sum of money bet
  * @method getTotal
  * @param {Array} stakesList is an array containing the current round's bets
+ * @param {String} att is the object attribute to be summed up
  * @return {int} the total amount of money that was bet this round
  */
 function getTotal(stakesList, att = "total") {
@@ -23,7 +24,7 @@ function listUsers(stakesList) {
 
     let total = getTotal(stakesList);
     $(".jackpot-score > .amount").text(`$${total.toFixed(2)}`);
-    document.getElementsByClassName("score")[6].textContent = `$${total.toFixed(2)}`;
+    Array.from(document.getElementsByClassName("score")).slice(-5)[2].textContent = `$${total.toFixed(2)}`;
 
     document.getElementsByClassName("score")[3].textContent = stakesList.length;
     
@@ -32,7 +33,7 @@ function listUsers(stakesList) {
 
     for(let i = stakesList.length-1; i >= 0; i--) {
 
-        if(stakesList[i].id == currentUserSteamId) {
+        if(stakesList[i].id == currentUserData.steamId) {
             document.getElementsByClassName("score")[0].innerHTML = `${(parseFloat(stakesList[i].total)/total*100).toFixed(2)}<small>%</small>`;        
             document.getElementsByClassName("score")[1].innerHTML = `<small>$</small>${parseFloat(stakesList[i].total).toFixed(2)}`;
      
@@ -287,7 +288,7 @@ function listModalItems({ availableItems, gambledItems }) {
         itemsRow.appendChild(itemContainer);
 
         columnIndex++;
-        if(columnIndex == 5) {
+        if(columnIndex == 4) {
             itemsList.appendChild(itemsRow);
             itemsRow = document.createElement("div");
             itemsRow.setAttribute("class", "row");
@@ -351,7 +352,7 @@ function listModalItems({ availableItems, gambledItems }) {
         itemsRow.appendChild(itemContainer);
 
         columnIndex++;
-        if(columnIndex == 5) {
+        if(columnIndex == 4) {
             itemsList.appendChild(itemsRow);
             itemsRow = document.createElement("div");
             itemsRow.setAttribute("class", "row");
