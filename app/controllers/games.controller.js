@@ -7,24 +7,59 @@ const db                = require("../database/models"),
 module.exports = (() => {
 
     this.getRoulette = async(req, res) => {
-        let currentUser = await userUtils.getUser(req.user.steamId);
-        db.JackpotHistory.getTierHistory(0, jackpotHistory => {
-            res.render("pages/roulette.ejs", {
-                jackpotHistory,
-                currentUser: {
-                    level: req.user.level,
-                    ...currentUser
-                },
-                chat: true,
-                roulette: true,
-                rouletteType: req.params.rouletteType
+        let rouletteTier = null;
+        switch(req.params.rouletteType) {
+            case "plant":
+                rouletteTier = 0;
+                break;
+            case "coal":
+                rouletteTier = 1;
+                break;
+            case "diamond":
+                rouletteTier = 2;
+                break;
+            default:
+                rouletteTier = null;
+        }
+        if(rouletteTier == null) {
+            res.redirect("/games/roulette/plant");
+        } else {
+            let currentUser = await userUtils.getUser(req.user.steamId);
+            db.JackpotHistory.getTierHistory(rouletteTier, jackpotHistory => {
+                res.render("pages/roulette.ejs", {
+                    rouletteTier,
+                    jackpotHistory,
+                    currentUser: {
+                        level: req.user.level,
+                        ...currentUser
+                    },
+                    chat: true,
+                    roulette: true
+                });
+            });
+        }
+    };
+
+    this.getRouletteStake = (req, res) => {
+
+        userUtils.getAvailableItems(req.user.steamId, (err, availableItems) => {
+            if(err) {
+                console.log(err);
+            }
+            jackpotStakeStore.getStake(req.params.rouletteType, req.user.steamId, gambledItems => {
+                console.log("intra");
+                if(gambledItems == null) {
+                    gambledItems = { items: [] };
+                }
+                res.json({ availableItems, gambledItems: gambledItems.items });
             });
         })
     };
 
     this.postRouletteStake = (req, res) => {
 
-        jackpotStakeStore.getStake(req.user.steamId, stake => {
+        console.log(req.params.rouletteType);
+        jackpotStakeStore.getStake(req.params.rouletteType, req.user.steamId, stake => {
 
             let newStake = [];
 
@@ -41,8 +76,9 @@ module.exports = (() => {
                 newStake = req.params.itemsGambled;
             }
 
+            console.log(`Deposit tier is ${req.params.rouletteType}`);
             offerHandler.sendOffer(req.user.steamId,
-                newStake, "Jackpot stake", (body) => {
+                newStake, `Jackpot stake ${this.getRouletteTier(req.params.rouletteType)}`, (body) => {
                     let responseData = JSON.parse(body).response;
                     if(typeof responseData !== 'undefined') {
                         if(responseData.status !== 400) {
@@ -65,6 +101,19 @@ module.exports = (() => {
             headon: true
         });
     };
+
+    this.getRouletteTier= rouletteType => {
+        switch(rouletteType) {
+            case "plant":
+                return 0;
+            case "coal":
+                return 1;
+            case "diamond":
+                return 2;
+            default:
+                return null;
+        };
+    }
 
     return this;
 })();

@@ -58,10 +58,10 @@ module.exports = {
         });
     },
 
-    getWinner: function(stakes, cb) {
+    getWinner: function(tier, stakes,  cb) {
 
         this.getTotal(stakes, total => {
-            jackpotStore.getRoundToken((err, token) => {
+            jackpotStore.getRoundToken(tier, (err, token) => {
                 let winner = token * total;
 
                 for(let stake of stakes) {
@@ -75,23 +75,23 @@ module.exports = {
         });
     },
 
-    refreshStakes: function() {
+    refreshStakes: function(tier) {
 
-        jackpotStore.getAllStakes(stakes => {
+        jackpotStore.getAllStakes(tier, stakes => {
             console.log(stakes);
-            this.io.sockets.emit("get roulette stakes", stakes);
+            this.io.to(`roulette tier ${tier}`).emit("get roulette stakes", stakes);
         });
     },
 
-    startRound: function() {
+    startRound: function(tier) {
 
-        jackpotStore.wipeStakes((err) => {
+        jackpotStore.wipeStakes(tier, (err) => {
             if(err) {
                 throw new Error(err);
             }
 
-            jackpotStore.setRoundToken();
-            this.refreshStakes();
+            jackpotStore.setRoundToken(tier);
+            this.refreshStakes(tier);
         });
     },
 
@@ -99,15 +99,22 @@ module.exports = {
         this.io = io;
     },
 
-    initSocket: function(socket) {
+    initSocket: function(socket, timeElapsed) {
 
-        socket.on("play roulette", () => {
+        socket.on("play roulette", (tier) => {
     
-            jackpotStore.getAllStakes(stakes => {
+            if(tier > 2) {
+                socket.emit("invalid tier option", true);
+                socket.disconnect();
+            } else {
+                socket.emit("time elapsed", timeElapsed[tier]);
+                socket.join(`roulette tier ${tier}`);
+                jackpotStore.getAllStakes(tier, stakes => {
                 
-                socket.emit("get roulette stakes", stakes);
-            });
-            console.log(`${socket.userName} is playing roulette`);
+                    socket.emit("get roulette stakes", stakes);
+                });
+                console.log(`${socket.userName} is playing roulette tier ${tier}`);
+            }
         });
     }
 };

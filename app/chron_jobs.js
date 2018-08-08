@@ -6,7 +6,7 @@ const db             = require("./database/models"),
 
 module.exports = {
 
-    timeRemaining: 90,
+    timeRemaining: [90, 90, 90],
     connectedUsers: 0,
 
     getItemWearCode: function(wearValue) {
@@ -29,7 +29,7 @@ module.exports = {
         return "BS";
     },
 
-    handleWinnerOffer: function(userId, items, cb = null) {
+    handleWinnerOffer: function(userId, items, tier, cb = null) {
 
         const total = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price), 0);
         const rakeMax = total * 0.1;
@@ -72,7 +72,7 @@ module.exports = {
         }
 
         offerHandler.sendOffer(userId, items.map(item => item.id).join(','), "Jackpot prize", (body) => {
-            setTimeout(rouletteSocket.startRound.bind(rouletteSocket), 6500);
+            setTimeout(() => rouletteSocket.startRound(tier), 6500);
             if(cb) {
                 cb(total);
             }
@@ -82,59 +82,62 @@ module.exports = {
     jackPotTimer: function(io) {
 
         return () => {
-            if(this.timeRemaining == 90) {
+            for(let tier in this.timeRemaining) {
 
-                jackpotStore.getPlayerCount(count => {
-                    if(count >= 2) {
-                        this.timeRemaining--;
+                if(this.timeRemaining[tier] == 90) {
+
+                    jackpotStore.getPlayerCount(tier, count => {
+                        if(count >= 2) {
+                            this.timeRemaining[tier]--;
+                        }
+                    });
+                } else {
+                    this.timeRemaining[tier]--;
+                    if(this.timeRemaining[tier] <= 90) {
+                        io.to(`roulette tier ${tier}`).emit("time elapsed", this.timeRemaining[tier]);
                     }
-                });
-            } else {
-                this.timeRemaining--;
-                if(this.timeRemaining <= 90) {
-                    io.sockets.emit("time elapsed", this.timeRemaining);
-                }
-                if(this.timeRemaining == 0) {
-                    this.timeRemaining = 100;
-
-                    jackpotStore.getAllStakes(stakes => {
-                        console.log(stakes);
-                        rouletteSocket.getWinner(stakes, winner => {
-                            console.log(winner);
-                            rouletteSocket.getWinnerPos(stakes, winner.id, winnerPos => {
-                                console.log(winnerPos);
-                                io.sockets.emit("round finished", { winner, winnerPos });
-
-                                let prizePot = [];
-                                stakes.forEach(stake => {
-                                    stake.items.forEach(item => prizePot.push(item));
-                                });
-                                this.handleWinnerOffer(winner.id, prizePot, total => {
-                                    db.JackpotHistory.create({
-                                        total,
-                                        winner: winner.id,
-                                        tier: 0,
-                                        stakes: JSON.stringify(stakes.map(stake => {
-                                            return {
-                                                userId: stake.id,
-                                                total: stake.total,
-                                                items: stake.items.map(item => {
-                                                    return {
-                                                        wear: this.getItemWearCode(item.wear),
-                                                        image: {
-                                                            "300px": item.image["300px"]
-                                                        },
-                                                        name: item.name,
-                                                        suggested_price: item.suggested_price
-                                                    }
-                                                })
-                                            }
-                                        }))
+                    if(this.timeRemaining[tier] == 0) {
+                        this.timeRemaining[tier] = 100;
+    
+                        jackpotStore.getAllStakes(tier, stakes => {
+                            console.log(stakes);
+                            rouletteSocket.getWinner(tier, stakes, winner => {
+                                console.log(winner);
+                                rouletteSocket.getWinnerPos(stakes, winner.id, winnerPos => {
+                                    console.log(winnerPos);
+                                    io.to(`roulette tier ${tier}`).emit("round finished", { winner, winnerPos });
+    
+                                    let prizePot = [];
+                                    stakes.forEach(stake => {
+                                        stake.items.forEach(item => prizePot.push(item));
+                                    });
+                                    this.handleWinnerOffer(winner.id, prizePot, tier, total => {
+                                        db.JackpotHistory.create({
+                                            total,
+                                            tier,
+                                            winner: winner.id,
+                                            stakes: JSON.stringify(stakes.map(stake => {
+                                                return {
+                                                    userId: stake.id,
+                                                    total: stake.total,
+                                                    items: stake.items.map(item => {
+                                                        return {
+                                                            wear: this.getItemWearCode(item.wear),
+                                                            image: {
+                                                                "300px": item.image["300px"]
+                                                            },
+                                                            name: item.name,
+                                                            suggested_price: item.suggested_price
+                                                        }
+                                                    })
+                                                }
+                                            }))
+                                        });
                                     });
                                 });
                             });
                         });
-                    });
+                    }
                 }
             }
         };

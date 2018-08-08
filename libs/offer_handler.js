@@ -42,12 +42,14 @@ module.exports = {
         jackpotBetsStore.offerExists(offer.id, (offerExists) => {
             if(!offerExists) {
                 jackpotBetsStore.addOffer(offer.id);
-                jackpotBetsStore.setStake({ 
+                console.log(offer.message.slice(-1));
+                jackpotBetsStore.setStake(offer.message.slice(-1), 
+                { 
                     id: offer.recipient.steam_id,
                     user: offer.recipient.display_name,
                     avatar: offer.recipient.avatar
                 }, offer.recipient.items, () => {
-                    rouletteSocket.refreshStakes();
+                    rouletteSocket.refreshStakes(offer.message.slice(-1));
                 });
             }
         })
@@ -59,7 +61,7 @@ module.exports = {
 
         tradeBot.pollTrades();
         tradeBot.on("offerUpdated", (offer) => {
-            if(offer.state_name == "Accepted" && offer.message == "Jackpot stake") {
+            if(offer.state_name == "Accepted" && offer.message.indexOf("Jackpot stake") !== -1) {
                 this.handleJackpotOffer(offer);
             }
         });
