@@ -4,7 +4,7 @@
   "main": "server.js",
   "license": "MIT",
   "scripts": {
-    "post-herokubuild": "cd app/database && sequelize db:migrate:undo:all && sequelize db:migrate && cd ../..",
+    "post-herokubuild": "cd app/database && sequelize db:drop && sequelize db:create && sequelize db:migrate && cd ../..",
     "start": "node server.js"
   },
   "dependencies": {
