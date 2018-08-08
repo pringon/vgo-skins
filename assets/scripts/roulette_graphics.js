@@ -403,7 +403,7 @@ $(document).ready(function() {
         //         listModalItems(items);
         //     });
             $.ajax({
-                url: "/user/items",
+                url: `/games/roulette/${rouletteTier}/items`,
                 success: (items) => {
                     console.log(items);
                     listModalItems(items);

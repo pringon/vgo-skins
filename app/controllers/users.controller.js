@@ -68,21 +68,6 @@ module.exports = (() => {
         }
     },
 
-    this.getAvailableItems = (req, res) => {
-
-        userUtils.getAvailableItems(req.user.steamId, (err, availableItems) => {
-            if(err) {
-                console.log(err);
-            }
-            jackpotStore.getStake(req.user.steamId, gambledItems => {
-                if(gambledItems == null) {
-                    gambledItems = { items: [] };
-                }
-                res.json({ availableItems, gambledItems: gambledItems.items });
-            });
-        })
-    },
-
     this.postLogout = (req, res) => {
 
         req.logout();

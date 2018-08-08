@@ -11,7 +11,9 @@ module.exports = (io) => {
 
     rouletteSocket.initRoulette(io);
     
-    rouletteSocket.startRound();
+    rouletteSocket.startRound(0);
+    rouletteSocket.startRound(1);
+    rouletteSocket.startRound(2);
     setInterval(chronJobs.jackPotTimer(io), 1000);
     setInterval(chronJobs.updateUsers(io), 10000);
 
@@ -28,11 +30,10 @@ module.exports = (io) => {
             socket.userName = userData.userName;
             socket.avatar = userData.avatar;
             socket.level = userData.level;
-            socket.emit("time elapsed", chronJobs.timeRemaining);
         });
 
         require("./sockets/chat_socket")(io, socket);
-        rouletteSocket.initSocket(socket);
+        rouletteSocket.initSocket(socket, chronJobs.timeRemaining);
 
         socket.on("play headon", () => {
 

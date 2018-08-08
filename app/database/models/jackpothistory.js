@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   JackpotHistory.getTierHistory = function(tier = 0, cb = null) {
     JackpotHistory.findAll({
-      limit: 1,
+      limit: 5,
       where: {
           tier
       },

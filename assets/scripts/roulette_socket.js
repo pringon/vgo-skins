@@ -2,7 +2,7 @@ $(document).ready(function() {
 
     $('.gallery').flickity('resize');
 
-    socket.emit("play roulette", true);
+    socket.emit("play roulette", rouletteTier);
     socket.on("get roulette stakes", (stakesData) => {
         console.log(stakesData);
         refreshScreen(stakesData);
@@ -31,4 +31,7 @@ $(document).ready(function() {
         $(".modal-content .row .score-panel .item .score:eq(1)").text(`$0.00`);
         $(".data-panel .bottom-sec button").text(`Deposit $0.00 (0 Skins)`);
     });
+    socket.on("invalid tier option", () => {
+        window.location.href = "/games/roulette/plant";
+    })
 });
