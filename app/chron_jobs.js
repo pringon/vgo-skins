@@ -132,6 +132,10 @@ module.exports = {
                                                     })
                                                 }
                                             }))
+                                        }).then(() => {
+                                            db.JackpotHistory.getTierHistory(tier, jackpotHistory => {
+                                                io.to(`roulette tier ${tier}`).emit("update jackpot history", jackpotHistory);
+                                            });
                                         });
                                     });
                                 });

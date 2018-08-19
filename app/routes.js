@@ -1,8 +1,7 @@
 "use strict";
 
 const UsersController = require("./controllers/users.controller"),
-      GamesController = require("./controllers/games.controller"),
-      userUtils       = require("../libs/user_utils");
+      GamesController = require("./controllers/games.controller");
 
 module.exports = (app, passport) => {
 

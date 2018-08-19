@@ -172,6 +172,7 @@ module.exports = {
             playerList.forEach(player => {
                 multiTask.del(`jackpot_players:${tier}:${player}`);
                 multiTask.del(`jackpot_players:${tier}:${player}:items`);
+                multiTask.del(`jackpot_players:${tier}:${player}:itemIds`);
             });
 
             multiTask.exec((err, results) => {

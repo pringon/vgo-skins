@@ -1,5 +1,6 @@
 "use strict";
-const db                = require("../database/models"),
+const request           = require("request-promise"),
+      db                = require("../database/models"),
       userUtils         = require("../../libs/user_utils"),
       jackpotStakeStore = require("../../libs/jackpot_stakes_store"),
       offerHandler      = require("../../libs/offer_handler");
@@ -58,12 +59,35 @@ module.exports = (() => {
 
     this.postRouletteStake = (req, res) => {
 
-        console.log(req.params.rouletteType);
-        jackpotStakeStore.getStake(req.params.rouletteType, req.user.steamId, stake => {
+        let maxStake, minStake, rouletteTier;
+
+        switch(req.params.rouletteType) {
+            case "plant":
+                rouletteTier = 0;
+                minStake = 0.1;
+                maxStake = 0.5;
+                break;
+            case "coal":
+                rouletteTier = 1;
+                minStake = 0.5;
+                maxStake = 1.0;
+                break;
+            case "diamond":
+                rouletteTier = 2;
+                minStake = 1.0;
+                maxStake = Infinity;
+                break;
+            default:
+                res.send("Invalid roullete type");
+        }
+
+        jackpotStakeStore.getStake(rouletteTier, req.user.steamId, stake => {
 
             let newStake = [];
+            let totalGambled = 0.0;
 
             if(stake !== null) {
+                totalGambled = parseFloat(stake.total);
 
                 let betItems = req.params.itemsGambled.split(',');
                 for(let item of betItems) {
@@ -76,17 +100,36 @@ module.exports = (() => {
                 newStake = req.params.itemsGambled;
             }
 
-            console.log(`Deposit tier is ${req.params.rouletteType}`);
-            offerHandler.sendOffer(req.user.steamId,
-                newStake, `Jackpot stake ${this.getRouletteTier(req.params.rouletteType)}`, (body) => {
-                    let responseData = JSON.parse(body).response;
-                    if(typeof responseData !== 'undefined') {
-                        if(responseData.status !== 400) {
-                            
-                            res.json({ tradeId: responseData.offer.id });
-                        }
-                    }
-            });
+            request({
+                method: "GET",
+                url: `https://api-trade.opskins.com/IItem/GetItemsById/v1/?item_id=${newStake}`,
+                headers: { 
+                    'Cache-Control': 'no-cache',
+                    'Authorization': offerHandler.opskinsHeaders.Authorization 
+                }
+            })
+            .then(body => JSON.parse(body))
+            .then(body => {
+                body.response.items.forEach(item => {
+                    totalGambled += parseFloat(item.suggested_price)/100;
+                });
+                
+                if(totalGambled <= maxStake && totalGambled >= minStake) {
+                    offerHandler.sendOffer(req.user.steamId,
+                        newStake, `Jackpot stake ${this.getRouletteTier(req.params.rouletteType)}`, (body) => {
+                            let responseData = JSON.parse(body).response;
+                            if(typeof responseData !== 'undefined') {
+                                if(responseData.status !== 400) {
+                                    
+                                    res.json({ tradeId: responseData.offer.id });
+                                }
+                            }
+                    });
+                } else {
+                    res.json({ err: { message: "Stake is not withing limits" }});
+                }
+            })
+            .catch(console.log);
         });
     };
 
