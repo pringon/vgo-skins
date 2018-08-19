@@ -190,6 +190,143 @@ function populateItemsGallery(stakesList) {
 }
 
 /**
+ * A function that takes up to 5 of the latest jackpot rounds and showcases them at the bottom of the page
+ * @method populateJackpotHistory
+ * @param {Array} jackpotHistory 
+ */
+function populateJackpotHistory(jackpotHistory) {
+
+    let jackpotRounds = document.createDocumentFragment();
+
+    jackpotHistory.forEach(jackpotEntry => {
+
+        let roundPanel = document.createElement("div");
+        roundPanel.setAttribute("class", "panel rounded");
+
+
+        let playerList = document.createElement("div");
+        playerList.setAttribute("class", "player-list");
+
+
+        let winnerInfo = document.createElement("div");
+        winnerInfo.setAttribute("class", "winner-info rounded");
+        
+        
+        let avatarDiv = document.createElement("div");
+        avatarDiv.setAttribute("class", "avatar rounded-circle");
+        let avatarLink = document.createElement('a');
+        avatarLink.setAttribute("href", `/user/profile/${jackpotEntry.winner.id}`);
+        let avatarImage = document.createElement("img");
+        avatarImage.setAttribute("src", jackpotEntry.winner.avatar);
+        avatarImage.setAttribute("class", "rounded-circle");
+        avatarLink.appendChild(avatarImage);
+        avatarDiv.appendChild(avatarLink);
+        
+        let playerInfoDiv = document.createElement("div");
+        playerInfoDiv.setAttribute("class", "info");
+        
+        let playerNameDiv = document.createElement("div");
+        playerNameDiv.setAttribute("class", "name");
+        playerNameDiv.textContent = jackpotEntry.winner.name;
+        let playerPrizeDiv = document.createElement("div");
+        playerPrizeDiv.setAttribute("class", "score");
+        playerPrizeDiv.innerHTML = `<label>Win: </label> $${(parseFloat(jackpotEntry.total)/100).toFixed(2)}`
+        let playerWinChanceDiv = document.createElement("div");
+        playerWinChanceDiv.setAttribute("class", "score");
+        playerWinChanceDiv.innerHTML = `<label>Chance: </label> ${(parseFloat(jackpotEntry.winner.total)*100/parseFloat(jackpotEntry.total)/100).toFixed(2)}%`;
+
+        playerInfoDiv.appendChild(playerNameDiv);
+        playerInfoDiv.appendChild(playerPrizeDiv);
+        playerInfoDiv.appendChild(playerWinChanceDiv);
+
+        winnerInfo.appendChild(avatarDiv);
+        winnerInfo.appendChild(playerInfoDiv);
+
+        playerList.appendChild(winnerInfo);
+
+        let losingPlayersList = document.createElement("ul");
+        jackpotEntry.stakes.forEach(stake => {
+
+            if(stake.userId != jackpotEntry.winner.id) {
+                
+                let losingPlayer = document.createElement("li");
+
+                let losingPlayerAvatarLink = document.createElement("a");
+                losingPlayerAvatarLink.setAttribute("href", `/user/profile/${stake.userId}`);
+                losingPlayerAvatarLink.setAttribute("class", "rounded");
+
+                let losingPlayerAvatar = document.createElement("span");
+                losingPlayerAvatar.setAttribute("class", "avatar");
+
+                losingPlayerAvatarImage = document.createElement("img");
+                losingPlayerAvatarImage.setAttribute("src", stake.userData.avatar);
+                losingPlayerWinChance = document.createElement("span");
+                losingPlayerWinChance.setAttribute("class", "score");
+                losingPlayerWinChance.textContent = `${(parseFloat(stake.total)*100/(parseFloat(jackpotEntry.total)/100)).toFixed(2)}%`;
+            
+                losingPlayerAvatar.appendChild(losingPlayerAvatarImage);
+                losingPlayerAvatar.appendChild(losingPlayerWinChance);
+                losingPlayerAvatarLink.appendChild(losingPlayerAvatar);
+                losingPlayer.appendChild(losingPlayerAvatarLink);
+                losingPlayersList.appendChild(losingPlayer);
+            }
+        });
+
+        let prizePotDiv = document.createElement("div");
+        prizePotDiv.setAttribute("class", "winning-items rounded");
+        let prizePotDivTitle = document.createElement("div");
+        prizePotDivTitle.setAttribute("class", "title");
+        prizePotDiv.appendChild(prizePotDivTitle);
+        let prizePotList = document.createElement("ul");
+        jackpotEntry.stakes.forEach(stake => {
+            stake.items.forEach(item => {
+
+                let prizePotItem = document.createElement("li");
+                prizePotItem.setAttribute("class", "skin-item rounded");
+
+                let topSection = document.createElement("div");
+                topSection.setAttribute("class", "top-sec");
+                let itemWearCode = document.createElement("span");
+                itemWearCode.setAttribute("class", "code");
+                itemWearCode.textContent = item.wear;
+                let itemPrice = document.createElement("span");
+                itemPrice.setAttribute("class", "amount");
+                itemPrice.textContent = `$${(parseFloat(item.suggested_price)/100).toFixed(2)}`;
+                topSection.appendChild(itemWearCode);
+                topSection.appendChild(itemPrice);
+            
+                let midSection = document.createElement("div");
+                midSection.setAttribute("class", "mid-sec");
+                let itemImage = document.createElement("img");
+                itemImage.setAttribute("src", item.image["300px"]);
+                midSection.appendChild(itemImage);
+
+                let bottomSection = document.createElement("div");
+                bottomSection.setAttribute("class", "bottom-sec");
+                bottomSection.textContent = item.name;
+
+                prizePotItem.appendChild(topSection);
+                prizePotItem.appendChild(midSection);
+                prizePotItem.appendChild(bottomSection);
+
+                prizePotList.appendChild(prizePotItem);
+            });
+        });
+        prizePotDiv.appendChild(prizePotList);
+
+        roundPanel.appendChild(playerList);
+        roundPanel.appendChild(losingPlayersList);
+        roundPanel.appendChild(prizePotDiv);
+
+        jackpotRounds.appendChild(roundPanel);
+    });
+
+    let roundPanelContainer = document.getElementsByClassName("winners-history-panel")[0];
+    roundPanelContainer.innerHTML = '';
+    roundPanelContainer.appendChild(jackpotRounds);
+}
+
+/**
  * A function that takes the users that bet this round and draws a pie chart where the slices are
  *  proportional to the value bet by the player
  * @method plotData

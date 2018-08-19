@@ -73,6 +73,12 @@ function submitSelection() {
         url: `/games/roulette/plant/${gambledItems.map(item => item.id)}`,
         method: "POST",
         success: function(res) {
+            if(res.err) {
+                console.log(res.err.message);
+                tradePopup.close();
+                return;
+            }
+            
             console.log(window);
             tradePopup.location = `https://trade.opskins.com/trade-offers/${res.tradeId}`;
             tradePopup.focus();

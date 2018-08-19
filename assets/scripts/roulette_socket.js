@@ -12,7 +12,7 @@ $(document).ready(function() {
         let seconds = timeRemaining%60;
         createCircles(timeRemaining);
         document.getElementsByClassName("score")[2].textContent = `${minutes > 9 ? minutes : "0" + minutes}:${seconds > 9 ? seconds : "0" + seconds}`;
-        document.getElementsByClassName("score")[8].textContent = `${minutes > 9 ? minutes : "0" + minutes}:${seconds > 9 ? seconds : "0" + seconds}`;
+        Array.from(document.getElementsByClassName("score")).slice(-1)[0].textContent = `${minutes > 9 ? minutes : "0" + minutes}:${seconds > 9 ? seconds : "0" + seconds}`;
     });
     socket.on("round finished", ({winner, winnerPos}) => {
         console.log(`The winner is ${winner.user}`);
@@ -31,6 +31,7 @@ $(document).ready(function() {
         $(".modal-content .row .score-panel .item .score:eq(1)").text(`$0.00`);
         $(".data-panel .bottom-sec button").text(`Deposit $0.00 (0 Skins)`);
     });
+    socket.on("update jackpot history", populateJackpotHistory);
     socket.on("invalid tier option", () => {
         window.location.href = "/games/roulette/plant";
     })

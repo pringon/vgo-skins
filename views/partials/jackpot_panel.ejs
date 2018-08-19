@@ -32,7 +32,13 @@
                 </div>
                 
             <% } %>
-            <div class="betting-amount">Min: $0.25 - Max: $10</div>
+            <% if(rouletteTier == 2) { %>
+                <div class="betting-amount">Min: $1 - Max: No-Limit</div>
+            <% } else if(rouletteTier == 1) { %>
+                <div class="betting-amount">Min: $0.5 - Max: $1</div>
+            <% } else { %>
+                <div class="betting-amount">Min: $0.1 - Max: $0.5</div>
+            <% } %>
         </div>
         <div class="firework">
             <img src="/img/firework.gif">

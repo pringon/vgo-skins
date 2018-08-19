@@ -68,7 +68,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       });
     });
-  }
+  };
   JackpotHistory.associate = function(models) {
     JackpotHistory.belongsTo(models.user, {foreignKey: "winner", targetKey: "steamId"});
   };
