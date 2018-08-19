@@ -1,0 +1,8 @@
+.alert-fixed-top {
+    position: fixed;
+    top: 5px; 
+    left:2%;
+    width: 96%;
+    display: none;
+    text-align: center;
+}
