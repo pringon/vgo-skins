@@ -145,6 +145,7 @@ body{
 	width: 100%;
 }
 .navbar .nav-link .link-label{
+	margin-top: 7.5%;
 	display: block;
 	overflow: hidden;
 }
