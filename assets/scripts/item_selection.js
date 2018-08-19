@@ -76,6 +76,12 @@ function submitSelection() {
             if(res.err) {
                 console.log(res.err.message);
                 tradePopup.close();
+                $("#wrong-stake-amount-flash").show();
+                console.log("Flash message shown");
+                setTimeout(function() {
+                    $("#wrong-stake-amount-flash").hide();
+                    console.log("Flash message hidden");
+                }, 4000);
                 return;
             }
             
