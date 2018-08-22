@@ -9,10 +9,16 @@ module.exports = (() => {
         Authorization: "Basic " + Buffer.from(process.env.OPSKINS_API_KEY + ":", "ascii").toString("base64")
     };
 
-    this.getUser = async(userId) => {
-        let jsonData = await request(`${baseUri}/ISteamUser/GetPlayerSummaries/v0002/?key=${process.env.STEAM_API_KEY}&steamids=${userId}`);
-        let data = JSON.parse(jsonData);
-        return data.response.players[0];
+    this.getUser = (userId, cb = null) => {
+        request(`${baseUri}/ISteamUser/GetPlayerSummaries/v0002/?key=${process.env.STEAM_API_KEY}&steamids=${userId}`)
+            .then(data => JSON.parse(data))
+            .then(data => {
+                console.log(data);
+                if(cb !== null) {
+                    cb(null, data.response.players[0]);
+                    return;
+                }
+            });
     };
 
     this.getAvailableItems = (userId, cb = null) => {

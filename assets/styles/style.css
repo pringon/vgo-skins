@@ -1466,6 +1466,7 @@ canvas {
 	padding: 4px 8px;
 }
 .profile-content-panel .dashboard-panel .left-panel .info-sec .btn-logout{
+	background-color: rgba(0,0,0,0);
 	border: solid 1px #cf3939;
 	font-size: 15px;
 	margin-top: 8px;

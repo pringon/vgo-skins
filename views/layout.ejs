@@ -32,16 +32,29 @@
             <% if(typeof chat !== "undefined" && chat === true) { %>
                 <%- include("partials/chat.ejs") %>
             <% } %>
-            <div class="content">
-                <div class="main-panel bg">
-                    <%- body %>
+            <% if(typeof profilePage !== "undefined" && profilePage == true) { %>
+                <div class="content">
+                    <div class="main-panel profile-content-panel bg">
+                        <%- body %>
+                    </div>
                 </div>
-            </div>
+            <% } else { %>
+                <div class="content">
+                    <div class="main-panel bg">
+                        <%- body %>
+                    </div>
+                </div>
+            <% } %>
             <footer>© vgogem 2018</footer>
         </div>
 
+        <% if(typeof profilePage !== "undefined" && profilePage == true) { %>
+            <%- include("modals/history_modal") %>
+            <%- include("modals/faq_modal") %>
+        <% } %>
+
         <% if(typeof roulette !== "undefined" && roulette == true) { %>
-            <%- include("partials/roulette_modal") %>
+            <%- include("modals/roulette_modal") %>
         <% } %>
         
         <!-- Optional JavaScript -->
@@ -86,20 +99,15 @@
                     let levels = parseInt($(this).text());
                     if(levels <= 9 ){
                         $(this).addClass("bg-gray");
-                    }
-                    if(levels > 9 && levels <= 19 ){
+                    } else if(levels > 9 && levels <= 19 ){
                         $(this).addClass("bg-blue");
-                    }
-                    if(levels > 19 && levels <= 29 ){
+                    } else if(levels > 19 && levels <= 29 ){
                         $(this).addClass("purple-blue");
-                    }
-                    if(levels > 29 && levels <= 39 ){
+                    } else if(levels > 29 && levels <= 39 ){
                         $(this).addClass("blue-shade");
-                    }
-                    if(levels > 39 && levels <= 49 ){
+                    } else if(levels > 39 && levels <= 49 ){
                         $(this).addClass("green-shade");
-                    }
-                    if(levels > 49 ){
+                    } else {
                         $(this).addClass("silver-white");
                     }
                 });
@@ -107,93 +115,16 @@
         </script>
         <!-- end -->
 
-        <script type="text/javascript">
-            function spinJackpot(winnerPos) {
-
-                let startJP = winnerPos + (360*3);    
-                $('.jackpot-pointer').animate({  transform: startJP }, {
-                    step: function(now,fx) {
-                        $(this).css('-webkit-transform','rotate('+now+'deg)'); 
-                    },
-                    duration:6000
-                },'linear'); 
-                setTimeout(() => {
-                    $('.jackpot-pointer').animate({  transform: 0 }, {
-                        step: function(now,fx) {
-                            $(this).css('-webkit-transform','rotate('+now+'deg)'); 
-                        },
-                        duration:0
-                    },'linear');
-                }, 7000);       
-            }
-        </script>
-
-        <script>
-            function createCircles(timeRemaining) {
-                var colors = [
-                    ['#595980', '#ffffff']
-                    ],
-                    circles = [];
-                for (var i = 1; i <= colors.length; i++) {
-                    var child = document.getElementById('circles-' + i),
-                    percentage = 100 + (i * 9.84),
-                    circle = Circles.create({
-                        id:         child.id,
-                        value:      timeRemaining,
-                        duration:   0,
-                        maxValue:   90,
-                        radius:     150,
-                        width:      4,
-                        colors:     colors[i - 1]
-                    });
-                    circles.push(circle);
-                }
-            }
-            (function() {
-                var canvas = document.getElementById('canvas'),
-                circlesCreated = false;
-                function onScroll() {
-                if (!circlesCreated && elementInViewport(canvas)) {
-                    circlesCreated = true;
-                    createCircles(90);
-                }
-                }
-                function elementInViewport(el) {
-                var rect = el.getBoundingClientRect();
-                return (
-                    rect.top  >= 0 &&
-                    rect.left >= 0 &&
-                    rect.top  <= (window.innerHeight || document.documentElement.clientHeight)
-                );
-                }
-                window.onscroll = onScroll;
-            })();
-        </script>
-
-        <script type="text/javascript">
-            function setArrowColor(elementId, color) {
-                let sheet = (function() {
-                    // Create the <style> tag
-                    let style = document.createElement("style");
-
-                    // Add a media (and/or media query) here if you'd like!
-                    // style.setAttribute("media", "screen")
-                    // style.setAttribute("media", "only screen and (max-width : 1024px)")
-
-                    // WebKit hack
-                    style.appendChild(document.createTextNode(""));
-
-                    // Add the <style> element to the page
-                    document.head.appendChild(style);
-
-                    return style.sheet;
-                })();
-                // You can pass color value here
-                sheet.insertRule(`#${elementId}:before { border-left-color:${color}!important; }`, 0);
-
-            }
+        <% if(typeof profilePage !== "undefined" && profilePage == true) { %>
+            <script type="text/javascript">
+                $(".historyModal").on("shown.bs.modal", function(event) {
+                    $(".gallery").flickity("resize");
+                });
+                $(".nav-tabs").on("shown.bs.tab", function(event) {
+                    $(".gallery").flickity("resize");
+                });
             </script>
-
+        <% } %>
 
         <% if(typeof chat !== "undefined" && chat === true) { %>
             <script src="/socket.io/socket.io.js"></script>
@@ -219,6 +150,94 @@
         <% } %>
 
         <% if(typeof roulette !== "undefined" && roulette == true) { %>
+
+            <script type="text/javascript">
+                function spinJackpot(winnerPos) {
+
+                    let startJP = winnerPos + (360*3);    
+                    $('.jackpot-pointer').animate({  transform: startJP }, {
+                        step: function(now,fx) {
+                            $(this).css('-webkit-transform','rotate('+now+'deg)'); 
+                        },
+                        duration:6000
+                    },'linear'); 
+                    setTimeout(() => {
+                        $('.jackpot-pointer').animate({  transform: 0 }, {
+                            step: function(now,fx) {
+                                $(this).css('-webkit-transform','rotate('+now+'deg)'); 
+                            },
+                            duration:0
+                        },'linear');
+                    }, 7000);       
+                }
+            </script>
+
+            <script>
+                function createCircles(timeRemaining) {
+                    var colors = [
+                        ['#595980', '#ffffff']
+                        ],
+                        circles = [];
+                    for (var i = 1; i <= colors.length; i++) {
+                        var child = document.getElementById('circles-' + i),
+                        percentage = 100 + (i * 9.84),
+                        circle = Circles.create({
+                            id:         child.id,
+                            value:      timeRemaining,
+                            duration:   0,
+                            maxValue:   90,
+                            radius:     150,
+                            width:      4,
+                            colors:     colors[i - 1]
+                        });
+                        circles.push(circle);
+                    }
+                }
+                (function() {
+                    var canvas = document.getElementById('canvas'),
+                    circlesCreated = false;
+                    function onScroll() {
+                    if (!circlesCreated && elementInViewport(canvas)) {
+                        circlesCreated = true;
+                        createCircles(90);
+                    }
+                    }
+                    function elementInViewport(el) {
+                    var rect = el.getBoundingClientRect();
+                    return (
+                        rect.top  >= 0 &&
+                        rect.left >= 0 &&
+                        rect.top  <= (window.innerHeight || document.documentElement.clientHeight)
+                    );
+                    }
+                    window.onscroll = onScroll;
+                })();
+            </script>
+
+            <script type="text/javascript">
+                function setArrowColor(elementId, color) {
+                    let sheet = (function() {
+                        // Create the <style> tag
+                        let style = document.createElement("style");
+
+                        // Add a media (and/or media query) here if you'd like!
+                        // style.setAttribute("media", "screen")
+                        // style.setAttribute("media", "only screen and (max-width : 1024px)")
+
+                        // WebKit hack
+                        style.appendChild(document.createTextNode(""));
+
+                        // Add the <style> element to the page
+                        document.head.appendChild(style);
+
+                        return style.sheet;
+                    })();
+                    // You can pass color value here
+                    sheet.insertRule(`#${elementId}:before { border-left-color:${color}!important; }`, 0);
+
+                }
+            </script>
+            
             <!-- Jackpot-resposive -->
             <script type="text/javascript">
                 $(window).on('load resize', function () {

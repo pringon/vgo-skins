@@ -12,12 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     tier: DataTypes.TINYINT,
     stakes: DataTypes.JSON
   }, {});
-  JackpotHistory.getTierHistory = function(tier = 0, cb = null) {
+
+  JackpotHistory.getHistory = function(query = {}, cb = null) {
     JackpotHistory.findAll({
       limit: 5,
-      where: {
-          tier
-      },
+      where: query,
       order: [[ "id", "DESC" ]]
     }).then(history => {
       let requestedUsers = {};
@@ -69,6 +68,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     });
   };
+
   JackpotHistory.associate = function(models) {
     JackpotHistory.belongsTo(models.user, {foreignKey: "winner", targetKey: "steamId"});
   };

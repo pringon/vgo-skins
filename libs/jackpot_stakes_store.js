@@ -1,5 +1,6 @@
 "use strict";
-const redis = require("redis");
+const db    = require("../app/database/models"),
+      redis = require("redis");
 const redisClient = (process.env.REDIS_URL ?
             redis.createClient(process.env.REDIS_URL) : redis.createClient());
             
@@ -19,6 +20,15 @@ module.exports = {
 
     setStake: function(tier, user, items, cb = null) {
 
+        let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price)/100, 0).toFixed(2)
+        db.user.update({
+            skinsWagered: db.Sequelize.literal(`skinsWagered + ${items.length}`),
+            totalGambled: db.Sequelize.literal(`totalGambled + ${totalDeposited}`)
+        }, {
+            where: { steamId:user.id }
+        });
+        db.user.addExperience(user.id, totalDeposited);
+
         redisClient.hget(`jackpot_players:${tier}:${user.id}`, "total", (err, total) => {
 
             if(total == null) {
@@ -30,7 +40,7 @@ module.exports = {
                     "user": user.user,
                     "avatar": user.avatar,
                     "color": randomColor(),
-                    "total": items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price)/100, 0).toFixed(2)
+                    "total": totalDeposited
                 });
                 items.forEach(item => {
                     multiTask.sadd(`jackpot_players:${tier}:${user.id}:items`, JSON.stringify(item))
@@ -42,20 +52,19 @@ module.exports = {
                         throw new Error(err);
                     }
                     if(cb !== null) {
-                        cb(results);  
+                        cb(results);
+                        return;
                     }
                     
                 })
             } else {
                 redisClient.smembers(`jackpot_players:${tier}:${user.id}:items`, (err, currentItems) => {
 
-                    let addedTotal = 0;
                     let insertedItems = [];
                     let multiTask = redisClient.multi();
                     items.forEach(item => {
 
                         if(!this.itemIsInSet(currentItems, item.id.toString())) {
-                            addedTotal += parseFloat(item.suggested_price)/100;
                             multiTask.sadd(`jackpot_players:${tier}:${user.id}:items`, JSON.stringify(item))
                             multiTask.sadd(`jackpot_players:${tier}:${user.id}:items:ids`, item.id);
                             insertedItems.push(item);
@@ -67,10 +76,11 @@ module.exports = {
                             throw new Error(err);
                         }
 
-                        redisClient.hset(`jackpot_players:${tier}:${user.id}`, "total", (parseFloat(total) + addedTotal).toFixed(2));
+                        redisClient.hset(`jackpot_players:${tier}:${user.id}`, "total", parseFloat(parseFloat(total) + totalDeposited).toFixed(2));
 
                         if(cb !== null) {
                             cb(results);
+                            return;
                         }
                     });
                 });
