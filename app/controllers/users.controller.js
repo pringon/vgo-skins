@@ -7,38 +7,71 @@ module.exports = (() => {
 
     this.isLoggedIn = (req, res, next) => {
         if(req.isAuthenticated()) {
-          return next();
+            return next();
         }
-      
+
         res.redirect('/');
     };
 
     this.getProfile = async(req, res) => {
 
-        let currentUser = await userUtils.getUser(req.user.steamId);
-
-        if(req.params.id == req.user.steamId) {
-            res.render("pages/profile.ejs", {
-                currentUser: {
-                    level: req.user.level,
-                    ...currentUser
-                },
-                queriedUser: currentUser
+        userUtils.getUser(req.user.steamId, (err, currentUser) => {
+            db.JackpotHistory.getHistory({ winner: req.params.id }, jackpotHistory =>{
+                if(req.params.id == req.user.steamId) {
+                    db.user.findOne({
+                        where: { steamId: req.user.steamId }
+                    }).then(userProfileData => {
+                        res.render("pages/profile.ejs", {
+                            jackpotHistory,
+                            currentUser: {
+                                level: req.user.level,
+                                ...currentUser
+                            },
+                            queriedUser: {
+                                ...{
+                                    level: userProfileData.level,
+                                    experiencePoints: userProfileData.experiencePoints,
+                                    totalWon: userProfileData.totalWon,
+                                    totalGambled: userProfileData.totalGambled,
+                                    skinsWagered: userProfileData.skinsWagered,
+                                    luckiestWin: userProfileData.luckiestWin 
+                                },
+                                ...currentUser,
+                            },
+                            profilePage: true,
+                            chat: true
+                        });
+                    })
+                } else {
+                    userUtils.getUser(req.params.id, (err, queriedUser) => {
+                        db.user.findOne({
+                            where: { steamId: queriedUser.steamid }
+                        }).then(userProfileData => {
+                            res.render("pages/profile.ejs", {
+                                jackpotHistory,
+                                currentUser: {
+                                    level: req.user.level,
+                                    ...currentUser
+                                },
+                                queriedUser: {
+                                    ...{
+                                        level: userProfileData.level,
+                                        experiencePoints: userProfileData.experiencePoints,
+                                        totalWon: userProfileData.totalWon,
+                                        totalGambled: userProfileData.totalGambled,
+                                        skinsWagered: userProfileData.skinsWagered,
+                                        luckiestWin: userProfileData.luckiestWin 
+                                    },
+                                    ...queriedUser
+                                },
+                                profilePage: true,
+                                chat: true
+                            });
+                        });
+                    });
+                }
             });
-        } else {
-            
-            let queriedUser = await userUtils.getUser(req.params.id);
-            if(typeof queriedUser === 'undefined') {
-                queriedUser = currentUser;
-            }
-            res.render("pages/profile.ejs", {
-                currentUser: {
-                    level: req.user.level,
-                    ...currentUser
-                },
-                queriedUser: queriedUser
-            });
-        }
+        });
     };
 
     this.handleOpenIDReturn = (req, res) => {

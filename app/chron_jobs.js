@@ -74,7 +74,7 @@ module.exports = {
         offerHandler.sendOffer(userId, items.map(item => item.id).join(','), "Jackpot prize", (body) => {
             setTimeout(() => rouletteSocket.startRound(tier), 6500);
             if(cb) {
-                cb(total);
+                cb(total-currentRake, currentRake);
             }
         });
     },
@@ -111,9 +111,9 @@ module.exports = {
                                     stakes.forEach(stake => {
                                         stake.items.forEach(item => prizePot.push(item));
                                     });
-                                    this.handleWinnerOffer(winner.id, prizePot, tier, total => {
+                                    this.handleWinnerOffer(winner.id, prizePot, tier, (totalWon, totalRaked) => {
                                         db.JackpotHistory.create({
-                                            total,
+                                            total: totalWon,
                                             tier,
                                             winner: winner.id,
                                             stakes: JSON.stringify(stakes.map(stake => {
@@ -133,9 +133,15 @@ module.exports = {
                                                 }
                                             }))
                                         }).then(() => {
-                                            db.JackpotHistory.getTierHistory(tier, jackpotHistory => {
+                                            db.JackpotHistory.getHistory({ tier }, jackpotHistory => {
                                                 io.to(`roulette tier ${tier}`).emit("update jackpot history", jackpotHistory);
                                             });
+                                        });
+                                        db.user.update({
+                                            totalWon: db.Sequelize.literal(`totalWon + ${parseFloat(totalWon)/100}`),
+                                            luckiestWin: (parseFloat(winner.total)/((totalWon+totalRaked)/100))*100
+                                        }, {
+                                            where: { steamId: winner.id }
                                         });
                                     });
                                 });

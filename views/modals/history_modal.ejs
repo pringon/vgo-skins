@@ -1,0 +1,254 @@
+<div class="modal fade historyModal"
+ tabindex="-1" role="dialog" 
+ aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <div class="modal-header">
+                History
+            </div>
+            <div class="modal-tabs profile-content-panel">
+                <ul id="tabsJustified" class="nav nav-tabs nav-fill">
+                    <li class="nav-item"><a href="#jackpotHistory" data-target="#jackpotHistory" data-toggle="tab" class="nav-link small text-uppercase active">Jackpot</a></li>
+                    <li class="nav-item"><a href="#coinflipHistory" data-target="#coinflipHistory" data-toggle="tab" class="nav-link small text-uppercase">Coinflip</a></li>
+                </ul>
+                <br>
+                <div class="tab-content">
+                    <div id="jackpotHistory" class="tab-pane fade active show">
+                        <% jackpotHistory.forEach(jackpotEntry => { %>
+                            <div class="panel rounded">
+                                <div class="left-panel">
+                                    <div class="avatar rounded-circle">
+                                        <img src="<%- jackpotEntry.winner.avatar %>" class="rounded-circle">
+                                    </div>
+                                    <div class="info-sec">
+                                        <div class="name"><%- jackpotEntry.winner.name %></div>
+                                        <div class="info">
+                                            <span>Win:  $<%- (parseFloat(jackpotEntry.total)/100).toFixed(2) %></span>
+                                            <span>Chance:  <%- (parseFloat(jackpotEntry.winner.total)*100/parseFloat(jackpotEntry.total/100)).toFixed(2) %>%</span>
+                                        </div>
+                                        <div class="date">
+                                            <span><%- jackpotEntry.createdAt.toString() %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="right-panel">
+                                    <div class="player-list">
+                                        <% jackpotEntry.stakes.forEach(stake => { %>
+                                            <% if(stake.userId != jackpotEntry.winner.id) { %>
+                                                <div class="gallery js-flickity"
+                                                data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": false, "pageDots": false }'>
+                                                    <div class="gallery-cell">
+                                                        <a href="/user/profile/<%- stake.userId %>" class="rounded">
+                                                            <span class="avatar">
+                                                                <img src="<%- stake.userData.avatar %>">
+                                                                <span class="score"><%- (parseFloat(stake.total)*100/(parseFloat(jackpotEntry.total)/100)).toFixed(2) %>%</span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            <% } %>
+                                        <% }) %>
+                                    </div>
+                                    <div class="skins-list">
+                                        <div class="gallery js-flickity"
+                                        data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": false, "pageDots": false }'>
+                                            <% jackpotEntry.stakes.forEach(stake => { %> 
+                                                <% stake.items.forEach(item => { %>
+                                                    <div class="skin-item rounded gallery-cell">
+                                                        <div class="top-sec">
+                                                            <span class="code"><%- item.wear %></span>
+                                                            <span class="amount">$<%- (parseFloat(item.suggested_price)/100).toFixed(2) %></span>
+                                                        </div>
+                                                        <div class="mid-sec">
+                                                            <img src="<%- item.image['300px'] %>">
+                                                        </div>
+                                                        <div class="bottom-sec">
+                                                            <%- item.name %>
+                                                        </div>
+                                                    </div>
+                                                <% }) %>
+                                            <% }) %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                    <div id="coinflipHistory" class="tab-pane fade">
+                        <div class="panel panel-coinflip rounded">
+                            <div class="left-panel">
+                                <div class="player-vs">
+                                    <a href="#" class="avatar rounded-circle winner">
+                                        <img src="/img/user-img02.jpg" class="rounded-circle">
+                                        <span class="crown"><img src="/img/crown.png"></span>
+                                    </a>
+                                    <span class="vs rounded-circle">v/s</span>
+                                    <a href="#" class="avatar rounded-circle">
+                                        <img src="/img/user-img01.jpg" class="rounded-circle">
+                                    </a>
+                                    <div class="amount">
+                                        <span class="badge">$40.32</span>
+                                    </div>
+                                </div>
+                                <div class="info-sec">
+                                    <div class="date">
+                                        <span>1 day ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="right-panel">
+                                <div class="skins-list">
+                                    <div class="gallery js-flickity"
+                                    data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": false, "pageDots": false }'>
+                                        <div class="skin-item rounded gallery-cell">
+                                            <div class="code">MM</div>
+                                            <div class="mid-sec">
+                                                <img src="/img/gun.png">
+                                            </div>
+                                            <div class="bottom-sec">
+                                                $2.00
+                                            </div>
+                                        </div>
+                                        <div class="skin-item rounded gallery-cell">
+                                            <div class="code">MM</div>
+                                            <div class="mid-sec">
+                                                <img src="/img/gun.png">
+                                            </div>
+                                            <div class="bottom-sec">
+                                                $2.00
+                                            </div>
+                                        </div>
+                                        <div class="skin-item rounded gallery-cell">
+                                            <div class="code">MM</div>
+                                            <div class="mid-sec">
+                                                <img src="/img/gun.png">
+                                            </div>
+                                            <div class="bottom-sec">
+                                                $2.00
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-coinflip rounded">
+                            <div class="left-panel">
+                                <div class="player-vs">
+                                    <a href="#" class="avatar rounded-circle winner">
+                                        <img src="/img/user-img02.jpg" class="rounded-circle">
+                                        <span class="crown"><img src="/img/crown.png"></span>
+                                    </a>
+                                    <span class="vs rounded-circle">v/s</span>
+                                    <a href="#" class="avatar rounded-circle">
+                                        <img src="/img/user-img01.jpg" class="rounded-circle">
+                                    </a>
+                                    <div class="amount">
+                                        <span class="badge">$40.32</span>
+                                    </div>
+                                </div>
+                                <div class="info-sec">
+                                    <div class="date">
+                                        <span>1 day ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="right-panel">
+                                <div class="skins-list">
+                                    <div class="gallery js-flickity"
+                                    data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": false, "pageDots": false }'>
+                                        <div class="skin-item rounded gallery-cell">
+                                            <div class="code">MM</div>
+                                            <div class="mid-sec">
+                                                <img src="/img/gun.png">
+                                            </div>
+                                            <div class="bottom-sec">
+                                                $2.00
+                                            </div>
+                                        </div>
+                                        <div class="skin-item rounded gallery-cell">
+                                            <div class="code">MM</div>
+                                            <div class="mid-sec">
+                                                <img src="/img/gun.png">
+                                            </div>
+                                            <div class="bottom-sec">
+                                                $2.00
+                                            </div>
+                                        </div>
+                                        <div class="skin-item rounded gallery-cell">
+                                            <div class="code">MM</div>
+                                            <div class="mid-sec">
+                                                <img src="/img/gun.png">
+                                            </div>
+                                            <div class="bottom-sec">
+                                                $2.00
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-coinflip rounded">
+                            <div class="left-panel">
+                                <div class="player-vs">
+                                    <a href="#" class="avatar rounded-circle winner">
+                                        <img src="/img/user-img02.jpg" class="rounded-circle">
+                                        <span class="crown"><img src="/img/crown.png"></span>
+                                    </a>
+                                    <span class="vs rounded-circle">v/s</span>
+                                    <a href="#" class="avatar rounded-circle">
+                                        <img src="/img/user-img01.jpg" class="rounded-circle">
+                                    </a>
+                                    <div class="amount">
+                                        <span class="badge">$40.32</span>
+                                    </div>
+                                </div>
+                                <div class="info-sec">
+                                    <div class="date">
+                                        <span>1 day ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="right-panel">
+                                <div class="skins-list">
+                                    <div class="gallery js-flickity"
+                                    data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": false, "pageDots": false }'>
+                                        <div class="skin-item rounded gallery-cell">
+                                            <div class="code">MM</div>
+                                            <div class="mid-sec">
+                                                <img src="/img/gun.png">
+                                            </div>
+                                            <div class="bottom-sec">
+                                                $2.00
+                                            </div>
+                                        </div>
+                                        <div class="skin-item rounded gallery-cell">
+                                            <div class="code">MM</div>
+                                            <div class="mid-sec">
+                                                <img src="/img/gun.png">
+                                            </div>
+                                            <div class="bottom-sec">
+                                                $2.00
+                                            </div>
+                                        </div>
+                                        <div class="skin-item rounded gallery-cell">
+                                            <div class="code">MM</div>
+                                            <div class="mid-sec">
+                                                <img src="/img/gun.png">
+                                            </div>
+                                            <div class="bottom-sec">
+                                                $2.00
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

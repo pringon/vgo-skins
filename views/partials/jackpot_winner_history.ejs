@@ -4,7 +4,7 @@
             <div class="player-list">
                 <div class="winner-info rounded">
                     <div class="avatar rounded-circle">
-                        <a href="/user/profile/<%- jackpotEntry.winner.id %>""><img src="<%- jackpotEntry.winner.avatar %>" class="rounded-circle"></a>
+                        <a href="/user/profile/<%- jackpotEntry.winner.id %>"><img src="<%- jackpotEntry.winner.avatar %>" class="rounded-circle"></a>
                     </div>
                     <div class="info">
                         <div class="name"><%- jackpotEntry.winner.name %></div>
@@ -20,7 +20,7 @@
                     <% jackpotEntry.stakes.forEach(stake => { %>
                         <% if(stake.userId != jackpotEntry.winner.id) { %>
                             <li>
-                                <a href="/user/profile/stake.userId" class="rounded">
+                                <a href="/user/profile/<%- stake.userId %>" class="rounded">
                                     <span class="avatar">
                                         <img src="<%- stake.userData.avatar %>">
                                         <span class="score"><%- (parseFloat(stake.total)*100/(parseFloat(jackpotEntry.total)/100)).toFixed(2) %>%</span>

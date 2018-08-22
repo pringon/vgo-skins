@@ -7,7 +7,7 @@ const request           = require("request-promise"),
 
 module.exports = (() => {
 
-    this.getRoulette = async(req, res) => {
+    this.getRoulette = (req, res) => {
         let rouletteTier = null;
         switch(req.params.rouletteType) {
             case "plant":
@@ -25,17 +25,18 @@ module.exports = (() => {
         if(rouletteTier == null) {
             res.redirect("/games/roulette/plant");
         } else {
-            let currentUser = await userUtils.getUser(req.user.steamId);
-            db.JackpotHistory.getTierHistory(rouletteTier, jackpotHistory => {
-                res.render("pages/roulette.ejs", {
-                    rouletteTier,
-                    jackpotHistory,
-                    currentUser: {
-                        level: req.user.level,
-                        ...currentUser
-                    },
-                    chat: true,
-                    roulette: true
+            userUtils.getUser(req.user.steamId, (err, currentUser) => {
+                db.JackpotHistory.getHistory({ tier: rouletteTier }, jackpotHistory => {
+                    res.render("pages/roulette.ejs", {
+                        rouletteTier,
+                        jackpotHistory,
+                        currentUser: {
+                            level: req.user.level,
+                            ...currentUser
+                        },
+                        chat: true,
+                        roulette: true
+                    });
                 });
             });
         }
@@ -133,15 +134,16 @@ module.exports = (() => {
         });
     };
 
-    this.getHeadon = async(req, res) => {
-        let currentUser = await userUtils.getUser(req.user.steamId);
-        res.render("pages/headon.ejs", {
-            currentUser: {
-                level: req.user.level,
-                ...currentUser
-            },
-            chat: true,
-            headon: true
+    this.getHeadon = (req, res) => {
+        userUtils.getUser(req.user.steamId, (err, currentUser) => {
+            res.render("pages/headon.ejs", {
+                currentUser: {
+                    level: req.user.level,
+                    ...currentUser
+                },
+                chat: true,
+                headon: true
+            });
         });
     };
 

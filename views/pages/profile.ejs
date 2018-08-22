@@ -1,12 +1,109 @@
-<div class="jumbotron container-fluid row" align="center">
+<div class="dashboard-panel rounded">
+    <div class="left-panel">
+        <div class="avatar rounded-circle">
+            <img src="<%- queriedUser.avatarfull %>" class="rounded-circle">
+        </div>
+        <div class="info-sec">
+            <div class="name"><%- queriedUser.personaname %></div>
+            <div class="level">
+                <span>Current Level</span>
+                <span class="badge gradient"><%- queriedUser.level %></span>
+            </div>
+            <form method="post" action="/user/logout">
+                <button type="submit" class="btn btn-logout">Logout</button>
+            </form>
+        </div>
+    </div>
+    <div class="right-panel">
+        <div class="row">
+            <div class="col">
+                <div class="rounded panel">
+                    <span class="value">$<%- parseFloat(queriedUser.totalWon).toFixed(2) %></span>
+                    <span class="label-name">Total Won</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="rounded panel">
+                    <span class="value">$<%- parseFloat(queriedUser.totalWon - queriedUser.totalGambled).toFixed(2) %></span>
+                    <span class="label-name">Total Profit</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="rounded panel">
+                    <span class="value"><%- queriedUser.skinsWagered %></span>
+                    <span class="label-name">Skins Wagered</span>
+                </div>
+            </div>
+            <div class="col">
+                <div class="rounded panel">
+                    <span class="value"><%- queriedUser.luckiestWin %>%</span>
+                    <span class="label-name">Luckiest Win</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="rounded progress-panel">
+    <div class="progress">
+        <div class="progress-bar gradient" 
+        role="progressbar" style="width: <%- Math.round(queriedUser.experiencePoints/(200 + Math.pow(queriedUser.level+1, 2.6))*100) %>%;" 
+        aria-valuenow="<%- Math.round(queriedUser.experiencePoints/(200 + Math.pow(queriedUser.level+1, 2.6))*100) %>" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <span class="vaue">(<%- queriedUser.experiencePoints %>/<%- 200 + Math.pow(queriedUser.level+1, 2.6) %>)</span>
+</div>
+
+<div class="level-status-panel">
     <div class="row">
-        <img src=<%- queriedUser.avatarfull %>
-        <p><%- queriedUser.personaname %></p>
+        <div class="col">
+            <div class="rounded panel">
+                <div class="row">
+                    <div class="col total-record level">
+                        <div class="title">Current Level</div>
+                        <div class="records gradient rounded badge"><%- queriedUser.level %></div>
+                    </div>
+                    <div class="col item">
+                        <div class="title">Jackpot Rake</div>
+                        <div class="records">
+                            <span class="icon"><img src="/img/jackpot-icon.png" alt=""></span> 5%
+                        </div>
+                    </div>
+                    <div class="col item">
+                        <div class="title">Coinflip Rake</div>
+                        <div class="records">
+                            <span class="icon"><img src="/img/coin-flip-icon-green.png" alt=""></span> 6%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="rounded panel">
+                <div class="row">
+                    <div class="col total-record level">
+                        <div class="title">Next Level</div>
+                        <div class="records gradient rounded badge"><%- queriedUser.level + 1 %></div>
+                    </div>
+                    <div class="col item">
+                        <div class="title">Jackpot Rake</div>
+                        <div class="records">
+                            <span class="icon"><img src="/img/jackpot-icon.png"></span> 5%
+                        </div>
+                    </div>
+                    <div class="col item">
+                        <div class="title">Coinflip Rake</div>
+                        <div class="records">
+                            <span class="icon"><img src="/img/coin-flip-icon-green.png"></span> 6%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row" style="margin-top: 25px;">
-        <form action="/user/tradeUrl" method="POST">
-            <input type="text" name="tradeUrl" value='<%- queriedUser.hasOwnProperty("tradeUrl") ? queriedUser.tradeUrl : "No URL set up" %>'>
-            <input type="submit" value="Submit">
-        </form>
-    </div>
+</div>
+
+<div class="support-panel">
+    <a href="#" class="btn" data-toggle="modal" data-target=".historyModal">History</a>
+    <a href="#" class="btn">Support</a>
+    <a href="#" class="btn" data-toggle="modal" data-target=".FAQModal">FAQ</a>
 </div>

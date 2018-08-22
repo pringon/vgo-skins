@@ -1,9 +1,10 @@
 "use strict";
-const request = require("request"),
-      authenticator = require("otplib").authenticator,
-      OPSkinsTrade = require("opskins-express-trade"),
+const db               = require("../app/database/models"),
+      request          = require("request"),
+      authenticator    = require("otplib").authenticator,
+      OPSkinsTrade     = require("opskins-express-trade"),
       jackpotBetsStore = require("./jackpot_stakes_store"),
-      rouletteSocket = require("../app/sockets/roulette_socket");
+      rouletteSocket   = require("../app/sockets/roulette_socket");
 
 module.exports = {
 
@@ -52,7 +53,7 @@ module.exports = {
                     rouletteSocket.refreshStakes(offer.message.slice(-1));
                 });
             }
-        })
+        });
     },
 
     handleIncomingOffers: function() {

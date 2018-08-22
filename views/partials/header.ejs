@@ -64,7 +64,7 @@
     </div>
     <% if(typeof currentUser !== "undefined") { %>
         <div class="navbar-right">
-        <a href="#" class="profile-panel">
+        <a href="/user/profile/<%- currentUser.steamid %>" class="profile-panel">
             <span class="nav-link-grp">
                 <span class="avatar rounded-circle">
                     <img src="<%- currentUser.avatarfull %>" alt="user" />
