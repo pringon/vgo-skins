@@ -20,12 +20,12 @@ module.exports = {
 
     setStake: function(tier, user, items, cb = null) {
 
-        let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price)/100, 0).toFixed(2)
+        let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price)/100, 0).toFixed(2);
         db.user.update({
             skinsWagered: db.Sequelize.literal(`skinsWagered + ${items.length}`),
             totalGambled: db.Sequelize.literal(`totalGambled + ${totalDeposited}`)
         }, {
-            where: { steamId:user.id }
+            where: { steamId: user.id }
         });
         db.user.addExperience(user.id, totalDeposited);
 
@@ -53,9 +53,8 @@ module.exports = {
                     }
                     if(cb !== null) {
                         cb(results);
-                        return;
                     }
-                    
+                    return;
                 })
             } else {
                 redisClient.smembers(`jackpot_players:${tier}:${user.id}:items`, (err, currentItems) => {
@@ -80,8 +79,8 @@ module.exports = {
 
                         if(cb !== null) {
                             cb(results);
-                            return;
                         }
+                        return;
                     });
                 });
             }

@@ -1,0 +1,91 @@
+<div class="coin-flip-score">
+    <div class="action-panel">
+        <a href="/games/coinflip/history" class="btn bg-gray">History</a>
+        <a href="javascript:void(0)" onclick="document.getElementById('coinflip-submit-selection').textContent = 'Host Coinflip'" 
+        data-toggle="modal" data-target=".coinFlipJoinModal" class="btn bg-blue">Deposit</a>
+    </div>
+    <div class="scores">
+        <div class="row">
+            <div class="cols col-md-6">
+                <div class="item">
+                    <div class="label">Total Value</div>
+                        <div class="value">
+                            <span class="icon">
+                            <img src="/img/coins-icon.png">
+                            </span>
+                            <span class="text">$1254.00</span>
+                        </div>
+                    </div> 
+                <div class="item">
+                <div class="label">Number of Coinflips</div>
+                    <div class="value">
+                        <span class="icon">
+                        <img src="/img/coin-flip-icon.png">
+                        </span>
+                        <span class="text">42</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cols col-md-6">
+                <div class="item">
+                    <div class="label">Coinflips</div>
+                        <div class="value">
+                            <span class="icon">
+                            <img src="/img/coin-flip-icon.png">
+                            </span>
+                            <span class="text">2</span>
+                        </div>
+                    </div> 
+                <div class="item">
+                <div class="label">Deposited</div>
+                    <div class="value">
+                        <span class="icon">
+                        <img src="/img/coins-icon.png">
+                        </span>
+                        <span class="text">$2214.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="coin-players-list">
+        <% coinflipLobbies.forEach(lobby => { %>
+            <div class="item">
+                <div class="player-vs">
+                    <a href="#" class="avatar rounded-circle">
+                        <img class="rounded-circle" src="<%- lobby.host.avatar %>">
+                    </a>
+                    <span class="vs rounded-circle">v/s</span>
+                    <a href="#" class="avatar rounded-circle">
+                        <img src="/img/coin-<%- lobby.host.coinColor == 'red' ? 'blue' : 'red' %>.png" class="rounded-circle">
+                    </a>
+                    <div class="amount">
+                        <span class="badge"><%- parseFloat(lobby.host.total).toFixed(2) %></span>
+                    </div>
+                </div>
+                <div class="action-col">
+                    <div class="circle" id="timer"></div>
+                    <a href="javascript:void(0)" class="btn bg-gray" data-toggle="modal" data-target=".coinFlipModal">
+                        <i class="fa fa-eye"></i>
+                        <span class="text">View</span>
+                    </a>
+                </div>
+                <div class="skins-col">
+                    <div class="gallery js-flickity skins-list" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }'>
+                        <% lobby.host.items.forEach(item => { %>
+                            <div class="gallery-cell skin-item">
+                                <div class="code">MM</div>
+                                <div class="mid-sec">
+                                    <img src="/img/gun.png">
+                                </div>
+                                <div class="bottom-sec">
+                                    $2.00
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</div>
