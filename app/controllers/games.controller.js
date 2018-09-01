@@ -1,9 +1,10 @@
 "use strict";
-const request           = require("request-promise"),
-      db                = require("../database/models"),
-      userUtils         = require("../../libs/user_utils"),
-      jackpotStakeStore = require("../../libs/jackpot_stakes_store"),
-      offerHandler      = require("../../libs/offer_handler");
+const request              = require("request-promise"),
+      db                   = require("../database/models"),
+      userUtils            = require("../../libs/user_utils"),
+      jackpotStakeStore    = require("../../libs/jackpot_stakes_store"),
+      coinflipLobbiesStore = require("../../libs/coinflip_lobbies_store"),
+      offerHandler         = require("../../libs/offer_handler");
 
 module.exports = (() => {
 
@@ -134,20 +135,36 @@ module.exports = (() => {
         });
     };
 
-    this.getHeadon = (req, res) => {
+    this.getCoinflip = (req, res) => {
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
-            res.render("pages/headon.ejs", {
+            coinflipLobbiesStore.getLobbies(coinflipLobbies => {
+                res.render("pages/coinflip.ejs", {
+                    coinflipLobbies,
+                    currentUser: {
+                        level: req.user.level,
+                        ...currentUser
+                    },
+                    chat: true,
+                    coinflip: true
+                });
+            });
+        });
+    };
+
+    this.getCoinflipHistory = (req, res) => {
+        userUtils.getUser(req.user.steamId, (err, currentUser) => {
+            res.render("pages/coinflip_history.ejs", {
                 currentUser: {
                     level: req.user.level,
                     ...currentUser
                 },
                 chat: true,
-                headon: true
+                coinflip: true
             });
-        });
+        })
     };
 
-    this.getRouletteTier= rouletteType => {
+    this.getRouletteTier = rouletteType => {
         switch(rouletteType) {
             case "plant":
                 return 0;

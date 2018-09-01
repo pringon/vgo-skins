@@ -38,6 +38,12 @@
                         <%- body %>
                     </div>
                 </div>
+            <% } else if(typeof coinflip !== "undefined" && coinflip == true) { %>
+                <div class="content">
+                    <div class="main-panel coin-flip-panel">
+                        <%- body %>
+                    </div>
+                </div>
             <% } else { %>
                 <div class="content">
                     <div class="main-panel bg">
@@ -320,13 +326,26 @@
             </script>
             <script type="text/javascript">const rouletteTier = <%- rouletteTier %>;</script>
             <script src="/scripts/item_selection.js"></script>
-            <script src="/scripts/roulette_graphics.js"></script>
-            <script src="/scripts/roulette_socket.js"></script>
+            <script src="/scripts/items_rendering.js"></script>
+            <script src="/scripts/jackpot/roulette_graphics.js"></script>
+            <script src="/scripts/jackpot/roulette_socket.js"></script>
         <% } %>
 
-        <!--<% if(typeof headon !== "undefined" && headon == true) { %>
-            <script src="/scripts/headon_graphics.js"></script>
-            <script src="/scripts/headon_socket.js"></script>
-        <% } %>-->
+        <% if(typeof coinflip !== "undefined" && coinflip == true) { %>
+                <%- include("modals/coinflip_view_modal") %>
+                <%- include("modals/coinflip_join_modal") %>
+
+                <!-- Modal-invenrory-slider -->
+                <script type="text/javascript">
+                    $('.modal-inventory').on( 'shown.bs.modal', function( event ) {
+                        $('.gallery').flickity('resize');
+                    });
+                </script>
+                <!-- end -->
+
+                <script src="/scripts/item_selection.js"></script>
+                <script src="/scripts/items_rendering.js"></script>
+                <script src="/scripts/coinflip/graphics.js"></script>
+        <% } %>
     </body>
 </html>

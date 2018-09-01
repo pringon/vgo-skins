@@ -74,6 +74,15 @@ module.exports = (() => {
         });
     };
 
+    this.getAvailableItems = (req, res) => {
+        userUtils.getAvailableItems(req.user.steamId, (err, availableItems) => {
+            if(err) {
+                throw new Error(err);
+            }
+            res.json({ availableItems });
+        });
+    };
+
     this.handleOpenIDReturn = (req, res) => {
 
         if(req.user) {

@@ -36,7 +36,6 @@ function listUsers(stakesList) {
         if(stakesList[i].id == currentUserData.steamId) {
             document.getElementsByClassName("score")[0].innerHTML = `${(parseFloat(stakesList[i].total)/total*100).toFixed(2)}<small>%</small>`;        
             document.getElementsByClassName("score")[1].innerHTML = `<small>$</small>${parseFloat(stakesList[i].total).toFixed(2)}`;
-     
         }
 
         let playerDiv = document.createElement("div");
@@ -354,7 +353,7 @@ function plotData(stakesList) {
  * A function that fetches the items owned by the player and lists them in the bet items modal
  * @method listModalItems
  */
-function listModalItems({ availableItems, gambledItems }) {
+function listModalItems({ availableItems = [], gambledItems = [] } = {}, dataUpdateHandler, cb = null) {
 
     selectedItems = {};
     totalMoneyGambled = 0;
@@ -455,7 +454,7 @@ function listModalItems({ availableItems, gambledItems }) {
         itemContainer.setAttribute("class", "ungambled-item gambling-selection-item col");
 
         itemContainer.setAttribute("id", item.id);
-        itemContainer.onclick = selectItem;
+        itemContainer.onclick = selectItem(dataUpdateHandler);
         let itemHolder = document.createElement("div");
         itemHolder.setAttribute("class", "skin-item");
 
@@ -504,10 +503,10 @@ function listModalItems({ availableItems, gambledItems }) {
     let itemsElementList = document.getElementsByClassName("data-content")[0];
     itemsElementList.innerHTML = '';
     itemsElementList.appendChild(itemsList);
-    $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (0 Skins)`);
-    $(".modal-content .row .score-panel .item .score:eq(0)").text(`(${userItemsInPot}/20)`);
-    $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${totalMoneyGambled.toFixed(2)}`);
-    $(".modal-content .row .score-panel .item .score:eq(3)").text(`${(totalMoneyGambled/(potTotal+totalMoneyGambled-userStakeInPot)*100).toFixed(2)}%`);
+
+    if(cb !== null) {
+        cb(totalMoneyGambled, userStakeInPot, potTotal);
+    }
     /*totalMoneyGambled = currentMoneyGambled;
     selectedItems = Object.assign({}, currentSelectedItems);*/
 }
@@ -524,29 +523,3 @@ function refreshScreen(stakesList) {
     listUsers(stakesList);
     populateItemsGallery(stakesList);
 }
-
-$(document).ready(function() {
-
-    $(".jackpot-btn > button").on("click", () => {
-    
-        // console.log("intra");
-        // fetch(`/user/items`, {
-        //     headers: {
-        //         "Accept": "application/json"
-        //     }
-        // }).then(items => items.json)
-        //   .then(items => {
-        //         console.log(items);
-        //         listModalItems(items);
-        //     });
-            $.ajax({
-                url: `/games/roulette/${rouletteTier}/items`,
-                success: (items) => {
-                    console.log(items);
-                    listModalItems(items);
-                }
-            });
-    });
-    $("#dump-items").on("click", clearSelection);
-    $(".data-panel .bottom-sec button").on("click", submitSelection);
-});

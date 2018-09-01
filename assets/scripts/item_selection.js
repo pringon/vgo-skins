@@ -6,44 +6,42 @@ let userStakeInPot = 0;
 let userItemsInPot = 0;
 let potTotal = 0;
 
-function selectItem() {
-    
-    let element = $(this);
+function selectItem(dataUpdateHandler) {
 
-    if(element.hasClass("selected-item")) {
-    
-        element.removeClass("selected-item");
+    return function() {
 
-        totalMoneyGambled -= selectedItems[element.attr("id")].price;
-        delete selectedItems[element.attr("id")];
-    } else {
-    
-        element.addClass("selected-item");
+        let element = $(this);
+        if(element.hasClass("selected-item")) {
+        
+            element.removeClass("selected-item");
 
-        selectedItems[element.attr("id")] = {
-            price: parseFloat(element.get(0).childNodes[0].childNodes[0].childNodes[1].innerText.substr(1)),
-            name: element.get(0).childNodes[0].childNodes[2].innerText,
-            image: element.get(0).childNodes[0].childNodes[1].childNodes[0].src
-        };
-        totalMoneyGambled += selectedItems[element.attr("id")].price;
-    }
-    $(".modal-content .row .score-panel .item .score:eq(1)").text(`$${totalMoneyGambled.toFixed(2)}`);
-    $(".data-panel .bottom-sec button").text(`Deposit $${totalMoneyGambled.toFixed(2)} (${Object.keys(selectedItems).length} Skins)`);
-    $(".modal-content .row .score-panel .item .score:eq(0)").text(`(${Object.keys(selectedItems).length + userItemsInPot}/20)`);
-    $(".modal-content .row .score-panel .item .score:eq(2)").text(`$${potTotal.toFixed(2)}`);
-    $(".modal-content .row .score-panel .item .score:eq(3)").text(`${(totalMoneyGambled/(potTotal+totalMoneyGambled-userStakeInPot)*100).toFixed(2)}%`);
+            totalMoneyGambled -= selectedItems[element.attr("id")].price;
+            delete selectedItems[element.attr("id")];
+        } else {
+        
+            element.addClass("selected-item");
 
-    if(Object.keys(selectedItems).length !== 0 && selectedItems.constructor === Object) {
+            selectedItems[element.attr("id")] = {
+                price: parseFloat(element.get(0).childNodes[0].childNodes[0].childNodes[1].innerText.substr(1)),
+                name: element.get(0).childNodes[0].childNodes[2].innerText,
+                image: element.get(0).childNodes[0].childNodes[1].childNodes[0].src
+            };
+            totalMoneyGambled += selectedItems[element.attr("id")].price;
+        }
+        dataUpdateHandler(totalMoneyGambled, userItemsInPot, potTotal);
 
-        //$(".data-panel .bottom-sec button").addClass("btn-info");
-        //$(".data-panel .bottom-sec button").removeClass("btn-basic");
-        $(".data-panel .bottom-sec button").prop("disabled", false);
-    } else {
+        if(Object.keys(selectedItems).length !== 0 && selectedItems.constructor === Object) {
 
-        //$(".data-panel .bottom-sec button").addClass("btn-basic");
-        //$(".data-panel .bottom-sec button").removeClass("btn-info");
-        $(".data-panel .bottom-sec button").prop("disabled", true);
-    }
+            //$(".data-panel .bottom-sec button").addClass("btn-info");
+            //$(".data-panel .bottom-sec button").removeClass("btn-basic");
+            $(".data-panel .bottom-sec button").prop("disabled", false);
+        } else {
+
+            //$(".data-panel .bottom-sec button").addClass("btn-basic");
+            //$(".data-panel .bottom-sec button").removeClass("btn-info");
+            $(".data-panel .bottom-sec button").prop("disabled", true);
+        }
+    };
 }
 
 function submitSelection() {
@@ -92,7 +90,7 @@ function submitSelection() {
             selectedItems = {};
             totalMoneyGambled = 0;
         }
-    })
+    });
 }
 
 function clearSelection() {
