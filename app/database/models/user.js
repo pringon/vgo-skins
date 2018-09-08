@@ -37,11 +37,17 @@ module.exports = (sequelize, DataTypes) => {
     }).then(user => {
       console.log(user);
       pointsGained = parseInt(pointsGained*100);
-      let experienceToNextLevel = 200 + Math.pow(this.level+1, 2.6);
+      let experienceToNextLevel = 200 + Math.pow(user.level+1, 2.6);
       let level, experiencePoints;
+      console.log(user.experiencePoints);
+      console.log(experienceToNextLevel);
       if(pointsGained + user.experiencePoints >= experienceToNextLevel) {
         level = user.level + 1;
         experiencePoints = pointsGained - (experienceToNextLevel - user.experiencePoints);
+        while(experiencePoints >= 200 + Math.pow(level+1, 2.6)) {
+          experiencePoints -= 200 + Math.pow(level+1, 2.6);
+          level++;
+        }
       } else {
         level = user.level;
         experiencePoints = pointsGained + user.experiencePoints;

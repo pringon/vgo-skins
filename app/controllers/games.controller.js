@@ -8,6 +8,7 @@ const request              = require("request-promise"),
 
 module.exports = (() => {
 
+    // /games/roulette/:rouletteType
     this.getRoulette = (req, res) => {
         let rouletteTier = null;
         switch(req.params.rouletteType) {
@@ -43,6 +44,7 @@ module.exports = (() => {
         }
     };
 
+    // /games/roulette/:rouletteType/items
     this.getRouletteStake = (req, res) => {
 
         userUtils.getAvailableItems(req.user.steamId, (err, availableItems) => {
@@ -59,6 +61,7 @@ module.exports = (() => {
         })
     };
 
+    // /games/roulette/:rouletteType/:itemsGambled
     this.postRouletteStake = (req, res) => {
 
         let maxStake, minStake, rouletteTier;
@@ -81,6 +84,7 @@ module.exports = (() => {
                 break;
             default:
                 res.send("Invalid roullete type");
+                return;
         }
 
         jackpotStakeStore.getStake(rouletteTier, req.user.steamId, stake => {
@@ -135,9 +139,10 @@ module.exports = (() => {
         });
     };
 
+    // /games/coinflip
     this.getCoinflip = (req, res) => {
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
-            coinflipLobbiesStore.getLobbies(coinflipLobbies => {
+            coinflipLobbiesStore.getLobbies((err, coinflipLobbies) => {
                 res.render("pages/coinflip.ejs", {
                     coinflipLobbies,
                     currentUser: {
@@ -151,6 +156,7 @@ module.exports = (() => {
         });
     };
 
+    // /games/coinflip/history
     this.getCoinflipHistory = (req, res) => {
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
             res.render("pages/coinflip_history.ejs", {
@@ -163,6 +169,28 @@ module.exports = (() => {
             });
         })
     };
+
+    // /games/coinflip/:itemsGambled/:coinColor
+    this.postCoinflipLobby = (req, res) => {
+        offerHandler.sendOffer(req.user.steamId, req.params.itemsGambled, `Coinflip host ${req.params.coinColor}`, (body) => {
+            let responseData = JSON.parse(body).response;
+            if(responseData && responseData.status !== 400) {
+                res.json({ tradeId: responseData.offer.id });
+            }
+        });
+    };
+
+    // /games/coinflip/:lobbyId/:itemsGambled
+    this.postCoinflipDeposit = (req, res) => {
+        console.log(req.params.itemsGambled, req.params.lobbyId);
+        offerHandler.sendOffer(req.user.steamId, req.params.itemsGambled, `Coinflip challenger ${req.params.lobbyId}`, (body) => {
+            console.log(body);
+            let responseData = JSON.parse(body).response;
+            if(responseData && responseData.status !== 400) {
+                res.json({ tradeId: responseData.offer.id });
+            }
+        })
+    }
 
     this.getRouletteTier = rouletteType => {
         switch(rouletteType) {

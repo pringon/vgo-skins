@@ -1,10 +1,11 @@
 "use strict";
-const db               = require("../app/database/models"),
-      request          = require("request"),
-      authenticator    = require("otplib").authenticator,
-      OPSkinsTrade     = require("opskins-express-trade"),
-      jackpotBetsStore = require("./jackpot_stakes_store"),
-      rouletteSocket   = require("../app/sockets/roulette_socket");
+const db                = require("../app/database/models"),
+      request           = require("request"),
+      authenticator     = require("otplib").authenticator,
+      OPSkinsTrade      = require("opskins-express-trade"),
+      jackpotBetsStore  = require("./jackpot_stakes_store"),
+      coinflipBetsStore = require("./coinflip_lobbies_store"),
+      rouletteSocket    = require("../app/sockets/roulette_socket");
 
 module.exports = {
 
@@ -56,14 +57,58 @@ module.exports = {
         });
     },
 
+    handleCoinflipHostOffer: function(offer) {
+        coinflipBetsStore.offerExists(offer.id, (offerExists) => {
+            if(!offerExists) {
+                coinflipBetsStore.addOffer(offer.id);
+                coinflipBetsStore.createLobby({
+                    id: offer.recipient.steam_id,
+                    user: offer.recipient.display_name,
+                    avatar: offer.recipient.avatar
+                }, offer.recipient.items, 
+                offer.message.replace("Coinflip host ", ''), (err, results) => {
+                    if(err) {
+                        throw new Error(err);
+                    }
+                    console.log(results);
+                });
+            }
+        });
+    },
+
+    handleCoinflipChallengeOffer: function(offer) {
+        coinflipBetsStore.offerExists(offer.id, (offerExists) => {
+            if(!offerExists) {
+                coinflipBetsStore.addOffer(offer.id);
+                coinflipBetsStore.setLobbyChallengerStake({
+                    id: offer.recipient.steam_id,
+                    user: offer.recipient.display_name,
+                    avatar: offer.recipient.avatar
+                }, offer.recipient.items, offer.message.replce("Coinflip challenger ", ''), (err, results) => {
+                    if(err) {
+                        throw new Error(err);
+                    }
+                    console.log(results);
+                });
+            }
+        });
+    },
+
     handleIncomingOffers: function() {
         
         let tradeBot = new OPSkinsTrade(process.env.OPSKINS_API_KEY, process.env.TWO_FACTOR_SECRET);
 
         tradeBot.pollTrades();
         tradeBot.on("offerUpdated", (offer) => {
-            if(offer.state_name == "Accepted" && offer.message.indexOf("Jackpot stake") !== -1) {
-                this.handleJackpotOffer(offer);
+            if(offer.state_name == "Accepted") {
+                let offerMessage = offer.message;
+                if(offerMessage.indexOf("Jackpot stake") !== -1) {
+                    this.handleJackpotOffer(offer);
+                } else if(offerMessage.indexOf("Coinflip host") !== -1) {
+                    this.handleCoinflipHostOffer(offer);
+                } else if(offerMessage.indexOf("Coinflip challenger") !== -1) {
+                    this.handleCoinflipChallengeOffer(offer);
+                }
             }
         });
     }
