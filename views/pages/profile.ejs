@@ -50,7 +50,7 @@
         role="progressbar" style="width: <%- Math.round(queriedUser.experiencePoints/(200 + Math.pow(queriedUser.level+1, 2.6))*100) %>%;" 
         aria-valuenow="<%- Math.round(queriedUser.experiencePoints/(200 + Math.pow(queriedUser.level+1, 2.6))*100) %>" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
-    <span class="vaue">(<%- queriedUser.experiencePoints %>/<%- 200 + Math.pow(queriedUser.level+1, 2.6) %>)</span>
+    <span class="vaue">(<%- queriedUser.experiencePoints %>/<%- Math.round(200 + Math.pow(queriedUser.level+1, 2.6)) %>)</span>
 </div>
 
 <div class="level-status-panel">

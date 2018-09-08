@@ -1,7 +1,7 @@
 <div class="coin-flip-score">
     <div class="action-panel">
         <a href="/games/coinflip/history" class="btn bg-gray">History</a>
-        <a href="javascript:void(0)" onclick="document.getElementById('coinflip-submit-selection').textContent = 'Host Coinflip'" 
+        <a href="javascript:void(0)" onclick="hostCoinflipHandler()" 
         data-toggle="modal" data-target=".coinFlipJoinModal" class="btn bg-blue">Deposit</a>
     </div>
     <div class="scores">
@@ -50,9 +50,9 @@
     </div>
     <div class="coin-players-list">
         <% coinflipLobbies.forEach(lobby => { %>
-            <div class="item">
+            <div id="lobby-<%- lobby.id %>" class="item">
                 <div class="player-vs">
-                    <a href="#" class="avatar rounded-circle">
+                    <a href="/user/profile/<%- lobby.host.id %>" class="avatar rounded-circle">
                         <img class="rounded-circle" src="<%- lobby.host.avatar %>">
                     </a>
                     <span class="vs rounded-circle">v/s</span>
@@ -64,7 +64,13 @@
                     </div>
                 </div>
                 <div class="action-col">
-                    <div class="circle" id="timer"></div>
+                    <% //if(lobby.host.id !== currentUser.steamid) { %>
+                        <a href="javascript:void(0)" onclick="joinCoinflipHandler(<%- lobby.id %>)" 
+                        data-toggle="modal" data-target=".coinFlipJoinModal" class="btn bg-green">
+                            <i class="fa fa-link"></i>
+                            <span class="text">Join</span>
+                        </a>
+                    <% //} %>
                     <a href="javascript:void(0)" class="btn bg-gray" data-toggle="modal" data-target=".coinFlipModal">
                         <i class="fa fa-eye"></i>
                         <span class="text">View</span>
@@ -72,14 +78,29 @@
                 </div>
                 <div class="skins-col">
                     <div class="gallery js-flickity skins-list" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }'>
-                        <% lobby.host.items.forEach(item => { %>
+                        <% lobby.host.items.map(item => {
+                            switch(item.wear) {
+                                case item.wear == null:
+                                    return { ...item, wear: ''};
+                                case item.wear < 0.07:
+                                    return { ...item, wear: "FN" };
+                                case item.wear < 0.15:
+                                    return { ...item, wear: "MW" };
+                                case item.wear < 0.37:
+                                    return { ...item, wear: "FT" };
+                                case item.wear < 0.44:
+                                    return { ...item, wear: "WW" };
+                                default:
+                                    return { ...item, wear: "BS" };
+                            }
+                        }).forEach(item => { %>
                             <div class="gallery-cell skin-item">
-                                <div class="code">MM</div>
+                                <div class="code"><%- item.wear %></div>
                                 <div class="mid-sec">
-                                    <img src="/img/gun.png">
+                                    <img src="<%- item.image['300px'] %>">
                                 </div>
                                 <div class="bottom-sec">
-                                    $2.00
+                                    $<%- (parseFloat(item.suggested_price)/100).toFixed(2) %>
                                 </div>
                             </div>
                         <% }) %>

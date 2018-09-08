@@ -45,7 +45,9 @@
                                     <img src="<%- item.image['300px'] %>">
                                 </div>
                                 <div class="bottom-sec">
-                                    <%- item.name %>
+                                    <%- (item.name.indexOf('|') !== -1) 
+                                            ? item.name.substring(item.name.indexOf('|')+1, item.name.indexOf('('))
+                                            : item.name %>
                                 </div>
                             </li>
                         <% }); %>

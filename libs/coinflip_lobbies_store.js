@@ -10,7 +10,9 @@ module.exports = (() => {
 
     const createLobby = (user, items, coinColor, cb = null) => {
 
-        let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_value)/100, 0).toFixed(2);
+        let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price)/100, 0).toFixed(2);
+        console.log(items);
+        console.log(totalDeposited);
         db.user.update({
             skinsWagered: db.Sequelize.literal(`skinsWagered + ${items.length}`),
             totalGambled: db.Sequelize.literal(`totalGambled + ${totalDeposited}`)
@@ -31,21 +33,22 @@ module.exports = (() => {
         });
         items.forEach(item => {
             multiTask.sadd(`coinflip_lobbies:${lobbyCount}:host:items`, JSON.stringify(item));
-            multiTask.sadd(`coinflip_lobbies:${lobbyCount}:host:items:ids`, item.id);
+            multiTask.sadd(`coinflip_lobbies:${lobbyCount}:host:items:ids`, item);
         });
         multiTask.exec((err, results) => {
             if(err) {
-                throw new Error(err);
+                cb(err);
+                return;
             }
             lobbyCount++;
             if(cb !== null) {
-                cb(results);
+                cb(null, results);
                 return
             }
         });
     };
 
-    const setLobbyStake = (user, items, coinColor, lobbyId, cb = null) => {
+    const setLobbyChallengerStake = (user, items, coinColor, lobbyId, cb = null) => {
 
         let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_value)/100, 0).toFixed(2);
         db.user.update({
@@ -72,13 +75,13 @@ module.exports = (() => {
 
         multiTask.exec((err, results) => {
 
-            if(err) {
-                throw new Error(err);
-            }
             if(cb !== null) {
-                cb(results);
+                if(err) {
+                    cb(err);
+                } else {
+                    cb(null, results);
+                }
             }
-            return;
         });
     };
 
@@ -105,7 +108,7 @@ module.exports = (() => {
                     lobby.challenger.items.push(JSON.parse(item));
                 }
             }
-            cb(lobby);
+            cb(null, lobby);
         });
     };
 
@@ -114,7 +117,7 @@ module.exports = (() => {
         redisClient.smembers("coinflip_lobbies", (err, lobbyIds) => {
 
             if(lobbyIds == null) {
-                cb([]);
+                cb(null, []);
                 return;
             }
             
@@ -149,15 +152,39 @@ module.exports = (() => {
                         }
                     }
                 }
-                cb(lobbies);
+                cb(null, lobbies);
             });
+        });
+    };
+
+    const addOffer = offerId => {
+
+        redisClient.sadd("coinflip_offers", offerId);
+    };
+
+    const offerExists = (offerId, cb) => {
+        redisClient.smembers("coinflip_offers", (err, offers) => {
+            if(err) {
+                throw new Error(err);
+            }
+            if(offers == null) {
+                cb(false);
+                return;
+            }
+            if(offers.indexOf(offerId.toString()) !== -1) {
+                cb(true);
+                return;
+            }
+            cb(false);
         });
     };
 
     return ({
         createLobby,
-        setLobbyStake,
+        setLobbyChallengerStake,
         getLobby,
-        getLobbies
+        getLobbies,
+        addOffer,
+        offerExists
     });
 })();

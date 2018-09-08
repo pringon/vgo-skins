@@ -13,6 +13,7 @@ module.exports = (() => {
         res.redirect('/');
     };
 
+    // /user/profile/:id
     this.getProfile = async(req, res) => {
 
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
@@ -74,6 +75,7 @@ module.exports = (() => {
         });
     };
 
+    // /user/items
     this.getAvailableItems = (req, res) => {
         userUtils.getAvailableItems(req.user.steamId, (err, availableItems) => {
             if(err) {
@@ -83,6 +85,7 @@ module.exports = (() => {
         });
     };
 
+    // /user/auth/openid/return
     this.handleOpenIDReturn = (req, res) => {
 
         if(req.user) {
@@ -92,6 +95,7 @@ module.exports = (() => {
         }
     };
 
+    // /user/tradeUrl
     this.postTradeUrl = (req, res) => {
 
         if(req.body.tradeUrl.indexOf("https://trade.opskins.com/t/") == 0) {
@@ -110,6 +114,7 @@ module.exports = (() => {
         }
     },
 
+    // /user/logout
     this.postLogout = (req, res) => {
 
         req.logout();

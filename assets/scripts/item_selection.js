@@ -1,109 +1,118 @@
-let currentSelectedItems = {};
-let currentMoneyGambled = 0;
-let selectedItems = {};
-let totalMoneyGambled = 0;
-let userStakeInPot = 0;
-let userItemsInPot = 0;
-let potTotal = 0;
+const itemSelection = {
 
-function selectItem(dataUpdateHandler) {
+    setPlayerStake: function(playerStake) {
+        this.playerStake = playerStake;
+    },
 
-    return function() {
+    selectItem: function(dataUpdateHandler = null) {
 
-        let element = $(this);
-        if(element.hasClass("selected-item")) {
-        
-            element.removeClass("selected-item");
-
-            totalMoneyGambled -= selectedItems[element.attr("id")].price;
-            delete selectedItems[element.attr("id")];
-        } else {
-        
-            element.addClass("selected-item");
-
-            selectedItems[element.attr("id")] = {
-                price: parseFloat(element.get(0).childNodes[0].childNodes[0].childNodes[1].innerText.substr(1)),
-                name: element.get(0).childNodes[0].childNodes[2].innerText,
-                image: element.get(0).childNodes[0].childNodes[1].childNodes[0].src
-            };
-            totalMoneyGambled += selectedItems[element.attr("id")].price;
-        }
-        dataUpdateHandler(totalMoneyGambled, userItemsInPot, potTotal);
-
-        if(Object.keys(selectedItems).length !== 0 && selectedItems.constructor === Object) {
-
-            //$(".data-panel .bottom-sec button").addClass("btn-info");
-            //$(".data-panel .bottom-sec button").removeClass("btn-basic");
-            $(".data-panel .bottom-sec button").prop("disabled", false);
-        } else {
-
-            //$(".data-panel .bottom-sec button").addClass("btn-basic");
-            //$(".data-panel .bottom-sec button").removeClass("btn-info");
-            $(".data-panel .bottom-sec button").prop("disabled", true);
-        }
-    };
-}
-
-function submitSelection() {
-
-    let gambledItems = [];
-    for(let item in selectedItems) {
-        if(selectedItems.hasOwnProperty(item)) {
-            gambledItems.push({ id: item, ...selectedItems[item] });
-        }
-    }
-
-    // fetch(`/games/roulette/plant/${gambledItems.map(item => item.id)}`, {
-    //     method: "POST",
-    //     headers: {
-    //         "Accept": "application/json"
-    //     }
-    // }).then(res => res.json())
-    // .then(res => {
-    //     tradePopup = window.open(`https://trade.opskins.com/trade-offers/${res.tradeId}`,"_blank");
-    //     tradePopup.focus();
-        
-    //     selectedItems = {};
-    //     totalMoneyGambled = 0;
-    // });
-    let tradePopup = window.open('', "_blank");
-    $.ajax({
-        url: `/games/roulette/plant/${gambledItems.map(item => item.id)}`,
-        method: "POST",
-        success: function(res) {
-            if(res.err) {
-                console.log(res.err.message);
-                tradePopup.close();
-                $("#wrong-stake-amount-flash").show();
-                console.log("Flash message shown");
-                setTimeout(function() {
-                    $("#wrong-stake-amount-flash").hide();
-                    console.log("Flash message hidden");
-                }, 4000);
-                return;
+        return function() {
+            this.playerStake = playerStake;
+    
+            let element = $(this);
+            if(element.hasClass("selected-item")) {
+            
+                element.removeClass("selected-item");
+    
+                this.playerStake.totalMoneyGambled -= parseFloat(element.get(0).childNodes[0].childNodes[0].childNodes[1].innerText.substr(1));
+                delete this.playerStake.selectedItems.delete(element.attr("id"));
+            } else {
+            
+                element.addClass("selected-item");
+    
+                this.playerStake.selectedItems.add(element.attr("id"));
+                this.playerStake.totalMoneyGambled += parseFloat(element.get(0).childNodes[0].childNodes[0].childNodes[1].innerText.substr(1));
             }
-            
-            console.log(window);
-            tradePopup.location = `https://trade.opskins.com/trade-offers/${res.tradeId}`;
-            tradePopup.focus();
-            
-            selectedItems = {};
-            totalMoneyGambled = 0;
+    
+            if(dataUpdateHandler !== null) {
+                dataUpdateHandler(this.playerStake);
+            } 
+    
+            if(this.playerStake.selectedItems.size > 0) {
+    
+                //$(".data-panel .bottom-sec button").addClass("btn-info");
+                //$(".data-panel .bottom-sec button").removeClass("btn-basic");
+                $(".data-panel .bottom-sec button").prop("disabled", false);
+            } else {
+    
+                //$(".data-panel .bottom-sec button").addClass("btn-basic");
+                //$(".data-panel .bottom-sec button").removeClass("btn-info");
+                $(".data-panel .bottom-sec button").prop("disabled", true);
+            }
+        };
+    },
+
+    selectCoinflipColor: function() {
+
+        return function() {
+            this.playerStake = playerStake;
+
+            let coin = this;
+            this.playerStake.coinColor = coin.id.replace("-coin", '');
+        };
+    },
+
+    submitSelection: function(requestUrl) {
+        
+        if(this.playerStake) {
+            let gambledItems = [];
+            this.playerStake.selectedItems.forEach(item => {
+                gambledItems.push(item);
+            });
+
+            if(typeof this.playerStake.lobbyId !== "undefined") {
+                requestUrl += `/${this.playerStake.lobbyId}`;
+            }
+            requestUrl += `/${gambledItems}`;
+            if(this.playerStake.coinColor) {
+                requestUrl += `/${this.playerStake.coinColor}`;
+            }
+
+            console.log(requestUrl);
+            let tradePopup = window.open('', "_blank");
+            $.ajax({
+                url: requestUrl,
+                method: "POST",
+                success: function(res) {
+
+                    if(res.err) {
+                        console.log(res.err.message);
+                        tradePopup.close();
+                        $("#wrong-stake-amount-flash").show();
+                        console.log("Flash message shown");
+                        setTimeout(function() {
+                            $("#wrong-stake-amount-flash").hide();
+                            console.log("Flash message hidden");
+                        }, 4000);
+                        return;
+                    }
+                    
+                    tradePopup.location = `https://trade.opskins.com/trade-offers/${res.tradeId}`;
+                    tradePopup.focus();
+                    
+                    if(this.playerStake) {
+                        this.playerStake.selectedItems.clear();
+                        this.playerStake.totalMoneyGambled = 0;
+                    }
+                }
+            });
         }
-    });
-}
+    },
 
-function clearSelection() {
+    clearSelection: function(cb = null) {
 
-    selectedItems = {};
-    totalMoneyGambled = 0;
-    let items = document.getElementsByClassName("ungambled-item");
-    for(let item of items) {
-        item.setAttribute("class", "ungambled-item gambling-selection-item col");
+        return function() {
+            this.playerStake = playerStake;
+
+            this.playerStake.selectedItems.clear();
+            this.playerStake.totalMoneyGambled = 0;
+            let items = document.getElementsByClassName("ungambled-item");
+            for(let item of items) {
+                item.setAttribute("class", "ungambled-item gambling-selection-item col");
+            }
+            if(cb !== null) {
+                cb(this.playerStake);
+            }
+        };
     }
-    $(".modal-content .row .score-panel .item .score:eq(0)").text(`(0/20)`);
-    $(".modal-content .row .score-panel .item .score:eq(1)").text(`$0.00`);
-    $(".modal-content .row .score-panel .item .score:eq(3)").text(`0.00%`);
-    $(".data-panel .bottom-sec button").text(`Deposit $0.00 (0 Skins)`);
-    $(".data-panel .bottom-sec button").prop("disabled", true);
-}
+};

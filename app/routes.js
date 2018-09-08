@@ -25,4 +25,6 @@ module.exports = (app, passport) => {
     app.post("/games/roulette/:rouletteType/:itemsGambled", UsersController.isLoggedIn, GamesController.postRouletteStake);
     app.get("/games/coinflip", UsersController.isLoggedIn, GamesController.getCoinflip);
     app.get("/games/coinflip/history", UsersController.isLoggedIn, GamesController.getCoinflipHistory);
+    app.post("/games/coinflip/:itemsGambled/:coinColor", UsersController.isLoggedIn, GamesController.postCoinflipLobby);
+    app.post("/games/coinflip/:lobbyId/:itemsGambled", UsersController.isLoggedIn, GamesController.postCoinflipDeposit);
 };

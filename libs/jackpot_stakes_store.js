@@ -44,7 +44,7 @@ module.exports = {
                 });
                 items.forEach(item => {
                     multiTask.sadd(`jackpot_players:${tier}:${user.id}:items`, JSON.stringify(item))
-                    multiTask.sadd(`jackpot_players:${tier}:${user.id}:items:ids`, item.id);
+                    multiTask.sadd(`jackpot_players:${tier}:${user.id}:items:ids`, item);
                 });
                 multiTask.exec((err, results) => {
 
@@ -63,9 +63,9 @@ module.exports = {
                     let multiTask = redisClient.multi();
                     items.forEach(item => {
 
-                        if(!this.itemIsInSet(currentItems, item.id.toString())) {
+                        if(!this.itemIsInSet(currentItems, item)) {
                             multiTask.sadd(`jackpot_players:${tier}:${user.id}:items`, JSON.stringify(item))
-                            multiTask.sadd(`jackpot_players:${tier}:${user.id}:items:ids`, item.id);
+                            multiTask.sadd(`jackpot_players:${tier}:${user.id}:items:ids`, item);
                             insertedItems.push(item);
                         }
                     });
@@ -88,11 +88,6 @@ module.exports = {
                 redisClient.sadd(`jackpot_players:${tier}:${user.id}:items`, JSON.stringify(item));
             });
         });
-    },
-
-    addOffer: function(offerId) {
-
-        redisClient.sadd("jackpot_offers", offerId);
     },
 
     getPlayerCount: function(tier, cb = null) {
@@ -201,6 +196,11 @@ module.exports = {
             }
         }
         return false;
+    },
+
+    addOffer: function(offerId) {
+
+        redisClient.sadd("jackpot_offers", offerId);
     },
 
     offerExists: function(offerId, cb) {
