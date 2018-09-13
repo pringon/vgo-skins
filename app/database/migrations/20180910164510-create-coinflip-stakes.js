@@ -1,14 +1,14 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('JackpotHistories', {
+    return queryInterface.createTable('CoinflipStakes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.BIGINT.UNSIGNED
       },
-      winner: {
+      user: {
         type: Sequelize.BIGINT.UNSIGNED,
         references: {
           model: "users",
@@ -16,13 +16,10 @@ module.exports = {
         }
       },
       total: {
-        type: Sequelize.INTEGER.UNSIGNED
+        type: Sequelize.INTEGER.UNSIGNED,
       },
-      tier: {
-        type: Sequelize.TINYINT
-      },
-      stakes: {
-        type: Sequelize.JSON
+      stake: {
+        type: Sequelize.JSON,
       },
       createdAt: {
         allowNull: false,
@@ -35,6 +32,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('JackpotHistories');
+    return queryInterface.dropTable('CoinflipStakes');
   }
 };

@@ -143,14 +143,17 @@ module.exports = (() => {
     this.getCoinflip = (req, res) => {
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
             coinflipLobbiesStore.getLobbies((err, coinflipLobbies) => {
-                res.render("pages/coinflip.ejs", {
-                    coinflipLobbies,
-                    currentUser: {
-                        level: req.user.level,
-                        ...currentUser
-                    },
-                    chat: true,
-                    coinflip: true
+                coinflipLobbiesStore.getCoinflipLobbyCount((err, coinflipLobbyCount) => {
+                    res.render("pages/coinflip.ejs", {
+                        coinflipLobbies,
+                        coinflipLobbyCount,
+                        currentUser: {
+                            level: req.user.level,
+                            ...currentUser
+                        },
+                        chat: true,
+                        coinflip: true
+                    });
                 });
             });
         });
@@ -159,15 +162,33 @@ module.exports = (() => {
     // /games/coinflip/history
     this.getCoinflipHistory = (req, res) => {
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
-            res.render("pages/coinflip_history.ejs", {
-                currentUser: {
-                    level: req.user.level,
-                    ...currentUser
-                },
-                chat: true,
-                coinflip: true
+            db.CoinflipHistory.getHistory({}, 5, (coinflipHistory) => {
+                res.render("pages/coinflip_history.ejs", {
+                    coinflipHistory,
+                    currentUser: {
+                        level: req.user.level,
+                        ...currentUser
+                    },
+                    chat: true,
+                    coinflip: true,
+                    coinflipHistoryPage: true
+                });
             });
         })
+    };
+
+    // /games/coinflip/:lobbyId
+    this.getCoinflipLobby = (req, res) => {
+        coinflipLobbiesStore.getLobby(req.params.lobbyId, (err, lobby) => {
+            if(err) {
+                throw new Error(err);
+            }
+            res.json(lobby);
+        });
+    };
+
+    this.getCoinflipLobbyFromHistory = (req, res) => {
+        db.CoinflipHistory.getLobby(req.params.lobbyId, res.json.bind(res));
     };
 
     // /games/coinflip/:itemsGambled/:coinColor
@@ -182,15 +203,20 @@ module.exports = (() => {
 
     // /games/coinflip/:lobbyId/:itemsGambled
     this.postCoinflipDeposit = (req, res) => {
-        console.log(req.params.itemsGambled, req.params.lobbyId);
-        offerHandler.sendOffer(req.user.steamId, req.params.itemsGambled, `Coinflip challenger ${req.params.lobbyId}`, (body) => {
-            console.log(body);
-            let responseData = JSON.parse(body).response;
-            if(responseData && responseData.status !== 400) {
-                res.json({ tradeId: responseData.offer.id });
+        coinflipLobbiesStore.getLobby(req.params.lobbyId, (err, lobby) => {
+            let depositedAmount = parseFloat(req.params.depositedAmount);
+            if(lobby.host.total * 1.1 > depositedAmount && lobby.host.total * 0.9 < depositedAmount) {
+                offerHandler.sendOffer(req.user.steamId, req.params.itemsGambled, `Coinflip challenger ${req.params.lobbyId}`, (body) => {
+                    let responseData = JSON.parse(body).response;
+                    if(responseData && responseData.status !== 400) {
+                        res.json({ tradeId: responseData.offer.id });
+                    }
+                });
+            } else {
+                res.json({ err: { message: "Stake is not within betting limits" }});
             }
-        })
-    }
+        });
+    };
 
     this.getRouletteTier = rouletteType => {
         switch(rouletteType) {

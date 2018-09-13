@@ -172,13 +172,152 @@ function populateItemsGallery(stakesList) {
 }
 
 /**
- * A function that takes the id of the lobby and the items deposited and populates the item gallery of the loby
+ * A function that takes the id of the lobby and the items deposited and populates the item gallery of the lobby
  * @method populateCoinflipLobbyGallery
  * @param {int} lobbyId 
  * @param {Array} items 
  */
-function populateCoinflipLobbyGallery(lobbyId, items) {
+function populateCoinflipLobbyGallery(coinflipLobbies) {
 
+    let coinflipLobbiesHolder = document.createDocumentFragment();
+    let coinflipTotalStake = 0.0;
+
+    coinflipLobbies.forEach(lobby => {
+        
+        let coinflipLobby = document.createElement("div");
+        coinflipLobby.setAttribute("id", `lobby-${lobby.id}`);
+        coinflipLobby.setAttribute("class", "item");
+
+        let playersColumn = document.createElement("div");
+        playersColumn.setAttribute("class", "player-vs");
+
+        let hostPlayerLink = document.createElement('a');
+        hostPlayerLink.setAttribute("class", "avatar rounded-circle");
+        hostPlayerLink.setAttribute("href", `/user/profile/${lobby.host.id}`);
+        let hostPlayerImage = document.createElement("img");
+        hostPlayerImage.setAttribute("class", "rounded-circle");
+        hostPlayerImage.setAttribute("src", lobby.host.avatar);
+        hostPlayerLink.appendChild(hostPlayerImage);
+
+        let delimiterSpan = document.createElement("span");
+        delimiterSpan.setAttribute("class", "vs rounded-circle");
+        delimiterSpan.textContent = "v/s";
+
+        let challengerPlayerLink = document.createElement("div");
+        challengerPlayerLink.setAttribute("class", "avatar rounded-circle");
+        let challengerPlayerImage = document.createElement("img");
+        challengerPlayerImage.setAttribute("class", "rounded-circle");
+        if(lobby.challenger) {
+            challengerPlayerLink.setAttribute("href", `/user/profile/${lobby.challenger.id}`);
+            challengerPlayerImage.setAttribute("src", lobby.challenger.avatar);
+        } else {
+            challengerPlayerLink.setAttribute("href", '#');
+            challengerPlayerImage.setAttribute("src", `/img/coin-${(lobby.host.coinColor == 'red') ? 'blue' : 'red'}.png`);
+        }
+        challengerPlayerLink.appendChild(challengerPlayerImage);
+
+        let lobbyStakeHolder = document.createElement("div");
+        lobbyStakeHolder.setAttribute("class", "amount");
+        let lobbyStake = document.createElement("span");
+        lobbyStake.setAttribute("class", "badge");
+        if(lobby.challenger) {
+            coinflipTotalStake += parseFloat(lobby.host.total) + parseFloat(lobby.challenger.total);
+            lobbyStake.textContent = (parseFloat(lobby.host.total) + parseFloat(lobby.challenger.total)).toFixed(2);
+        } else {
+            coinflipTotalStake += parseFloat(lobby.host.total);
+            lobbyStake.textContent = parseFloat(lobby.host.total).toFixed(2);
+        }
+        lobbyStakeHolder.appendChild(lobbyStake);
+
+        playersColumn.appendChild(hostPlayerLink);
+        playersColumn.appendChild(delimiterSpan);
+        playersColumn.appendChild(challengerPlayerLink);
+        playersColumn.appendChild(lobbyStakeHolder);
+
+        let actionColumn = document.createElement("div");
+        actionColumn.setAttribute("class", "action-col");
+
+        if(lobby.host.id !== /[^/]*$/.exec(document.getElementsByClassName("profile-panel")[0].href)[0]) {
+            let joinLink = document.createElement('a');
+            joinLink.setAttribute("href", "javascript:void(0)");
+            joinLink.setAttribute("onclick", `joinCoinflipHandler(${lobby.id})`);
+            joinLink.setAttribute("data-toggle", "modal");
+            joinLink.setAttribute("data-target", ".coinFlipJoinModal");
+            joinLink.setAttribute("class", "btn bg-green");
+
+            let joinImage = document.createElement('i');
+            joinImage.setAttribute("class", "fa fa-link");
+            let joinText = document.createElement("span");
+            joinText.setAttribute("class", "text");
+            joinText.textContent = "Join";
+
+            joinLink.appendChild(joinImage);
+            joinLink.appendChild(joinText);
+            actionColumn.appendChild(joinLink);
+        }
+
+        let viewLink = document.createElement('a');
+        viewLink.setAttribute("href", "javascript:void(0)");
+        viewLink.setAttribute("data-toggle", "modal");
+        viewLink.setAttribute("data-target", ".coinFlipModal");
+        viewLink.setAttribute("class", "btn bg-gray");
+
+        let viewImage = document.createElement('i');
+        viewImage.setAttribute("class", "fa fa-eye");
+        let viewText = document.createElement("span");
+        viewText.setAttribute("class", "text");
+        viewText.textContent = "View";
+
+        viewLink.appendChild(viewImage);
+        viewLink.appendChild(viewText);
+        actionColumn.appendChild(viewLink);
+
+        let skinsColumn = document.createElement("div");
+        skinsColumn.setAttribute("class", "skins-col");
+        let skinsGallery = document.createElement("div");
+        skinsGallery.setAttribute("class", "gallery js-flickity skins-list");
+        skinsGallery.setAttribute("data-flickity", '{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }');
+        
+        lobby.host.items.concat((lobby.challenger) ? lobby.challenger.items : []).forEach(item => {
+            
+            let skinCell = document.createElement("div");
+            skinCell.setAttribute("class", "gallery-cell skin-item");
+
+            if(item.wear !== null) {
+                let itemWear = document.createElement("div");
+                itemWear.setAttribute("class", "code");
+                itemWear.textContent = getItemWearCode(item.wear);
+                skinCell.appendChild(itemWear);
+            }
+
+            let midSection = document.createElement("div");
+            midSection.setAttribute("class", "mid-sec");
+            let skinImage = document.createElement("img");
+            skinImage.setAttribute("src", item.image['300px']);
+            midSection.appendChild(skinImage);
+
+            let bottomSection = document.createElement("div");
+            bottomSection.setAttribute("class", "bottom-sec");
+            bottomSection.textContent = `$${(parseFloat(item.suggested_price)/100).toFixed(2)}`;
+
+            skinCell.appendChild(midSection);
+            skinCell.appendChild(bottomSection);
+            skinsGallery.appendChild(skinCell);
+        });
+        skinsColumn.appendChild(skinsGallery);
+
+        coinflipLobby.appendChild(playersColumn);
+        coinflipLobby.appendChild(actionColumn);
+        coinflipLobby.appendChild(skinsColumn);
+        coinflipLobbiesHolder.appendChild(coinflipLobby);
+    });
+
+    let coinflipLobbiesElement = document.getElementsByClassName("coin-players-list")[0];
+    coinflipLobbiesElement.innerHTML = '';
+    coinflipLobbiesElement.appendChild(coinflipLobbiesHolder);
+    $(".gallery").flickity();
+    $("#coinflip-total-stake").text(`$${coinflipTotalStake.toFixed(2)}`);
+    $("#coinflip-lobby-count").text(coinflipLobbies.length);
 }
 
 /**
@@ -340,6 +479,133 @@ function plotData(stakesList) {
     }
 
     plotStakes("doughnut", chartData);
+}
+
+/**
+ * @method renderViewModal
+ * @param {Object} lobby object containing the data to be displayed in the modal 
+ */
+function renderViewModal(lobby) {
+    console.log(lobby);
+    $("#lobby-title").text(`Lobby ID: ${lobby.id}`);
+
+    $("#coinFlipPlayer1 img").attr("src", lobby.host.avatar);
+    $(".player-left .coin img").attr("src", `/img/coin-${lobby.host.coinColor}.png`);
+    $(".player-left .name").text(lobby.host.user);
+
+    let challengerCoinColor = lobby.host.coinColor == "blue" ? "red" : "blue";
+    if(lobby.challenger) {
+        $("#coinFlipPlayer2 img").attr("src", lobby.challenger.avatar);
+        $(".player-right .coin img").attr("src", `/img/coin-${challengerCoinColor}.png`);
+        $(".player-right .name").text(lobby.challenger.user);
+    } else {
+        $("#coinFlipPlayer2 img").attr("src", `/img/coin-${challengerCoinColor}.png`);
+        $(".player-right .coin img").attr("src", `/img/coin-${challengerCoinColor}.png`);
+        $(".player-right .name").text("Challenger awaited");
+    }
+
+    if(typeof lobby.host.items == "string") {
+        lobby.host.items = JSON.parse(lobby.host.items);
+    }
+    if(typeof lobby.challenger !== "undefined" && typeof lobby.challenger.items == "string") {
+        lobby.challenger.items = JSON.parse(lobby.challenger.items);
+    }
+
+    let hostItemsColumn = document.getElementsByClassName("card-header")[0];
+    hostItemsColumn.childNodes[1].innerHTML = `<label>Items:</label> ${lobby.host.items.length}`;
+    hostItemsColumn.childNodes[3].innerHTML = `<label>Value:</label> $${lobby.host.total}`;
+
+    let itemsHolder = document.createDocumentFragment();
+    lobby.host.items.forEach(item => {
+
+        let itemRow = document.createElement("tr");
+        
+        let itemImageHolder = document.createElement("td");
+        let itemImage = document.createElement("img");
+        itemImage.setAttribute("src", item.image["300px"]);
+        itemImageHolder.appendChild(itemImage);
+
+        let itemDataHolder = document.createElement("td");
+        let itemTitle = document.createElement("span");
+        itemTitle.setAttribute("class", "title");
+        itemTitle.textContent = getItemShortName(item.name);
+        let itemDescription = document.createElement("span");
+        itemDescription.setAttribute("class", "des");
+        itemDescription.textContent = item.category;
+        itemDataHolder.appendChild(itemTitle);
+        itemDataHolder.appendChild(itemDescription);
+
+        let itemPriceHolder = document.createElement("td");
+        let itemPrice = document.createElement("span");
+        itemPrice.setAttribute("class", "amount");
+        itemPrice.textContent = `$${(parseFloat(item.suggested_price)/100).toFixed(2)}`;
+        itemPriceHolder.appendChild(itemPrice);
+
+        
+        itemRow.appendChild(itemImageHolder);
+        itemRow.appendChild(itemDataHolder);
+        itemRow.appendChild(itemPriceHolder);
+
+        itemsHolder.appendChild(itemRow)
+    });
+
+    let itemsContainer = document.getElementsByClassName("card-body")[0].childNodes[1];
+    itemsContainer.innerHTML = '';
+    itemsContainer.appendChild(itemsHolder);
+
+    if(lobby.challenger) {
+        let hostItemsColumn = document.getElementsByClassName("card-header")[1];
+        hostItemsColumn.childNodes[1].innerHTML = `<label>Items:</label> ${lobby.challenger.items.length}`;
+        hostItemsColumn.childNodes[3].innerHTML = `<label>Value:</label> $${lobby.challenger.total}`;
+    
+
+        let itemsHolder = document.createDocumentFragment();
+        lobby.challenger.items.forEach(item => {
+
+            let itemRow = document.createElement("tr");
+            
+            let itemImageHolder = document.createElement("td");
+            let itemImage = document.createElement("img");
+            itemImage.setAttribute("src", item.image["300px"]);
+            itemImageHolder.appendChild(itemImage);
+
+            let itemDataHolder = document.createElement("td");
+            let itemTitle = document.createElement("span");
+            itemTitle.setAttribute("class", "title");
+            itemTitle.textContent = getItemShortName(item.name);
+            let itemDescription = document.createElement("span");
+            itemDescription.setAttribute("class", "des");
+            itemDescription.textContent = item.category;
+            itemDataHolder.appendChild(itemTitle);
+            itemDataHolder.appendChild(itemDescription);
+
+            let itemPriceHolder = document.createElement("td");
+            let itemPrice = document.createElement("span");
+            itemPrice.setAttribute("class", "amount");
+            itemPrice.textContent = `$${(parseFloat(item.suggested_price)/100).toFixed(2)}`;
+            itemPriceHolder.appendChild(itemPrice);
+
+            
+            itemRow.appendChild(itemImageHolder);
+            itemRow.appendChild(itemDataHolder);
+            itemRow.appendChild(itemPriceHolder);
+
+            itemsHolder.appendChild(itemRow)
+        });
+
+        let itemsContainer = document.getElementsByClassName("card-body")[1].childNodes[1];
+        itemsContainer.innerHTML = '';
+        itemsContainer.appendChild(itemsHolder);
+
+    } else {
+        let hostItemsColumn = document.getElementsByClassName("card-header")[1];
+        hostItemsColumn.childNodes[1].innerHTML = "<label>Items:</label> 0";
+        hostItemsColumn.childNodes[3].innerHTML = "<label>Value:</label> $0.00";
+
+        let itemsContainer = document.getElementsByClassName("card-body")[1].childNodes[1];
+        itemsContainer.innerHTML = '';
+    
+    }
 }
 
 /**

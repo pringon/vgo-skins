@@ -8,6 +8,10 @@ module.exports = (() => {
 
     let lobbyCount = 0;
 
+    const getCoinflipLobbyCount = (cb) => {
+        redisClient.scard("coinflip_lobbies", cb);
+    };
+
     const createLobby = (user, items, coinColor, cb = null) => {
 
         let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price)/100, 0).toFixed(2);
@@ -48,9 +52,26 @@ module.exports = (() => {
         });
     };
 
-    const setLobbyChallengerStake = (user, items, coinColor, lobbyId, cb = null) => {
+    const deleteLobby = (lobbyId, cb = null) => {
 
-        let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_value)/100, 0).toFixed(2);
+        let multiTask = redisClient.multi();
+
+        multiTask.srem("coinflip_lobbies", lobbyId);
+        multiTask.del(`coinflip_lobbies:${lobbyId}:host`);
+        multiTask.del(`coinflip_lobbies:${lobbyId}:host:items`);
+        multiTask.del(`coinflip_lobbies:${lobbyId}:challenger`);
+        multiTask.del(`coinflip_lobbies:${lobbyId}:challenger:items`);
+
+        multiTask.exec((results) => {
+            if(cb !== null) {
+                cb(null);
+            }
+        });
+    };
+
+    const setLobbyChallengerStake = (user, items, lobbyId, cb = null) => {
+        console.log("The lobby id is", lobbyId);
+        let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price)/100, 0).toFixed(2);
         db.user.update({
             skinsWagered: db.Sequelize.literal(`skinsWagered + ${items.length}`),
             totalGambled: db.Sequelize.literal(`totalGambled + ${totalDeposited}`)
@@ -59,29 +80,33 @@ module.exports = (() => {
         });
         db.user.addExperience(user.id, totalDeposited);
 
-        let multiTask = redisClient.multi();
+        redisClient.hget(`coinflip_lobbies:${lobbyId}:host`, "coinColor", (hostCoinColor) => {
+            
+            let challengerCoinColor = hostCoinColor == "red" ? "blue" : "red";
 
-        multiTask.hmset(`coinflip_lobbies:${lobbyId}:challenger`, {
-            "id": user.id,
-            "user": user.user,
-            "avatar": user.avatar,
-            "total": totalDeposited,
-            "coinColor": coinColor
-        });
-        items.forEach(item => {
-            multiTask.sadd(`coinflip_lobbies:${lobbyId}:challenger:items`, JSON.stringify(item));
-            multiTask.sadd(`coinflip_lobbies:${lobbyId}:challenger:items:ids`, item.id);
-        });
-
-        multiTask.exec((err, results) => {
-
-            if(cb !== null) {
-                if(err) {
-                    cb(err);
-                } else {
-                    cb(null, results);
+            let multiTask = redisClient.multi();
+            multiTask.hmset(`coinflip_lobbies:${lobbyId}:challenger`, {
+                "id": user.id,
+                "user": user.user,
+                "avatar": user.avatar,
+                "total": totalDeposited,
+                "coinColor": challengerCoinColor
+            });
+            items.forEach(item => {
+                multiTask.sadd(`coinflip_lobbies:${lobbyId}:challenger:items`, JSON.stringify(item));
+                multiTask.sadd(`coinflip_lobbies:${lobbyId}:challenger:items:ids`, item.id);
+            });
+    
+            multiTask.exec((err, results) => {
+    
+                if(cb !== null) {
+                    if(err) {
+                        cb(err);
+                    } else {
+                        cb(null, results);
+                    }
                 }
-            }
+            });
         });
     };
 
@@ -94,7 +119,7 @@ module.exports = (() => {
         multiTask.smembers(`coinflip_lobbies:${lobbyId}:challenger:items`);
 
         multiTask.exec((err, results) => {
-            let lobby = { id: lobbdyId };
+            let lobby = { id: lobbyId };
             lobby.host = results[0];
             lobby.host.items = [];
             for(let item of results[1]) {
@@ -180,7 +205,9 @@ module.exports = (() => {
     };
 
     return ({
+        getCoinflipLobbyCount,
         createLobby,
+        deleteLobby,
         setLobbyChallengerStake,
         getLobby,
         getLobbies,

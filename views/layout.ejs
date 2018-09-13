@@ -133,6 +133,32 @@
         <% } %>
 
         <% if(typeof chat !== "undefined" && chat === true) { %>
+
+            <!-- Chat-responsive -->
+            <script type="text/javascript">
+            $(window).on('load resize', function () {
+            if ($(window).width() < 1200){
+                $(".chat-panel").addClass("collapse in");
+            }
+            else{
+                $(".chat-panel").removeClass("collapse in");
+            };
+            });
+        </script>
+        <!-- end -->
+
+        <!-- body scroll none -->
+        <script type="text/javascript">
+            $(window).on('load', function () {
+            $(".chat-bar-menu").click(function(){
+                $("body").toggleClass("scroll-none");
+            });
+            $(".navbar-toggler").click(function(){
+                $("body").toggleClass("scroll-none");
+            });
+            });
+        </script>
+        <!-- end -->
             <script src="/socket.io/socket.io.js"></script>
             <script type="text/javascript">
                 const socket = io();
@@ -348,6 +374,9 @@
                 <script src="/scripts/utils/item_format.js"></script>
                 <script src="/scripts/items_rendering.js"></script>
                 <script src="/scripts/coinflip/graphics.js"></script>
+                <% if(typeof coinflipHistoryPage !== "undefined" && coinflipHistoryPage == true) { %>
+                    <script src="/scripts/coinflip/socket.js"></script>
+                <% } %>
         <% } %>
     </body>
 </html>

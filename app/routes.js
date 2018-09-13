@@ -22,9 +22,11 @@ module.exports = (app, passport) => {
 
     app.get("/games/roulette/:rouletteType", UsersController.isLoggedIn, GamesController.getRoulette);
     app.get("/games/roulette/:rouletteType/items", UsersController.isLoggedIn, GamesController.getRouletteStake);
-    app.post("/games/roulette/:rouletteType/:itemsGambled", UsersController.isLoggedIn, GamesController.postRouletteStake);
+    app.post("/games/roulette/:rouletteType/:itemsGambled/:depositedAmount", UsersController.isLoggedIn, GamesController.postRouletteStake);
     app.get("/games/coinflip", UsersController.isLoggedIn, GamesController.getCoinflip);
     app.get("/games/coinflip/history", UsersController.isLoggedIn, GamesController.getCoinflipHistory);
-    app.post("/games/coinflip/:itemsGambled/:coinColor", UsersController.isLoggedIn, GamesController.postCoinflipLobby);
-    app.post("/games/coinflip/:lobbyId/:itemsGambled", UsersController.isLoggedIn, GamesController.postCoinflipDeposit);
+    app.get("/games/coinflip/:lobbyId", UsersController.isLoggedIn, GamesController.getCoinflipLobby);
+    app.get("/games/coinflip/history/:lobbyId", UsersController.isLoggedIn, GamesController.getCoinflipLobbyFromHistory);
+    app.post("/games/coinflip/:itemsGambled/:depositedAmount/:coinColor", UsersController.isLoggedIn, GamesController.postCoinflipLobby);
+    app.post("/games/coinflip/challenge/:lobbyId/:itemsGambled/:depositedAmount", UsersController.isLoggedIn, GamesController.postCoinflipDeposit);
 };
