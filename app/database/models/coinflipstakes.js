@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true
     },
     user: DataTypes.BIGINT,
-    total: DataTypes.INTEGER,
+    total: DataTypes.INTEGER.UNSIGNED,
     stake: DataTypes.JSON,
     coinColor: DataTypes.STRING,
     createdAt: DataTypes.DATE,
