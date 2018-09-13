@@ -29,7 +29,7 @@ module.exports = {
         return "BS";
     },
 
-    handleWinnerOffer: function(userId, items, tier, cb = null) {
+    handleJackpotWinnerOffer: function(userId, items, tier, cb = null) {
 
         const total = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price), 0);
         const rakeMax = total * 0.1;
@@ -111,7 +111,7 @@ module.exports = {
                                     stakes.forEach(stake => {
                                         stake.items.forEach(item => prizePot.push(item));
                                     });
-                                    this.handleWinnerOffer(winner.id, prizePot, tier, (totalWon, totalRaked) => {
+                                    this.handleJackpotWinnerOffer(winner.id, prizePot, tier, (totalWon, totalRaked) => {
                                         db.JackpotHistory.create({
                                             total: totalWon,
                                             tier,

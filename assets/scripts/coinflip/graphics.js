@@ -52,6 +52,15 @@ function handleSelectionModal(playerStake) {
     });
 }
 
+function handleViewModal() {
+    let lobbyId = this.parentNode.parentNode.id.replace("lobby-", '');
+    $.ajax({
+        url: `${window.location.pathname}/${lobbyId}`,
+        method: "GET",
+        success: renderViewModal
+    });
+}
+
 $(document).ready(function() {
 
     $(".your-coins .rounded-circle").on("click", itemSelection.selectCoinflipColor());
@@ -66,4 +75,5 @@ $(document).ready(function() {
             itemSelection.submitSelection("/games/coinflip");
         }
     });
+    $("a.bg-gray").on("click", handleViewModal);
 });

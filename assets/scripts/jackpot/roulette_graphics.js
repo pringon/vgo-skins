@@ -27,6 +27,7 @@ function handleSelectionModal() {
 }
 
 $(document).ready(function() {
+    $(".jackpot-btn button").on("click", handleSelectionModal);
     $("#dump-items").on("click", itemSelection.clearSelection(() => {
         $(".modal-content .row .score-panel .item .score:eq(0)").text(`(0/20)`);
         $(".modal-content .row .score-panel .item .score:eq(1)").text(`$0.00`);
@@ -34,5 +35,7 @@ $(document).ready(function() {
         $(".data-panel .bottom-sec button").text(`Deposit $0.00 (0 Skins)`);
         $(".data-panel .bottom-sec button").prop("disabled", true);
     }));
-    $(".data-panel .bottom-sec button").on("click", itemSelection.submitSelection(`/games/roulette/${jackpotTiers[rouletteTier]}`));
+    $(".data-panel .bottom-sec button").on("click", () => {
+        itemSelection.submitSelection(`/games/roulette/${jackpotTiers[rouletteTier]}`);
+    });
 });

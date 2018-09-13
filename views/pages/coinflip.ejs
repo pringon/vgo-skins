@@ -13,7 +13,7 @@
                             <span class="icon">
                             <img src="/img/coins-icon.png">
                             </span>
-                            <span class="text">$1254.00</span>
+                            <span id="coinflip-total-stake" class="text">$1254.00</span>
                         </div>
                     </div> 
                 <div class="item">
@@ -22,7 +22,7 @@
                         <span class="icon">
                         <img src="/img/coin-flip-icon.png">
                         </span>
-                        <span class="text">42</span>
+                        <span id="coinflip-lobby-count" class="text"><%- coinflipLobbyCount %></span>
                     </div>
                 </div>
             </div>
@@ -56,11 +56,21 @@
                         <img class="rounded-circle" src="<%- lobby.host.avatar %>">
                     </a>
                     <span class="vs rounded-circle">v/s</span>
-                    <a href="#" class="avatar rounded-circle">
-                        <img src="/img/coin-<%- lobby.host.coinColor == 'red' ? 'blue' : 'red' %>.png" class="rounded-circle">
-                    </a>
+                    <% if(typeof lobby.challenger !== "undefined") { %>
+                        <a href="/user/profile/<%- lobby.challenger.id %>" class="avatar rounded-circle">
+                            <img src="<%- lobby.challenger.avatar %>" class="rounded-circle">
+                        </a>
+                    <% } else { %>
+                        <a href="#" class="avatar rounded-circle">
+                            <img src="/img/coin-<%- (lobby.host.coinColor == 'red') ? 'blue' : 'red' %>.png" alt="">
+                        </a>
+                    <% } %>
                     <div class="amount">
-                        <span class="badge"><%- parseFloat(lobby.host.total).toFixed(2) %></span>
+                        <% if(lobby.challenger) { %>
+                            <span class="badge"><%- (parseFloat(lobby.host.total) + parseFloat(lobby.challenger.total)).toFixed(2) %></span>
+                        <% } else { %>
+                            <span class="badge"><%- parseFloat(lobby.host.total).toFixed(2) %></span>
+                        <% } %>
                     </div>
                 </div>
                 <div class="action-col">
@@ -71,31 +81,32 @@
                             <span class="text">Join</span>
                         </a>
                     <% //} %>
-                    <a href="javascript:void(0)" class="btn bg-gray" data-toggle="modal" data-target=".coinFlipModal">
+                    <a href="javascript:void(0)" class="btn bg-gray" 
+                    data-toggle="modal" data-target=".coinFlipModal">
                         <i class="fa fa-eye"></i>
                         <span class="text">View</span>
                     </a>
                 </div>
                 <div class="skins-col">
                     <div class="gallery js-flickity skins-list" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }'>
-                        <% lobby.host.items.map(item => {
-                            switch(item.wear) {
-                                case item.wear == null:
+                        <% lobby.host.items.concat((lobby.challenger) ? lobby.challenger.items : []).map(item => {
+                                if(item.wear == null) {
                                     return { ...item, wear: ''};
-                                case item.wear < 0.07:
+                                } else if(item.wear < 0.07){
                                     return { ...item, wear: "FN" };
-                                case item.wear < 0.15:
+                                } else if(item.wear < 0.15) {
                                     return { ...item, wear: "MW" };
-                                case item.wear < 0.37:
+                                } else if(item.wear < 0.37) {
                                     return { ...item, wear: "FT" };
-                                case item.wear < 0.44:
+                                } else if(item.wear < 0.44) {
                                     return { ...item, wear: "WW" };
-                                default:
-                                    return { ...item, wear: "BS" };
-                            }
+                                }
+                                return { ...item, wear: "BS" };
                         }).forEach(item => { %>
                             <div class="gallery-cell skin-item">
-                                <div class="code"><%- item.wear %></div>
+                                <% if(item.wear !== '') { %>
+                                    <div class="code"><%- item.wear %></div>
+                                <% } %>
                                 <div class="mid-sec">
                                     <img src="<%- item.image['300px'] %>">
                                 </div>

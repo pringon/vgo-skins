@@ -9,18 +9,18 @@
             <div class="cols col-md-6">
                 <div class="item">
                     <div class="label">Total Value</div>
-                        <div class="value">
-                            <span class="icon">
-                            <img src="/img/coins-icon.png">
-                            </span>
-                            <span class="text">$1254.00</span>
-                        </div>
-                    </div> 
-                <div class="item">
-                <div class="label">Number of Coinflips</div>
                     <div class="value">
                         <span class="icon">
-                        <img src="/img/coin-flip-icon.png">
+                            <img src="/img/coins-icon.png">
+                        </span>
+                        <span class="text">$1254.00</span>
+                    </div>
+                </div> 
+                <div class="item">
+                    <div class="label">Number of Coinflips</div>
+                    <div class="value">
+                        <span class="icon">
+                            <img src="/img/coin-flip-icon.png">
                         </span>
                         <span class="text">42</span>
                     </div>
@@ -29,15 +29,15 @@
             <div class="cols col-md-6">
                 <div class="item">
                     <div class="label">Coinflips</div>
-                        <div class="value">
-                            <span class="icon">
+                    <div class="value">
+                        <span class="icon">
                             <img src="/img/coin-flip-icon.png">
-                            </span>
-                            <span class="text">2</span>
-                        </div>
-                    </div> 
+                        </span>
+                        <span class="text">2</span>
+                    </div>
+                </div> 
                 <div class="item">
-                <div class="label">Deposited</div>
+                    <div class="label">Deposited</div>
                     <div class="value">
                         <span class="icon">
                         <img src="/img/coins-icon.png">
@@ -48,601 +48,59 @@
             </div>
         </div>
     </div>
-    </div>
-    <div class="coin-players-list">
-    <div class="item">
-        <div class="player-vs">
-            <a href="#" class="avatar rounded-circle">
-                <img class="rounded-circle" src="/img/user-img02.jpg">
-            </a>
-            <span class="vs rounded-circle">v/s</span>
-            <a href="#" class="avatar rounded-circle">
-                <img src="/img/coin-red.png">
-            </a>
-            <div class="amount">
-                <span class="badge">$40.32</span>
+</div>
+<div class="coin-players-list">
+    <% coinflipHistory.forEach(lobby => { %>
+        <div id="lobby-<%- lobby.id %>" class="item">
+            <div class="player-vs">
+                <a href="/user/profile/<%- lobby.host.id %>" class="avatar rounded-circle">
+                    <img class="rounded-circle" src="<%- lobby.host.avatar %>" />
+                </a>
+                <span class="vs rounded-circle">v/s</span>
+                <a href="user/profile/<%- lobby.challenger.id %>" class="avatar rounded-circle">
+                    <img class="rounded-circle" src="<%- lobby.challenger.avatar %>" />
+                </a>
+                <div class="amount">
+                    <span class="badge"><%- (parseFloat(lobby.host.total)/100 + parseFloat(lobby.challenger.total)/100).toFixed(2) %></span>
+                </div>
             </div>
-        </div>
-        <div class="action-col">
-            <a href="javascript:void(0)" class="avatar rounded-circle">
-                <img src="/img/user-img02.jpg" class="rounded-circle">
-            </a>
-            <div class="circle" id="timer"></div>
-                <a href="javascript:void(0)" class="btn bg-gray" data-toggle="modal" data-target=".coinFlipModal">
+            <div class="action-col">
+                <a href="javascript:void(0)" class="btn bg-gray" 
+                data-toggle="modal" data-target=".coinFlipModal">
                     <i class="fa fa-eye"></i>
                     <span class="text">View</span>
                 </a>
             </div>
-        <div class="skins-col">
-            <div class="gallery js-flickity skins-list" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }'>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
+            <div class="skins-col">
+                <div class="gallery js-flickity skins-list" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }'>
+                    <% JSON.parse(lobby.host.stake).concat(JSON.parse(lobby.challenger.stake)).map(item => {
+                            if(item.wear == null) {
+                                return { ...item, wear: ''};
+                            } else if(item.wear < 0.07){
+                                return { ...item, wear: "FN" };
+                            } else if(item.wear < 0.15) {
+                                return { ...item, wear: "MW" };
+                            } else if(item.wear < 0.37) {
+                                return { ...item, wear: "FT" };
+                            } else if(item.wear < 0.44) {
+                                return { ...item, wear: "WW" };
+                            }
+                            return { ...item, wear: "BS" };
+                    }).forEach(item => { %>
+                        <div class="gallery-cell skin-item">
+                            <% if(item.wear !== '') { %>
+                                <div class="code"><%- item.wear %></div>
+                            <% } %>
+                            <div class="mid-sec">
+                                <img src="<%- item.image['300px'] %>">
+                            </div>
+                            <div class="bottom-sec">
+                                $<%- (parseFloat(item.suggested_price)/100).toFixed(2) %>
+                            </div>
+                        </div>
+                    <% }) %>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="item">
-        <div class="player-vs">
-            <a href="#" class="avatar rounded-circle">
-                <img class="rounded-circle" src="/img/user-img02.jpg">
-            </a>
-            <span class="vs rounded-circle">v/s</span>
-            <a href="#" class="avatar rounded-circle">
-                <img src="/img/coin-red.png">
-            </a>
-            <div class="amount">
-                <span class="badge">$40.32</span>
-            </div>
-        </div>
-        <div class="action-col">
-            <a href="javascript:void(0)" class="avatar rounded-circle">
-                <img src="/img/user-img02.jpg" class="rounded-circle">
-            </a>
-            <a href="javascript:void(0)" class="btn bg-gray" data-toggle="modal" data-target=".coinFlipModal">
-                <i class="fa fa-eye"></i>
-                <span class="text">View</span>
-            </a>
-        </div>
-        <div class="skins-col">
-            <div class="gallery js-flickity skins-list" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }'>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="item">
-        <div class="player-vs">
-            <a href="#" class="avatar rounded-circle">
-                <img class="rounded-circle" src="/img/user-img02.jpg">
-            </a>
-            <span class="vs rounded-circle">v/s</span>
-            <a href="#" class="avatar rounded-circle">
-                <img src="/img/coin-blue.png">
-            </a>
-            <div class="amount">
-                <span class="badge">$40.32</span>
-            </div>
-        </div>
-        <div class="action-col">
-            <a href="javascript:void(0)" class="avatar rounded-circle">
-                <img src="/img/user-img02.jpg" class="rounded-circle">
-            </a>
-            <a href="javascript:void(0)" class="btn bg-gray" data-toggle="modal" data-target=".coinFlipModal">
-                <i class="fa fa-eye"></i>
-                <span class="text">View</span>
-            </a>
-        </div>
-        <div class="skins-col">
-            <div class="gallery js-flickity skins-list" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }'>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="item">
-        <div class="player-vs">
-            <a href="#" class="avatar rounded-circle">
-                <img class="rounded-circle" src="/img/user-img02.jpg">
-            </a>
-            <span class="vs rounded-circle">v/s</span>
-            <a href="#" class="avatar rounded-circle">
-                <img class="rounded-circle" src="/img/user-img01.jpg">
-            </a>
-            <div class="amount">
-                <span class="badge">$40.32</span>
-            </div>
-        </div>
-        <div class="action-col">
-            <a href="javascript:void(0)" class="avatar rounded-circle">
-                <img src="/img/user-img02.jpg" class="rounded-circle">
-            </a>
-            <a href="javascript:void(0)" id="viewCoinAnim" class="btn bg-gray" data-toggle="modal" data-target=".coinFlipModal">
-                <i class="fa fa-eye"></i>
-                <span class="text">View</span>
-            </a>
-        </div>
-        <div class="skins-col">
-            <div class="gallery js-flickity skins-list" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }'>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="item">
-        <div class="player-vs">
-            <a href="#" class="avatar rounded-circle">
-                <img class="rounded-circle" src="/img/user-img02.jpg">
-            </a>
-            <span class="vs rounded-circle">v/s</span>
-            <a href="#" class="avatar rounded-circle">
-                <img src="/img/coin-red.png">
-            </a>
-            <div class="amount">
-                <span class="badge">$40.32</span>
-            </div>
-        </div>
-        <div class="action-col">
-            <a href="javascript:void(0)" class="avatar rounded-circle">
-                <img src="/img/user-img02.jpg" class="rounded-circle">
-            </a>
-            <a href="javascript:void(0)" class="btn bg-gray" data-toggle="modal" data-target=".coinFlipModal">
-                <i class="fa fa-eye"></i>
-                <span class="text">View</span>
-            </a>
-        </div>
-        <div class="skins-col">
-            <div class="gallery js-flickity skins-list" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }'>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="item">
-        <div class="player-vs">
-            <a href="#" class="avatar rounded-circle">
-                <img class="rounded-circle" src="/img/user-img02.jpg">
-            </a>
-            <span class="vs rounded-circle">v/s</span>
-            <a href="#" class="avatar rounded-circle">
-                <img src="/img/coin-blue.png">
-            </a>
-            <div class="amount">
-                <span class="badge">$40.32</span>
-            </div>
-        </div>
-        <div class="action-col">
-            <a href="javascript:void(0)" class="avatar rounded-circle">
-                <img src="/img/user-img02.jpg" class="rounded-circle">
-            </a>
-            <a href="javascript:void(0)" class="btn bg-gray" data-toggle="modal" data-target=".coinFlipModal">
-                <i class="fa fa-eye"></i>
-                <span class="text">View</span>
-            </a>
-        </div>
-        <div class="skins-col">
-            <div class="gallery js-flickity skins-list" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": true, "pageDots": false }'>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-                <div class="gallery-cell skin-item">
-                    <div class="code">MM</div>
-                    <div class="mid-sec">
-                        <img src="/img/gun.png" />
-                    </div>
-                    <div class="bottom-sec">
-                        $2.00
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <% }) %>
 </div>

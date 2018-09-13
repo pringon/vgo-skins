@@ -24,6 +24,8 @@ const itemSelection = {
                 this.playerStake.totalMoneyGambled += parseFloat(element.get(0).childNodes[0].childNodes[0].childNodes[1].innerText.substr(1));
             }
     
+
+            console.log(playerStake);
             if(dataUpdateHandler !== null) {
                 dataUpdateHandler(this.playerStake);
             } 
@@ -54,6 +56,9 @@ const itemSelection = {
 
     submitSelection: function(requestUrl) {
         
+        console.log(this.playerStake);
+        console.log("intra");
+        console.log(requestUrl);
         if(this.playerStake) {
             let gambledItems = [];
             this.playerStake.selectedItems.forEach(item => {
@@ -61,9 +66,9 @@ const itemSelection = {
             });
 
             if(typeof this.playerStake.lobbyId !== "undefined") {
-                requestUrl += `/${this.playerStake.lobbyId}`;
+                requestUrl += `/challenge/${this.playerStake.lobbyId}`;
             }
-            requestUrl += `/${gambledItems}`;
+            requestUrl += `/${gambledItems}/${this.playerStake.totalMoneyGambled}`;
             if(this.playerStake.coinColor) {
                 requestUrl += `/${this.playerStake.coinColor}`;
             }

@@ -5,11 +5,13 @@ let headonPosts = [{ id: 1, user: "Matt", stake: 30, upper: true, lower: true },
                 { id: 3, user: "Matt", stake: 40, upper: true, lower: false }, { id: 4, user: "Dan", stake: 100, upper: false, lower: true},
                 { id: 5, user: "Igor", stake: 90, upper: false, lower: false}];
 
-const rouletteSocket = require("./sockets/roulette_socket");
+const rouletteSocket = require("./sockets/roulette_socket"),
+      coinflipSocket = require("./sockets/coinflip_socket");
 
 module.exports = (io) => {
 
     rouletteSocket.initRoulette(io);
+    coinflipSocket.initCoinflip(io);
     
     rouletteSocket.startRound(0);
     rouletteSocket.startRound(1);

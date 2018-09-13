@@ -1,7 +1,6 @@
 "use strict";
 const jackpotStore = require("../../libs/jackpot_stakes_store"),
-      randomColor  = require("randomcolor"),
-      offerHandler = require("../../libs/offer_handler");
+      randomColor  = require("randomcolor");
 
 let mockImg = "https://files.opskins.media/file/vgo-img/item/dual-berettas-trigger-happy-battle-scarred-300.png";
 let mockName = "MAG-7 Gold Digger (Factory New)";
