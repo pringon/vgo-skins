@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: DataTypes.DATE
   }, {});
 
-  CoinflipHistory.procedures = require("../procedures/coinfliphistory");
+  CoinflipHistory.procedures = require("../procedures/coinfliphistory")(CoinflipHistory, sequelize);
 
   CoinflipHistory.associate = function(models) {
     

@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     stakes: DataTypes.JSON
   }, {});
 
-  JackpotHistory.procedures = require("../procedures/jackpothistory");
+  JackpotHistory.procedures = require("../procedures/jackpothistory")(JackpotHistory);
 
   JackpotHistory.associate = function(models) {
     JackpotHistory.belongsTo(models.user, {foreignKey: "winner", targetKey: "steamId"});
