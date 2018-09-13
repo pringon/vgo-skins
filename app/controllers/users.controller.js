@@ -17,7 +17,7 @@ module.exports = (() => {
     this.getProfile = async(req, res) => {
 
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
-            db.JackpotHistory.getHistory({ winner: req.params.id }, jackpotHistory =>{
+            db.JackpotHistory.procedures.getHistory({ winner: req.params.id }, jackpotHistory =>{
                 if(req.params.id == req.user.steamId) {
                     db.user.findOne({
                         where: { steamId: req.user.steamId }

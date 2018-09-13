@@ -28,7 +28,7 @@ module.exports = (() => {
             res.redirect("/games/roulette/plant");
         } else {
             userUtils.getUser(req.user.steamId, (err, currentUser) => {
-                db.JackpotHistory.getHistory({ tier: rouletteTier }, jackpotHistory => {
+                db.JackpotHistory.procedures.getHistory({ tier: rouletteTier }, jackpotHistory => {
                     res.render("pages/roulette.ejs", {
                         rouletteTier,
                         jackpotHistory,
@@ -162,7 +162,7 @@ module.exports = (() => {
     // /games/coinflip/history
     this.getCoinflipHistory = (req, res) => {
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
-            db.CoinflipHistory.getHistory({}, 5, (coinflipHistory) => {
+            db.CoinflipHistory.procedures.getHistory({}, 5, (coinflipHistory) => {
                 res.render("pages/coinflip_history.ejs", {
                     coinflipHistory,
                     currentUser: {
@@ -188,7 +188,7 @@ module.exports = (() => {
     };
 
     this.getCoinflipLobbyFromHistory = (req, res) => {
-        db.CoinflipHistory.getLobby(req.params.lobbyId, res.json.bind(res));
+        db.CoinflipHistory.procedures.getLobby(req.params.lobbyId, res.json.bind(res));
     };
 
     // /games/coinflip/:itemsGambled/:coinColor

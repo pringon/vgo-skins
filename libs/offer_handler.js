@@ -18,11 +18,13 @@ module.exports = {
         let hostInsert = db.CoinflipStakes.create({
             user: lobby.host.id,
             total: lobby.host.total*100,
+            coinColor: lobby.host.coinColor,
             stake: JSON.stringify(lobby.host.items)
         });
         let challengerInsert = db.CoinflipStakes.create({
             user: lobby.challenger.id,
             total: lobby.challenger.total*100,
+            coinColor: lobby.challenger.coinColor,
             stake: JSON.stringify(lobby.challenger.items)
         });
 

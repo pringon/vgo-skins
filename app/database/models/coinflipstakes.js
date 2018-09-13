@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     user: DataTypes.BIGINT,
     total: DataTypes.INTEGER,
     stake: DataTypes.JSON,
+    coinColor: DataTypes.STRING,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {});
