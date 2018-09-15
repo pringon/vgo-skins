@@ -1243,6 +1243,9 @@ canvas {
 .coinFlipModal .players-panel .player-left .avatar.winner{
 	border-color: #f7e70c;
 }
+.coinFlipModal .players-panel .player-left .avatar.loser{
+	opacity: 0.5;
+}
 .coinFlipModal .players-panel .player-right .avatar.loser{
 	opacity: 0.5;
 }
@@ -1295,6 +1298,20 @@ canvas {
 	vertical-align: middle;
 	margin-right: 30px;
     margin-top: 26px;
+}
+.coinFlipModal .players-panel .player-right .avatar .crown{
+	display: none;
+}
+.coinFlipModal .players-panel .player-right .avatar.winner .crown{
+	width: 66px;
+	position: absolute;
+	top: -27px;
+	left: 50%;
+	margin-left: -33px;
+	display: block;
+}
+.coinFlipModal .players-panel .player-right .avatar.winner{
+	border-color: #f7e70c;
 }
 .coinFlipModal .players-panel .coin-flip-anim{
 	overflow: hidden;
@@ -1813,6 +1830,17 @@ canvas {
 	display: none;
 }
 .historyModal .panel .left-panel .player-vs .avatar.winner .crown{
+	display: block;
+}
+.historyModal .panel .right-panel .player-vs .avatar .crown{
+	position: absolute;
+	top: -20px;
+	left: 0px;
+	right: 0px;
+	text-align: center;
+	display: none;
+}
+.historyModal .panel .right-panel .player-vs .avatar.winner .crown{
 	display: block;
 }
 .historyModal .panel .left-panel .player-vs .vs{

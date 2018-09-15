@@ -76,4 +76,5 @@ $(document).ready(function() {
         }
     });
     $("a.bg-gray").on("click", handleViewModal);
+    $(".coinFlipModal").on("hidden.bs.modal", cancelCoinflipTossAnimation);
 });

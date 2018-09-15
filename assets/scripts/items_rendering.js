@@ -489,19 +489,27 @@ function renderViewModal(lobby) {
     console.log(lobby);
     $("#lobby-title").text(`Lobby ID: ${lobby.id}`);
 
-    $("#coinFlipPlayer1 img").attr("src", lobby.host.avatar);
+    if(window.location.pathname == "/games/coinflip/history") {
+        if(lobby.host.usedId == lobby.winner) {
+            coinflipTossAnimation("host", lobby.host.coinColor);
+        } else {
+            coinflipTossAnimation("challenger", lobby.challenger.coinColor);
+        }
+    }
+
+    $("#coinFlipPlayer1 img.rounded-circle").attr("src", lobby.host.avatar);
     $(".player-left .coin img").attr("src", `/img/coin-${lobby.host.coinColor}.png`);
-    $(".player-left .name").text(lobby.host.user);
+    $(".player-left span.name").text(lobby.host.name);
 
     let challengerCoinColor = lobby.host.coinColor == "blue" ? "red" : "blue";
     if(lobby.challenger) {
-        $("#coinFlipPlayer2 img").attr("src", lobby.challenger.avatar);
+        $("#coinFlipPlayer2 img.rounded-circle").attr("src", lobby.challenger.avatar);
         $(".player-right .coin img").attr("src", `/img/coin-${challengerCoinColor}.png`);
-        $(".player-right .name").text(lobby.challenger.user);
+        $(".player-right span.name").text(lobby.challenger.name);
     } else {
         $("#coinFlipPlayer2 img").attr("src", `/img/coin-${challengerCoinColor}.png`);
         $(".player-right .coin img").attr("src", `/img/coin-${challengerCoinColor}.png`);
-        $(".player-right .name").text("Challenger awaited");
+        $(".player-right span.name").text("Challenger awaited");
     }
 
     if(typeof lobby.host.items == "string") {
