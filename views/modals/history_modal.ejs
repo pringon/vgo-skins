@@ -78,174 +78,65 @@
                         <% }) %>
                     </div>
                     <div id="coinflipHistory" class="tab-pane fade">
-                        <div class="panel panel-coinflip rounded">
-                            <div class="left-panel">
-                                <div class="player-vs">
-                                    <a href="#" class="avatar rounded-circle winner">
-                                        <img src="/img/user-img02.jpg" class="rounded-circle">
-                                        <span class="crown"><img src="/img/crown.png"></span>
-                                    </a>
-                                    <span class="vs rounded-circle">v/s</span>
-                                    <a href="#" class="avatar rounded-circle">
-                                        <img src="/img/user-img01.jpg" class="rounded-circle">
-                                    </a>
-                                    <div class="amount">
-                                        <span class="badge">$40.32</span>
-                                    </div>
-                                </div>
-                                <div class="info-sec">
-                                    <div class="date">
-                                        <span>1 day ago</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="right-panel">
-                                <div class="skins-list">
-                                    <div class="gallery js-flickity"
-                                    data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": false, "pageDots": false }'>
-                                        <div class="skin-item rounded gallery-cell">
-                                            <div class="code">MM</div>
-                                            <div class="mid-sec">
-                                                <img src="/img/gun.png">
-                                            </div>
-                                            <div class="bottom-sec">
-                                                $2.00
-                                            </div>
+                        <% coinflipHistory.forEach(lobby => { %>
+                            <div id="<%- lobby.id %>" class="panel panel-coinflip rounded">
+                                <div class="left-panel">
+                                    <div class="player-vs">
+                                        <a href="/user/profile/<%- lobby.host.userId %>" class="avatar rounded-circle winner">
+                                            <img src="<%- lobby.host.avatar %>" class="rounded-circle">
+                                            <% if(lobby.host.userId == lobby.winner) { %>
+                                                <span class="crown"><img src="img/crown.png"></span>
+                                            <% } %>
+                                        </a>
+                                        <span class="vs rounded-circle">v/s</span>
+                                        <a href="/user/profile/<%- lobby.challenger.userId %>" class="avatar rounded-circle">
+                                            <img src="<%- lobby.challenger.avatar %>" class="rounded-circle">
+                                            <% if(lobby.challenger.userId == lobby.winner) { %>
+                                                <span class="crown"><img src="img/crown.png"></span>
+                                            <% } %>
+                                        </a>
+                                        <div class="amount">
+                                            <span class="badge"><%- lobby.host.total + lobby.challenger.total %></span>
                                         </div>
-                                        <div class="skin-item rounded gallery-cell">
-                                            <div class="code">MM</div>
-                                            <div class="mid-sec">
-                                                <img src="/img/gun.png">
-                                            </div>
-                                            <div class="bottom-sec">
-                                                $2.00
-                                            </div>
-                                        </div>
-                                        <div class="skin-item rounded gallery-cell">
-                                            <div class="code">MM</div>
-                                            <div class="mid-sec">
-                                                <img src="/img/gun.png">
-                                            </div>
-                                            <div class="bottom-sec">
-                                                $2.00
-                                            </div>
+                                    </div>
+                                    <div class="info-sec">
+                                        <div class="date">
+                                            <span><%- lobby.createdAt.toString() %></span>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="panel panel-coinflip rounded">
-                            <div class="left-panel">
-                                <div class="player-vs">
-                                    <a href="#" class="avatar rounded-circle winner">
-                                        <img src="/img/user-img02.jpg" class="rounded-circle">
-                                        <span class="crown"><img src="/img/crown.png"></span>
-                                    </a>
-                                    <span class="vs rounded-circle">v/s</span>
-                                    <a href="#" class="avatar rounded-circle">
-                                        <img src="/img/user-img01.jpg" class="rounded-circle">
-                                    </a>
-                                    <div class="amount">
-                                        <span class="badge">$40.32</span>
-                                    </div>
-                                </div>
-                                <div class="info-sec">
-                                    <div class="date">
-                                        <span>1 day ago</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="right-panel">
-                                <div class="skins-list">
-                                    <div class="gallery js-flickity"
-                                    data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": false, "pageDots": false }'>
-                                        <div class="skin-item rounded gallery-cell">
-                                            <div class="code">MM</div>
-                                            <div class="mid-sec">
-                                                <img src="/img/gun.png">
-                                            </div>
-                                            <div class="bottom-sec">
-                                                $2.00
-                                            </div>
-                                        </div>
-                                        <div class="skin-item rounded gallery-cell">
-                                            <div class="code">MM</div>
-                                            <div class="mid-sec">
-                                                <img src="/img/gun.png">
-                                            </div>
-                                            <div class="bottom-sec">
-                                                $2.00
-                                            </div>
-                                        </div>
-                                        <div class="skin-item rounded gallery-cell">
-                                            <div class="code">MM</div>
-                                            <div class="mid-sec">
-                                                <img src="/img/gun.png">
-                                            </div>
-                                            <div class="bottom-sec">
-                                                $2.00
-                                            </div>
+                                <div class="right-panel">
+                                    <div class="skins-list">
+                                        <div class="gallery js-flickity" data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": false, "pageDots": false }'>
+                                            <% JSON.parse(lobby.host.stake).concat(JSON.parse(lobby.challenger.stake)).map(item => {
+                                                if(item.wear == null) {
+                                                    return { ...item, wear: ''};
+                                                } else if(item.wear < 0.07){
+                                                    return { ...item, wear: "FN" };
+                                                } else if(item.wear < 0.15) {
+                                                    return { ...item, wear: "MW" };
+                                                } else if(item.wear < 0.37) {
+                                                    return { ...item, wear: "FT" };
+                                                } else if(item.wear < 0.44) {
+                                                    return { ...item, wear: "WW" };
+                                                }
+                                                return { ...item, wear: "BS" };
+                                            }).forEach(item => { %>
+                                                <div class="skin-item rounded gallery-cell">
+                                                    <div class="code"><%- item.wear %></div>
+                                                    <div class="mid-sec">
+                                                        <img src="<%- item.image['300px'] %>">
+                                                    </div>
+                                                    <div class="bottom-sec">
+                                                        $<%- (parseFloat(item.suggested_price)/100).toFixed(2) %>
+                                                    </div>
+                                                </div>
+                                            <% }) %>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="panel panel-coinflip rounded">
-                            <div class="left-panel">
-                                <div class="player-vs">
-                                    <a href="#" class="avatar rounded-circle winner">
-                                        <img src="/img/user-img02.jpg" class="rounded-circle">
-                                        <span class="crown"><img src="/img/crown.png"></span>
-                                    </a>
-                                    <span class="vs rounded-circle">v/s</span>
-                                    <a href="#" class="avatar rounded-circle">
-                                        <img src="/img/user-img01.jpg" class="rounded-circle">
-                                    </a>
-                                    <div class="amount">
-                                        <span class="badge">$40.32</span>
-                                    </div>
-                                </div>
-                                <div class="info-sec">
-                                    <div class="date">
-                                        <span>1 day ago</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="right-panel">
-                                <div class="skins-list">
-                                    <div class="gallery js-flickity"
-                                    data-flickity='{ "freeScroll": true, "contain": true, "prevNextButtons": false, "pageDots": false }'>
-                                        <div class="skin-item rounded gallery-cell">
-                                            <div class="code">MM</div>
-                                            <div class="mid-sec">
-                                                <img src="/img/gun.png">
-                                            </div>
-                                            <div class="bottom-sec">
-                                                $2.00
-                                            </div>
-                                        </div>
-                                        <div class="skin-item rounded gallery-cell">
-                                            <div class="code">MM</div>
-                                            <div class="mid-sec">
-                                                <img src="/img/gun.png">
-                                            </div>
-                                            <div class="bottom-sec">
-                                                $2.00
-                                            </div>
-                                        </div>
-                                        <div class="skin-item rounded gallery-cell">
-                                            <div class="code">MM</div>
-                                            <div class="mid-sec">
-                                                <img src="/img/gun.png">
-                                            </div>
-                                            <div class="bottom-sec">
-                                                $2.00
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <% }) %>
                     </div>
                 </div>
             </div>

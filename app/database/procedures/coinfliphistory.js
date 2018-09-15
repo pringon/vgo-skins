@@ -7,7 +7,7 @@ module.exports = (CoinflipHistory, sequelize) => {
 
         getHistory: function(query = {}, limit = 5, cb = null) {
             CoinflipHistory.findAll({
-                limit: 5,
+                limit,
                 where: query,
                 order: [[ "id", "DESC" ]]
             }).then(history => {
@@ -86,8 +86,8 @@ module.exports = (CoinflipHistory, sequelize) => {
                     userId: stakes[1].user,
                     total: parseFloat(stakes[1].total)/100,
                     items: stakes[1].stake,
-                    name: users[0].personaname,
-                    avatar: users[0].avatar
+                    name: users[1].personaname,
+                    avatar: users[1].avatar
                     };
                     if(cb) {
                     cb(lobby.dataValues);

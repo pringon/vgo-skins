@@ -28,7 +28,7 @@ module.exports = (() => {
             res.redirect("/games/roulette/plant");
         } else {
             userUtils.getUser(req.user.steamId, (err, currentUser) => {
-                db.JackpotHistory.procedures.getHistory({ tier: rouletteTier }, jackpotHistory => {
+                db.JackpotHistory.procedures.getHistory({ tier: rouletteTier }, 5, jackpotHistory => {
                     res.render("pages/roulette.ejs", {
                         rouletteTier,
                         jackpotHistory,
