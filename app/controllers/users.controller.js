@@ -17,39 +17,15 @@ module.exports = (() => {
     this.getProfile = async(req, res) => {
 
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
-            db.JackpotHistory.procedures.getHistory({ winner: req.params.id }, jackpotHistory =>{
-                if(req.params.id == req.user.steamId) {
-                    db.user.findOne({
-                        where: { steamId: req.user.steamId }
-                    }).then(userProfileData => {
-                        res.render("pages/profile.ejs", {
-                            jackpotHistory,
-                            currentUser: {
-                                level: req.user.level,
-                                ...currentUser
-                            },
-                            queriedUser: {
-                                ...{
-                                    level: userProfileData.level,
-                                    experiencePoints: userProfileData.experiencePoints,
-                                    totalWon: userProfileData.totalWon,
-                                    totalGambled: userProfileData.totalGambled,
-                                    skinsWagered: userProfileData.skinsWagered,
-                                    luckiestWin: userProfileData.luckiestWin 
-                                },
-                                ...currentUser,
-                            },
-                            profilePage: true,
-                            chat: true
-                        });
-                    })
-                } else {
-                    userUtils.getUser(req.params.id, (err, queriedUser) => {
+            db.JackpotHistory.procedures.getHistory({ winner: req.params.id }, 5, jackpotHistory => {
+                db.CoinflipHistory.procedures.getHistory({ winner: req.params.id }, 5, coinflipHistory => {
+                    if(req.params.id == req.user.steamId) {
                         db.user.findOne({
-                            where: { steamId: queriedUser.steamid }
+                            where: { steamId: req.user.steamId }
                         }).then(userProfileData => {
                             res.render("pages/profile.ejs", {
                                 jackpotHistory,
+                                coinflipHistory,
                                 currentUser: {
                                     level: req.user.level,
                                     ...currentUser
@@ -63,14 +39,42 @@ module.exports = (() => {
                                         skinsWagered: userProfileData.skinsWagered,
                                         luckiestWin: userProfileData.luckiestWin 
                                     },
-                                    ...queriedUser
+                                    ...currentUser,
                                 },
                                 profilePage: true,
                                 chat: true
                             });
+                        })
+                    } else {
+                        userUtils.getUser(req.params.id, (err, queriedUser) => {
+                            db.user.findOne({
+                                where: { steamId: queriedUser.steamid }
+                            }).then(userProfileData => {
+                                res.render("pages/profile.ejs", {
+                                    jackpotHistory,
+                                    coinflipHistory,
+                                    currentUser: {
+                                        level: req.user.level,
+                                        ...currentUser
+                                    },
+                                    queriedUser: {
+                                        ...{
+                                            level: userProfileData.level,
+                                            experiencePoints: userProfileData.experiencePoints,
+                                            totalWon: userProfileData.totalWon,
+                                            totalGambled: userProfileData.totalGambled,
+                                            skinsWagered: userProfileData.skinsWagered,
+                                            luckiestWin: userProfileData.luckiestWin 
+                                        },
+                                        ...queriedUser
+                                    },
+                                    profilePage: true,
+                                    chat: true
+                                });
+                            });
                         });
-                    });
-                }
+                    }
+                });
             });
         });
     };

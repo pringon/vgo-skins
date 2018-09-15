@@ -3,9 +3,9 @@ const request = require("request-promise"),
 
 module.exports = (JackpotHistory) => {
     return {
-        getHistory: function(query = {}, cb = null) {
+        getHistory: function(query = {}, limit = 5, cb = null) {
             JackpotHistory.findAll({
-                limit: 5,
+                limit,
                 where: query,
                 order: [[ "id", "DESC" ]]
             }).then(history => {
