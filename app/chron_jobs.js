@@ -1,7 +1,9 @@
 "use strict";
 const db             = require("./database/models"),
       rouletteSocket = require("./sockets/roulette_socket"),
+      coinflipSocket = require("./sockets/coinflip_socket"),
       jackpotStore   = require("../libs/jackpot_stakes_store"),
+      coinflipStore  = require("../libs/coinflip_lobbies_store"),
       offerHandler   = require("../libs/offer_handler");
 
 module.exports = {
@@ -27,6 +29,70 @@ module.exports = {
             return "WW";
         }
         return "BS";
+    },
+
+    insertLobbyIntoDatabase: function(lobby, hostIsTheWinner = true) {
+        let hostInsert = db.CoinflipStakes.create({
+            user: lobby.host.id,
+            total: lobby.host.total*100,
+            coinColor: lobby.host.coinColor,
+            stake: JSON.stringify(lobby.host.items)
+        });
+        let challengerInsert = db.CoinflipStakes.create({
+            user: lobby.challenger.id,
+            total: lobby.challenger.total*100,
+            coinColor: lobby.challenger.coinColor,
+            stake: JSON.stringify(lobby.challenger.items)
+        });
+
+        Promise.all([hostInsert, challengerInsert]).then(([host, challenger]) => {
+            let winner;
+            if(hostIsTheWinner) {
+                winner = lobby.host.id;
+            } else {
+                winner = lobby.challenger.id;
+            }
+            db.CoinflipHistory.create({
+                winner,
+                host: host.get("id"),
+                challenger: challenger.get("id")
+            }).then((lobbyRow) => {
+                console.log(lobbyRow);
+                coinflipStore.deleteLobby(lobby.id, (err) => {
+                    if(err) {
+                        throw new Error(err);
+                    }
+                    coinflipSocket.refreshCoinflipLobbiesList();
+                });
+            });
+        });
+    },
+
+    getCoinflipWinner: function(lobbyId) {
+        coinflipStore.getLobby(lobbyId, (err, lobby) => {
+            let flipResult = Math.random();
+            let hostTotal = parseFloat(lobby.host.total);
+            let challengerTotal = parseFloat(lobby.challenger.total);
+            let hostWinMargin = 0;
+            if(hostTotal > challengerTotal + challengerTotal * 0.05) {
+                hostWinMargin += 0.01;
+            } else if(challengerTotal > hostTotal + hostTotal * 0.05) {
+                hostWinMargin -= 0.01;
+            }
+            if(lobby.host.coinColor == "blue") {
+                if(flipResult - hostWinMargin < 0.5) {
+                    this.insertLobbyIntoDatabase(lobby);
+                } else {
+                    this.insertLobbyIntoDatabase(lobby, false);
+                }
+            } else {
+                if(flipResult + hostWinMargin > 0.5) {
+                    this.insertLobbyIntoDatabase(lobby);
+                } else {
+                    this.insertLobbyIntoDatabase(lobby, false);
+                }
+            }
+        })
     },
 
     handleJackpotWinnerOffer: function(userId, items, tier, cb = null) {
@@ -150,6 +216,23 @@ module.exports = {
                     }
                 }
             }
+        };
+    },
+
+    coinflipLobbiesTimer: function(io) {
+        return () => {
+            coinflipStore.decrementAllLobbyCounts((err, {lobbyIds, lobbyCounts}) => {
+                if(err) {
+                    throw new Error(err);
+                }
+                for(let lobby in lobbyCounts) {
+                    if(lobbyCounts[lobby] == 0) {
+                        console.log(lobbyCounts[lobby]);
+                        this.getCoinflipWinner(lobbyIds[lobby]);
+                        coinflipStore.deleteLobbyCount(lobbyIds[lobby]);
+                    }
+                }
+            });
         };
     },
 

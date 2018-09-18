@@ -257,6 +257,7 @@ function populateCoinflipLobbyGallery(coinflipLobbies) {
         }
 
         let viewLink = document.createElement('a');
+        viewLink.setAttribute("onclick", `handleViewModal(${lobby.id})`);
         viewLink.setAttribute("href", "javascript:void(0)");
         viewLink.setAttribute("data-toggle", "modal");
         viewLink.setAttribute("data-target", ".coinFlipModal");
