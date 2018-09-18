@@ -52,8 +52,7 @@ function handleSelectionModal(playerStake) {
     });
 }
 
-function handleViewModal() {
-    let lobbyId = this.parentNode.parentNode.id.replace("lobby-", '');
+function handleViewModal(lobbyId) {
     $.ajax({
         url: `${window.location.pathname}/${lobbyId}`,
         method: "GET",
@@ -75,6 +74,5 @@ $(document).ready(function() {
             itemSelection.submitSelection("/games/coinflip");
         }
     });
-    $("a.bg-gray").on("click", handleViewModal);
     $(".coinFlipModal").on("hidden.bs.modal", cancelCoinflipTossAnimation);
 });

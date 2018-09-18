@@ -17,6 +17,7 @@ module.exports = (io) => {
     rouletteSocket.startRound(1);
     rouletteSocket.startRound(2);
     setInterval(chronJobs.jackPotTimer(io), 1000);
+    setInterval(chronJobs.coinflipLobbiesTimer(io), 1000);
     setInterval(chronJobs.updateUsers(io), 10000);
 
     //rouletteSocket.seedStakes();

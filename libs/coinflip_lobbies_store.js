@@ -12,6 +12,79 @@ module.exports = (() => {
         redisClient.scard("coinflip_lobbies", cb);
     };
 
+    const createLobbyCount = (lobbyId, cb = null) => {
+        redisClient.sadd("filled_coinflip_lobbies", lobbyId);
+        redisClient.set(`filled_coinflip_lobbies:${lobbyId}`, 10);
+    };
+
+    const getLobbyCount = (lobbyId, cb = null) => {
+        redisClient.get(`filled_coinflip_lobbies:${lobbyId}`, (err, lobbyCount) => {
+            if(cb) {
+                if(err) {
+                    cb(err);
+                } else {
+                    cb(err, lobbyCount);
+                }
+            }
+        });
+    };
+
+    const getLobbyCounts = (cb = null) => {
+        redisClient.smembers(`filled_coinflip_lobbies`, (err, lobbyIds) => {
+            if(err && cb) {
+                cb(err);
+            }
+            
+            let multiTask = redisClient.multi();
+            lobbyIds.forEach(lobbyId => multiTask.get(`filled_coinflip_lobbies:${lobbyId}`));
+            multiTask.exec((err, results) => {
+                if(cb) {
+                    if(err) {
+                        cb(err);
+                    } else {
+                        cb(null, results);
+                    }    
+                }
+            });
+        });
+    };
+
+    const deleteLobbyCount = (lobbyId) => {
+        redisClient.srem("filled_coinflip_lobbies", lobbyId);
+        redisClient.del(`filled_coinflip_lobbies:${lobbyId}`);
+    };
+
+    const decrementLobbyCount = (lobbyId, cb = null) => {
+        redisClient.decr(`filled_coinflip_lobbies:${lobbyId}`, (err, currentValue) => {
+            if(cb) {
+                if(err) {
+                    cb(err);
+                } else {
+                    cb(null, currentValue);
+                }
+            }
+        });
+    };
+
+    const decrementAllLobbyCounts = (cb = null) => {
+        redisClient.smembers(`filled_coinflip_lobbies`, (err, lobbyIds) => {
+            if(err) {
+                throw new Error(err);
+            }
+
+            let multiTask = redisClient.multi();
+            lobbyIds.forEach(lobbyId => multiTask.decr(`filled_coinflip_lobbies:${lobbyId}`));
+            multiTask.exec((err, results) => {
+                if(err) {
+                    cb(err);
+                }
+                if(cb) {
+                    cb(null, {lobbyIds, lobbyCounts: results});
+                }
+            });
+        });
+    };
+
     const createLobby = (user, items, coinColor, cb = null) => {
 
         let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price)/100, 0).toFixed(2);
@@ -206,6 +279,12 @@ module.exports = (() => {
 
     return ({
         getCoinflipLobbyCount,
+        createLobbyCount,
+        getLobbyCount,
+        getLobbyCounts,
+        deleteLobbyCount,
+        decrementLobbyCount,
+        decrementAllLobbyCounts,
         createLobby,
         deleteLobby,
         setLobbyChallengerStake,

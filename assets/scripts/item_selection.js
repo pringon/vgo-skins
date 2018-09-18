@@ -80,6 +80,7 @@ const itemSelection = {
                 method: "POST",
                 success: function(res) {
 
+                    $(".modal").modal("hide");
                     if(res.err) {
                         console.log(res.err.message);
                         tradePopup.close();

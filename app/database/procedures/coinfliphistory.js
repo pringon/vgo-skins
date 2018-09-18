@@ -6,6 +6,7 @@ module.exports = (CoinflipHistory, sequelize) => {
     return {
 
         getHistory: function(query = {}, limit = 5, cb = null) {
+            
             CoinflipHistory.findAll({
                 limit,
                 where: query,
@@ -42,12 +43,14 @@ module.exports = (CoinflipHistory, sequelize) => {
                     for(let index = 0, length = stakes.length; index < length; index += 2) {
                     history[index/2].host = {
                         userId: stakes[index].user,
+                        coinColor: stakes[index].coinColor,
                         total: parseFloat(stakes[index].total)/100,
                         stake: stakes[index].stake,
                         ...requestedUsers[stakes[index].user]
                     };
                     history[index/2].challenger = {
                         userId: stakes[index+1].user,
+                        coinColor: stakes[index+1].coinColor,
                         total: parseFloat(stakes[index+1].total)/100,
                         stake: stakes[index+1].stake,
                         ...requestedUsers[stakes[index+1].user]
@@ -77,6 +80,7 @@ module.exports = (CoinflipHistory, sequelize) => {
                     .then(users => {
                     lobby.host = {
                     userId: stakes[0].user,
+                    coinColor: stakes[0].coinColor,
                     total: parseFloat(stakes[0].total)/100,
                     items: stakes[0].stake,
                     name: users[0].personaname,
@@ -84,17 +88,18 @@ module.exports = (CoinflipHistory, sequelize) => {
                     };
                     lobby.challenger = {
                     userId: stakes[1].user,
+                    coinColor: stakes[1].coinColor,
                     total: parseFloat(stakes[1].total)/100,
                     items: stakes[1].stake,
                     name: users[1].personaname,
                     avatar: users[1].avatar
                     };
                     if(cb) {
-                    cb(lobby.dataValues);
+                        cb(lobby.dataValues);
                     }
                 });
                 });
             });
         }
-    }
+    };
 };
