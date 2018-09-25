@@ -63,6 +63,7 @@
                 data: data,
                 options: options
                 });
+                document.getElementById(id).setAttribute("style", "display: block; width: 108%; height: 108%; padding: 0 7.5% 7.5% 0;");
             }
             function plotStakes(type, chartData) {
                 let canvas = document.getElementById(`${type}-canvas`);
@@ -70,7 +71,6 @@
                 canvasParent.removeChild(canvas);
                 let newCanvas = document.createElement("canvas");
                 newCanvas.setAttribute("id", `${type}-canvas`);
-                newCanvas.setAttribute("style", "width: 350px; height: 350px;");
                 canvasParent.appendChild(newCanvas);
                 
                 createChart(type + '-canvas', type, chartData, {

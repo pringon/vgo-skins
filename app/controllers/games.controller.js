@@ -143,7 +143,7 @@ module.exports = (() => {
     this.getCoinflip = (req, res) => {
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
             coinflipLobbiesStore.getLobbies((err, coinflipLobbies) => {
-                coinflipLobbiesStore.getCoinflipLobbyCount((err, coinflipLobbyCount) => {
+                coinflipLobbiesStore.getLobbyCounts((err, coinflipLobbyCount) => {
                     res.render("pages/coinflip.ejs", {
                         coinflipLobbies,
                         coinflipLobbyCount,
@@ -183,7 +183,17 @@ module.exports = (() => {
             if(err) {
                 throw new Error(err);
             }
-            res.json(lobby);
+            if(lobby.challenger) {
+                coinflipLobbiesStore.getLobbyCount(lobby.id, lobbyCount => {
+                    lobby = {
+                        timerCountdown: lobbyCount,
+                        ...lobby
+                    };
+                    res.json(lobby);
+                });
+            } else {
+                res.json(lobby);
+            }
         });
     };
 
@@ -201,7 +211,7 @@ module.exports = (() => {
         });
     };
 
-    // /games/coinflip/:lobbyId/:itemsGambled
+    // /games/coinflip/challenge/:lobbyId/:itemsGambled/:depositedAmount
     this.postCoinflipDeposit = (req, res) => {
         coinflipLobbiesStore.getLobby(req.params.lobbyId, (err, lobby) => {
             let depositedAmount = parseFloat(req.params.depositedAmount);

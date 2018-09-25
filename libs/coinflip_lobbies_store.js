@@ -41,9 +41,13 @@ module.exports = (() => {
                 if(cb) {
                     if(err) {
                         cb(err);
-                    } else {
-                        cb(null, results);
-                    }    
+                        return;
+                    }
+                    let lobbyCountDowns = {};
+                    results.forEach((lobbyTimer, index) => {
+                        lobbyCountDowns[lobbyIds[index]] = lobbyTimer;
+                    });
+                    cb(null, lobbyCountDowns);
                 }
             });
         });
@@ -79,13 +83,17 @@ module.exports = (() => {
                     cb(err);
                 }
                 if(cb) {
-                    cb(null, {lobbyIds, lobbyCounts: results});
+                    let lobbyCountDowns = {};
+                    results.forEach((lobbyTimer, index) => {
+                        lobbyCountDowns[lobbyIds[index]] = lobbyTimer;
+                    });
+                    cb(null, lobbyCountDowns);
                 }
             });
         });
     };
 
-    const createLobby = (user, items, coinColor, cb = null) => {
+    const createLobby = (user, items, cb = null) => {
 
         let totalDeposited = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price)/100, 0).toFixed(2);
         console.log(items);
@@ -102,11 +110,8 @@ module.exports = (() => {
 
         multiTask.sadd("coinflip_lobbies", lobbyCount);
         multiTask.hmset(`coinflip_lobbies:${lobbyCount}:host`, {
-            "id": user.id,
-            "user": user.user,
-            "avatar": user.avatar,
             "total": totalDeposited,
-            "coinColor": coinColor
+            ...user
         });
         items.forEach(item => {
             multiTask.sadd(`coinflip_lobbies:${lobbyCount}:host:items`, JSON.stringify(item));
@@ -192,6 +197,12 @@ module.exports = (() => {
         multiTask.smembers(`coinflip_lobbies:${lobbyId}:challenger:items`);
 
         multiTask.exec((err, results) => {
+            if(err) {
+                if(cb) {
+                    cb(err);
+                }
+                return;
+            }
             let lobby = { id: lobbyId };
             lobby.host = results[0];
             lobby.host.items = [];

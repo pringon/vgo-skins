@@ -237,7 +237,7 @@ function populateCoinflipLobbyGallery(coinflipLobbies) {
         let actionColumn = document.createElement("div");
         actionColumn.setAttribute("class", "action-col");
 
-        if(lobby.host.id !== /[^/]*$/.exec(document.getElementsByClassName("profile-panel")[0].href)[0]) {
+        //if(lobby.host.id !== /[^/]*$/.exec(document.getElementsByClassName("profile-panel")[0].href)[0]) {
             let joinLink = document.createElement('a');
             joinLink.setAttribute("href", "javascript:void(0)");
             joinLink.setAttribute("onclick", `joinCoinflipHandler(${lobby.id})`);
@@ -254,6 +254,12 @@ function populateCoinflipLobbyGallery(coinflipLobbies) {
             joinLink.appendChild(joinImage);
             joinLink.appendChild(joinText);
             actionColumn.appendChild(joinLink);
+        //}
+        if(lobby.challenger) {
+            let lobbyTimer = document.createElement("div");
+            lobbyTimer.setAttribute("class", "circle coinflip-countdown");
+            lobbyTimer.setAttribute("id", `timer-${lobby.id}`);
+            actionColumn.appendChild(lobbyTimer);
         }
 
         let viewLink = document.createElement('a');
@@ -500,13 +506,38 @@ function renderViewModal(lobby) {
 
     $("#coinFlipPlayer1 img.rounded-circle").attr("src", lobby.host.avatar);
     $(".player-left .coin img").attr("src", `/img/coin-${lobby.host.coinColor}.png`);
-    $(".player-left span.name").text(lobby.host.name);
+    $(".player-left span.name").text(lobby.host.user);
+
+    if(lobby.challenger && window.location.pathname == "/games/coinflip") {
+        let timerHolder = document.createElement("div");
+        timerHolder.setAttribute("class", "circle text-center coinflip-countdown");
+        timerHolder.setAttribute("id", `timer-${lobby.id}-modal`);
+
+        let coinflipTossHolder = document.getElementsByClassName("coin-flip-anim")[0];
+        coinflipTossHolder.innerHTML = '';
+        coinflipTossHolder.appendChild(timerHolder);
+    } else {
+        let coinflipTossDiv = document.createElement("div");
+        coinflipTossDiv.setAttribute("id", "coin-flip-here");
+
+        let coinflipSideA = document.createElement("div");
+        coinflipSideA.setAttribute("class", "side-a");
+        let coinflipSideB = document.createElement("div");
+        coinflipSideB.setAttribute("class", "side-b");
+
+        coinflipTossDiv.appendChild(coinflipSideA);
+        coinflipTossDiv.appendChild(coinflipSideB);
+
+        let coinflipTossHolder = document.getElementsByClassName("coin-flip-anim")[0];
+        coinflipTossHolder.innerHTML = '';
+        coinflipTossHolder.appendChild(coinflipTossDiv);
+    }
 
     let challengerCoinColor = lobby.host.coinColor == "blue" ? "red" : "blue";
     if(lobby.challenger) {
         $("#coinFlipPlayer2 img.rounded-circle").attr("src", lobby.challenger.avatar);
         $(".player-right .coin img").attr("src", `/img/coin-${challengerCoinColor}.png`);
-        $(".player-right span.name").text(lobby.challenger.name);
+        $(".player-right span.name").text(lobby.challenger.user);
     } else {
         $("#coinFlipPlayer2 img").attr("src", `/img/coin-${challengerCoinColor}.png`);
         $(".player-right .coin img").attr("src", `/img/coin-${challengerCoinColor}.png`);
@@ -740,6 +771,29 @@ function listModalItems({ availableItems = [], gambledItems = [] } = {}, playerS
     if(cb !== null) {
         cb(null);
     }
+}
+
+function updateCoinflipLobbyTimers(lobbyTimers) {
+
+    let timers = document.getElementsByClassName("coinflip-countdown");
+    Array.from(timers).forEach(timer => {
+        Circles.create({
+            id:                  timer.id,
+            radius:              30,
+            value:               lobbyTimers[timer.id.replace("timer-", '').replace("-modal", '')],
+            maxValue:            10,
+            width:               3,
+            text:                value => Math.round(value),
+            colors:              ['#3f4068', '#2dc451'],
+            duration:            0,
+            wrpClass:            'circles-integer',
+            textClass:           'circles-integer',
+            valueStrokeClass:    'circles-valueStroke',
+            maxValueStrokeClass: 'circles-maxValueStroke',
+            styleWrapper:        true,
+            styleText:           true
+        })
+    });
 }
 
 /**

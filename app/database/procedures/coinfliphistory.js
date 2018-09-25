@@ -64,6 +64,86 @@ module.exports = (CoinflipHistory, sequelize) => {
             });
         },
     
+
+
+        getUserHistory: function(userId, limit = 5, cb = null) {
+            sequelize.models.CoinflipStakes.findAll({
+                limit,
+                where: { user: userId },
+                order: [[ "id", "DESC" ]]
+            }).then(stakes => {
+                let historyPromiseArray = [];
+                stakes.forEach(stake => {
+                    historyPromiseArray.push(CoinflipHistory.findOne({ where: {
+                        $or: [
+                            {
+                                host: {
+                                    $eq: stake.id
+                                }
+                            },
+                            {
+                                challenger: {
+                                    $eq: stake.id
+                                }
+                            }
+                        ]
+                    }}));
+                });
+                Promise.all(historyPromiseArray).then(history => {
+                    let stakePromisesArray = [];
+                    history.forEach(lobby => {
+                    stakePromisesArray.push(sequelize.models.CoinflipStakes.findOne({ where: { id: lobby.host }}));
+                    stakePromisesArray.push(sequelize.models.CoinflipStakes.findOne({ where: { id: lobby.challenger }}));
+                    });
+                    Promise.all(stakePromisesArray).then(stakes => {
+                    let requestedUsers = {};
+                    let userRequestArray = [];
+                    for(let index = 0, length = stakes.length; index < length; index += 2) {
+                        if(!requestedUsers[stakes[index].user]) {
+                        requestedUsers[stakes[index].user] = {};
+                        userRequestArray.push(stakes[index].user);
+                        }
+                        if(!requestedUsers[stakes[index+1].user]) {
+                        requestedUsers[stakes[index+1].user] = {};
+                        userRequestArray.push(stakes[index+1].user);
+                        }
+                    }
+                    request({
+                        uri: `${baseUri}/ISteamUser/GetPlayerSummaries/v0002/?key=${process.env.STEAM_API_KEY}&steamids=${userRequestArray.join(',')}`,
+                        json: true
+                    }).then(users => {
+                        users.response.players.forEach(profile => {
+                        requestedUsers[profile.steamid] = {
+                            name: profile.personaname,
+                            avatar: profile.avatarfull
+                        };
+                        });
+                        for(let index = 0, length = stakes.length; index < length; index += 2) {
+                        history[index/2].host = {
+                            userId: stakes[index].user,
+                            coinColor: stakes[index].coinColor,
+                            total: parseFloat(stakes[index].total)/100,
+                            stake: stakes[index].stake,
+                            ...requestedUsers[stakes[index].user]
+                        };
+                        history[index/2].challenger = {
+                            userId: stakes[index+1].user,
+                            coinColor: stakes[index+1].coinColor,
+                            total: parseFloat(stakes[index+1].total)/100,
+                            stake: stakes[index+1].stake,
+                            ...requestedUsers[stakes[index+1].user]
+                        };
+                        }
+                        if(cb) {
+                        cb(history.map(round => round.dataValues));
+                        } 
+                    });
+                    });
+                });
+    
+            });
+        },
+    
         getLobby: function(lobbyId, cb = null) {
             CoinflipHistory.findOne(
                 { where: { id: lobbyId }}

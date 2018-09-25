@@ -1,11 +1,6 @@
 "use strict";
-const chronJobs = require("./chron_jobs");
-
-let headonPosts = [{ id: 1, user: "Matt", stake: 30, upper: true, lower: true }, { id: 2, user: "Bill", stake: 20, upper: true, lower: true},
-                { id: 3, user: "Matt", stake: 40, upper: true, lower: false }, { id: 4, user: "Dan", stake: 100, upper: false, lower: true},
-                { id: 5, user: "Igor", stake: 90, upper: false, lower: false}];
-
-const rouletteSocket = require("./sockets/roulette_socket"),
+const chronJobs = require("./chron_jobs"),
+      rouletteSocket = require("./sockets/roulette_socket"),
       coinflipSocket = require("./sockets/coinflip_socket");
 
 module.exports = (io) => {
@@ -17,7 +12,7 @@ module.exports = (io) => {
     rouletteSocket.startRound(1);
     rouletteSocket.startRound(2);
     setInterval(chronJobs.jackPotTimer(io), 1000);
-    setInterval(chronJobs.coinflipLobbiesTimer(io), 1000);
+    setInterval(chronJobs.coinflipLobbiesTimer(), 1000);
     setInterval(chronJobs.updateUsers(io), 10000);
 
     //rouletteSocket.seedStakes();
@@ -37,12 +32,7 @@ module.exports = (io) => {
 
         require("./sockets/chat_socket")(io, socket);
         rouletteSocket.initSocket(socket, chronJobs.timeRemaining);
-
-        socket.on("play headon", () => {
-
-            socket.emit("get headon posts", headonPosts);
-            console.log(`${socket.userName} is playing headon`);
-        });
+        coinflipSocket.initSocket(socket);
 
         socket.on("disconnect", () => {
             chronJobs.connectedUsers--;

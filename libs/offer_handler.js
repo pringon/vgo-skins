@@ -61,14 +61,15 @@ module.exports = {
     handleCoinflipHostOffer: function(offer) {
         coinflipBetsStore.offerExists(offer.id, (offerExists) => {
             if(!offerExists) {
-                let lobbyId = offer.message.replace("Coinflip host ", '');
+                let coinColor = offer.message.replace("Coinflip host ", '');
                 coinflipBetsStore.addOffer(offer.id);
                 coinflipBetsStore.createLobby({
+                    coinColor,
                     id: offer.recipient.steam_id,
                     user: offer.recipient.display_name,
                     avatar: offer.recipient.avatar
                 }, offer.recipient.items, 
-                lobbyId, (err, results) => {
+                (err, results) => {
                     if(err) {
                         throw new Error(err);
                     }

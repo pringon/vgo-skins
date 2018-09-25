@@ -79,26 +79,32 @@ module.exports = {
             } else if(challengerTotal > hostTotal + hostTotal * 0.05) {
                 hostWinMargin -= 0.01;
             }
+            let winnerId;
             if(lobby.host.coinColor == "blue") {
                 if(flipResult - hostWinMargin < 0.5) {
+                    winnerId = lobby.host.id;
                     this.insertLobbyIntoDatabase(lobby);
                 } else {
+                    winnerId = lobby.challenger.id;
                     this.insertLobbyIntoDatabase(lobby, false);
                 }
             } else {
                 if(flipResult + hostWinMargin > 0.5) {
+                    winnderId = lobby.host.id;
                     this.insertLobbyIntoDatabase(lobby);
                 } else {
+                    winnerId = lobby.challenger.id;
                     this.insertLobbyIntoDatabase(lobby, false);
                 }
             }
+            coinflipSocket.emitCoinflipWinner(lobby, winnerId);
+            this.handleCoinflipWinnerOffer(winnerId, lobby.host.items.concat(lobby.challenger.items));
         })
     },
 
-    handleJackpotWinnerOffer: function(userId, items, tier, cb = null) {
-
+    rakePrizePot: function(items, rakePoints, cb = null) {
         const total = items.reduce((acc, currValue) => acc + parseFloat(currValue.suggested_price), 0);
-        const rakeMax = total * 0.1;
+        const rakeMax = total * rakePoints;
         
         items.sort((a, b) => a.suggested_price - b.suggested_price);
         let rakedItems = [];
@@ -137,11 +143,33 @@ module.exports = {
             }
         }
 
-        offerHandler.sendOffer(userId, items.map(item => item.id).join(','), "Jackpot prize", (body) => {
-            setTimeout(() => rouletteSocket.startRound(tier), 6500);
-            if(cb) {
-                cb(total-currentRake, currentRake);
-            }
+        if(cb) {
+            cb(items, total, currentRake);
+        }
+    },
+
+    handleJackpotWinnerOffer: function(userId, items, tier, cb = null) {
+
+        this.rakePrizePot(items, 0.1, (itemsAfterRake, total, rakedAmount) => {
+            offerHandler.sendOffer(userId, itemsAfterRake.map(item => item.id).join(','), 
+            "Jackpot prize", (body) => {
+                setTimeout(() => rouletteSocket.startRound(tier), 6500);
+                if(cb) {
+                    cb(total-rakedAmount, rakedAmount);
+                }
+            });
+        });
+    },
+
+    handleCoinflipWinnerOffer: function(userId, items, cb = null) {
+
+        this.rakePrizePot(items, 0.1, (itemsAfterRake, total, rakedAmount) => {
+            offerHandler.sendOffer(userId, itemsAfterRake.map(item => item.id).join(','), 
+            "Coinflip prize", (body) => {
+                if(cb) {
+                    cb(total-rakedAmount, rakedAmount);
+                }
+            });
         });
     },
 
@@ -160,7 +188,8 @@ module.exports = {
                 } else {
                     this.timeRemaining[tier]--;
                     if(this.timeRemaining[tier] <= 90) {
-                        io.to(`roulette tier ${tier}`).emit("time elapsed", this.timeRemaining[tier]);
+                        io.to(`roulette tier ${tier}`).emit("time elapsed", 
+                                                            this.timeRemaining[tier]);
                     }
                     if(this.timeRemaining[tier] == 0) {
                         this.timeRemaining[tier] = 100;
@@ -171,13 +200,15 @@ module.exports = {
                                 console.log(winner);
                                 rouletteSocket.getWinnerPos(stakes, winner.id, winnerPos => {
                                     console.log(winnerPos);
-                                    io.to(`roulette tier ${tier}`).emit("round finished", { winner, winnerPos });
+                                    io.to(`roulette tier ${tier}`).emit("round finished", 
+                                                                        { winner, winnerPos });
     
                                     let prizePot = [];
                                     stakes.forEach(stake => {
                                         stake.items.forEach(item => prizePot.push(item));
                                     });
-                                    this.handleJackpotWinnerOffer(winner.id, prizePot, tier, (totalWon, totalRaked) => {
+                                    this.handleJackpotWinnerOffer(winner.id, prizePot, 
+                                    tier, (totalWon, totalRaked) => {
                                         db.JackpotHistory.create({
                                             total: totalWon,
                                             tier,
@@ -219,18 +250,25 @@ module.exports = {
         };
     },
 
-    coinflipLobbiesTimer: function(io) {
+    coinflipLobbiesTimer: function() {
         return () => {
-            coinflipStore.decrementAllLobbyCounts((err, {lobbyIds, lobbyCounts}) => {
+            coinflipStore.decrementAllLobbyCounts((err, lobbyCounts) => {
+
                 if(err) {
                     throw new Error(err);
                 }
+                let lobbyRemoved = false;
                 for(let lobby in lobbyCounts) {
                     if(lobbyCounts[lobby] == 0) {
-                        console.log(lobbyCounts[lobby]);
-                        this.getCoinflipWinner(lobbyIds[lobby]);
-                        coinflipStore.deleteLobbyCount(lobbyIds[lobby]);
+                        lobbyRemoved = true;
+                        this.getCoinflipWinner(lobby);
+                        coinflipStore.deleteLobbyCount(lobby);
                     }
+                }
+                if(lobbyRemoved) {
+                    coinflipSocket.refreshCoinflipLobbiesList();
+                } else {
+                    coinflipSocket.refreshCoinflipLobbiesCountdown(lobbyCounts);
                 }
             });
         };
