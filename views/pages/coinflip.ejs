@@ -49,6 +49,7 @@
         </div>
     </div>
     <div class="coin-players-list">
+        <% let timerCount = 0; %>
         <% coinflipLobbies.forEach(lobby => { %>
             <div id="lobby-<%- lobby.id %>" class="item">
                 <div class="player-vs">
@@ -74,12 +75,15 @@
                     </div>
                 </div>
                 <div class="action-col">
-                    <% if(lobby.host.id !== currentUser.steamid) { %>
+                    <% //if(lobby.host.id !== currentUser.steamid && !lobby.challenger) { %>
                         <a href="javascript:void(0)" onclick="joinCoinflipHandler(<%- lobby.id %>)" 
                         data-toggle="modal" data-target=".coinFlipJoinModal" class="btn bg-green">
                             <i class="fa fa-link"></i>
                             <span class="text">Join</span>
                         </a>
+                    <% //} %>
+                    <% if(lobby.challenger) { %>
+                        <div class="circle coinflip-countdown" id="timer-<%- lobby.id %>"></div>
                     <% } %>
                     <a href="javascript:void(0)" onclick="handleViewModal(<%- lobby.id %>)" class="btn bg-gray" 
                     data-toggle="modal" data-target=".coinFlipModal">

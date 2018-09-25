@@ -18,7 +18,7 @@ module.exports = (() => {
 
         userUtils.getUser(req.user.steamId, (err, currentUser) => {
             db.JackpotHistory.procedures.getHistory({ winner: req.params.id }, 5, jackpotHistory => {
-                db.CoinflipHistory.procedures.getHistory({ winner: req.params.id }, 5, coinflipHistory => {
+                db.CoinflipHistory.procedures.getUserHistory(req.params.id, 5, coinflipHistory => {
                     if(req.params.id == req.user.steamId) {
                         db.user.findOne({
                             where: { steamId: req.user.steamId }

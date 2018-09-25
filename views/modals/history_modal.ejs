@@ -85,14 +85,14 @@
                                         <a href="/user/profile/<%- lobby.host.userId %>" class="avatar rounded-circle winner">
                                             <img src="<%- lobby.host.avatar %>" class="rounded-circle">
                                             <% if(lobby.host.userId == lobby.winner) { %>
-                                                <span class="crown"><img src="img/crown.png"></span>
+                                                <span class="crown"><img src="/img/crown.png"></span>
                                             <% } %>
                                         </a>
                                         <span class="vs rounded-circle">v/s</span>
                                         <a href="/user/profile/<%- lobby.challenger.userId %>" class="avatar rounded-circle">
                                             <img src="<%- lobby.challenger.avatar %>" class="rounded-circle">
                                             <% if(lobby.challenger.userId == lobby.winner) { %>
-                                                <span class="crown"><img src="img/crown.png"></span>
+                                                <span class="crown"><img src="/img/crown.png"></span>
                                             <% } %>
                                         </a>
                                         <div class="amount">

@@ -51,7 +51,7 @@
                     </div>
                 </div>
             <% } %>
-            <footer>© vgogem 2018</footer>
+            <footer>© vgogem <%- new Date(Date.now()).getFullYear() %></footer>
         </div>
 
         <% if(typeof profilePage !== "undefined" && profilePage == true) { %>
@@ -375,7 +375,9 @@
                 <script src="/scripts/coinflip/animations.js"></script>
                 <script src="/scripts/items_rendering.js"></script>
                 <script src="/scripts/coinflip/graphics.js"></script>
-                <script src="/scripts/coinflip/socket.js"></script>
+                <% if(typeof coinflipHistoryPage == "undefined") { %>
+                    <script src="/scripts/coinflip/socket.js"></script>
+                <% } %>
         <% } %>
     </body>
 </html>
